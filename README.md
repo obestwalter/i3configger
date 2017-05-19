@@ -2,7 +2,7 @@
 
 Generate i3 config files from a set of partial config files in a config folder.
 
-Either as script or a deamon watching the folder and triggering a build on changes of one of the .i3config files.
+See [my i3 config](https://github.com/obestwalter/i3config) for an example: [.i3/config.d](https://github.com/obestwalter/i3config/tree/master/config.d) is turned into [config](https://github.com/obestwalter/i3config/tree/master/config)
 
 ##  Features
 
