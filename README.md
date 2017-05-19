@@ -4,17 +4,17 @@ Generate i3 config files from a set of *.i3config files in a config.d folder.
 
 Either as script or a deamon watching the folder and triggering a build on changes of one of the .i3config files.
 
-# TODO
-
-* [X] watch a folder for changes
-* [X] only react on changes to .i3config files
-* [X] concatenate .i3conf files and write to config
-* [X] add command line handling
-* [X] add watch and daemonize
-* [ ] replace variables depending on certain criteria (e.g. hostname, number of connected monitors, etc.)
-* [ ] think about integrating it into py3status
+* build config as one shot script
+* watch a folder for changes and build automatically
+* runs as deamon or in foreground
 
 # Ideas
+
+## replace variables
+
+Everything that is set with `set $<whatever> <value>` can be replaced using string template substitutions
+
+It is then possible to switch sets of seetings by simply replacing the source of variables.
 
 ## Dynamic settings
 
