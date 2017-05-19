@@ -1,4 +1,5 @@
 import logging
+import sys
 import time
 
 from inotify import constants as ic
@@ -44,3 +45,4 @@ def inotify_eventloop(sources, suffix, gather_func, build_func):
                     build_func(fragments=gather_func())
     except:
         log.exception("tree watcher struggled")
+        sys.exit(1)
