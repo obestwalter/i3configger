@@ -42,7 +42,7 @@ more info:
 
 Everything that is set with `set $<whatever> <value>` can be replaced using string template substitutions
 
-It is then possible to switch sets of seetings by simply replacing the source of variables.
+It is then possible to switch sets of settings by simply replacing the source of variables.
 
 ## Dynamic settings
 
