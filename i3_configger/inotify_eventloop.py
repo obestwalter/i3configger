@@ -7,10 +7,10 @@ from inotify.adapters import InotifyTree
 log = logging.getLogger(__name__)
 
 BACKOFF_DELAY = 0.1
-"""If an IDE does monkey business with the files more than one change is 
-triggerred for each change. 
+"""If an IDE does monkey business with the files (e.g. Jetbrains "safe write")
+more than one change is triggered for each change. 
 
-Using a small delay to not trigger to often
+Using a small delay to not trigger to often.
 """
 
 MASK = (ic.IN_MODIFY | ic.IN_CLOSE_WRITE | ic.IN_MOVED_FROM | ic.IN_MOVED_TO
