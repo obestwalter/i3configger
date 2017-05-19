@@ -48,7 +48,7 @@ def main():
     configure_logging(cnf.verbose)
     log.debug("config: %s", cnf)
     gather_func = partial(gather_fragments, cnf.sources, cnf.suffix)
-    build_func = partial(build, destination=cnf.destination, msg=cnf.message)
+    build_func = partial(build, cnf.destination, cnf.message)
     if cnf.watch:
         inotify_eventloop(cnf.sources, cnf.suffix, gather_func, build_func)
     elif cnf.daemon:
