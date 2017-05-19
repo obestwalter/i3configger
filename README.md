@@ -17,7 +17,7 @@ Either as script or a deamon watching the folder and triggering a build on chang
 
 # Installation
 
-    $ pip install -e "git+https://github.com/obestwalter/i3-configger.git#egg=i3-configger"
+    $ pip install "git+https://github.com/obestwalter/i3-configger.git#egg=i3-configger"
 
 # Usage
 
