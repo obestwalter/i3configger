@@ -36,9 +36,9 @@ def inotify_eventloop(sources, suffix, gather_func, build_func):
                 if filename.endswith(suffix):
                     if (filename == lastFilename
                             and time.time() - lastChange < BACKOFF_DELAY):
-                        log.info("ignore %s changed too quick", filename)
+                        log.debug("ignore %s changed too quick", filename)
                         continue
-                    log.info("%s changed -> mining", filename)
+                    log.info("%s changed -> build new config", filename)
                     lastFilename = filename
                     lastChange = time.time()
                     build_func(fragments=gather_func())
