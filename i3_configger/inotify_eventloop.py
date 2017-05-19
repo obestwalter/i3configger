@@ -44,5 +44,6 @@ def inotify_eventloop(sources, suffix, gather_func, build_func):
                     lastChange = time.time()
                     build_func(fragments=gather_func())
     except:
+        # Very stupid attempt to handle case when running as daemon ...
         log.exception("tree watcher struggled")
         sys.exit(1)
