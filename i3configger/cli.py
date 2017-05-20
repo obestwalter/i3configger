@@ -1,27 +1,42 @@
 import logging
 import os
 import sys
+import tempfile
 from argparse import ArgumentParser
-from functools import partial
+from pathlib import Path
 
 from daemon import daemon
 
-from i3_configger.functions import (
-    build_config, gather_fragments, i3_reload, notify)
-from i3_configger.inotify_eventloop import inotify_eventloop
+from i3configger import __version__
+from i3configger.lib import I3Configger
 
-log = logging.getLogger(__name__)
+log = logging.getLogger()
 
 
-def configure_logging(verbose):
+def configure_logging(verbose, logtToFile=True):
+    logPath = Path('/var/log')
+    if not logPath.exists():
+        logPath = Path(tempfile.gettempdir())
+    logFilePath = logPath / 'i3configger.log'
+    logPath = '/var/log/i3configger.log'
     level = logging.DEBUG if verbose else logging.INFO
     fmt = '%(asctime)s %(name)s %(levelname)s: %(message)s'
     logging.basicConfig(stream=sys.stdout, format=fmt, level=level)
+    if not logtToFile:
+        return
+    fileHandler = logging.FileHandler(logFilePath)
+    fileHandler.setFormatter(fmt)
+    fileHandler.setLevel(level)
+    log.addHandler(fileHandler)
+    log.addHandler(fileHandler)
+    """add file handler to root logger to have libraries output also"""
+    log.debug("logging to %s", logFilePath)
 
 
 def get_cnf():
-    p = ArgumentParser('i3-configger')
+    p = ArgumentParser('i3configger')
     p.add_argument('--verbose', action="store_true", default=False)
+    p.add_argument('--version', action='version', version=__version__)
     g = p.add_mutually_exclusive_group()
     g.add_argument('--watch', action="store_true",
                    help="build new config on changes",
@@ -48,17 +63,15 @@ def main():
     cnf = get_cnf()
     configure_logging(cnf.verbose)
     log.debug("config: %s", cnf)
-    gather = partial(gather_fragments, cnf.sources, cnf.suffix)
-    build = partial(build_config, cnf.destination, cnf.message)
+    i3Configger = I3Configger(cnf)
     if cnf.watch:
-        inotify_eventloop(
-            cnf.sources, cnf.suffix, gather, build, i3_reload, notify)
+        i3Configger.watch()
     elif cnf.daemon:
         log.debug("daemonizing ...")
         with daemon.DaemonContext():
-            inotify_eventloop(cnf.sources, cnf.suffix, gather, build)
+            i3Configger.watch()
     else:
-        build(fragments=gather())
+        i3Configger.build()
 
 
 if __name__ == '__main__':

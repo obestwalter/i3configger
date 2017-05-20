@@ -1,4 +1,4 @@
-# i3 configger
+# i3configger
 
 Generate i3 config files from a set of partial config files in a config folder.
 
@@ -17,7 +17,7 @@ See [my i3 config](https://github.com/obestwalter/i3config) for an example: [.i3
 
 # Installation
 
-    $ pip install "git+https://github.com/obestwalter/i3-configger.git#egg=i3-configger"
+    $ pip install "git+https://github.com/obestwalter/i3configger.git#egg=i3configger"
 
 # Usage
 
@@ -25,16 +25,16 @@ See [my i3 config](https://github.com/obestwalter/i3config) for an example: [.i3
 
 one shot:
 
-    $ i3-configger
+    $ i3configger
 
 as daemon:
 
-    $ i3-configger --daemon
+    $ i3configger --daemon
 
 
 more info:
 
-    $ i3-configger --help
+    $ i3configger --help
 
 # Ideas
 
