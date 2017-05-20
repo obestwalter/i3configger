@@ -19,31 +19,40 @@ MASK = (ic.IN_MODIFY | ic.IN_CLOSE_WRITE | ic.IN_MOVED_FROM | ic.IN_MOVED_TO
 """Trigger only on changes"""
 
 
-def inotify_eventloop(sources, suffix, gather_func, build_func):
+def inotify_eventloop(sources, suffix, gather, build, refresh, notify):
+    errors = 0
     # todo add logging file handler
-    try:
-        treeWatcher = InotifyTree(sources.encode(), mask=MASK)
-        lastChange = time.time()
-        lastFilename = None
-        for event in treeWatcher.event_gen():
+    treeWatcher = InotifyTree(sources.encode(), mask=MASK)
+    lastChange = time.time()
+    lastFilename = None
+    for event in treeWatcher.event_gen():
+        try:
             if event:
                 (header, typeNames, watchPath, filename) = event
                 filename = filename.decode()
-                log.debug(
-                    "WD=(%d) MASK=(%d) COOKIE=(%d) LEN=(%d) MASK->NAMES=%s "
-                    "WATCH-PATH=[%s] FILENAME=[%s]",
-                    header.wd, header.mask, header.cookie, header.len,
-                    typeNames, watchPath.decode('utf-8'), filename)
                 if filename.endswith(suffix):
+                    log.debug(
+                        "WD=(%d) MASK=(%d) COOKIE=(%d) LEN=(%d) MASK->NAMES=%s "
+                        "WATCH-PATH=[%s] FILENAME=[%s]",
+                        header.wd, header.mask, header.cookie, header.len,
+                        typeNames, watchPath.decode('utf-8'), filename)
                     if (filename == lastFilename
                             and time.time() - lastChange < BACKOFF_DELAY):
                         log.debug("ignore %s changed too quick", filename)
                         continue
-                    log.info("%s changed -> build new config", filename)
+                    log.info("%s changed -> %s", filename, build)
                     lastFilename = filename
                     lastChange = time.time()
-                    build_func(fragments=gather_func())
-    except:
-        # Very stupid attempt to handle case when running as daemon ...
-        log.exception("tree watcher struggled")
-        sys.exit(1)
+                    fragments = gather()
+                    log.debug("run %s with %s", build, fragments)
+                    build(fragments)
+                    log.debug("run %s", refresh)
+                    refresh()
+                    notify()
+        except:
+            # Very stupid attempt to handle case when running as daemon ...
+            log.exception("tree watcher struggled")
+            errors += 1
+            if errors == 10:
+                log.critical("too many errors, interrupting ...")
+                sys.exit(1)

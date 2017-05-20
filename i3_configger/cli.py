@@ -6,7 +6,8 @@ from functools import partial
 
 from daemon import daemon
 
-from i3_configger.builder import build, gather_fragments
+from i3_configger.functions import (
+    build_config, gather_fragments, i3_reload, notify)
 from i3_configger.inotify_eventloop import inotify_eventloop
 
 log = logging.getLogger(__name__)
@@ -14,7 +15,7 @@ log = logging.getLogger(__name__)
 
 def configure_logging(verbose):
     level = logging.DEBUG if verbose else logging.INFO
-    fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    fmt = '%(asctime)s %(name)s %(levelname)s: %(message)s'
     logging.basicConfig(stream=sys.stdout, format=fmt, level=level)
 
 
@@ -47,16 +48,17 @@ def main():
     cnf = get_cnf()
     configure_logging(cnf.verbose)
     log.debug("config: %s", cnf)
-    gather_func = partial(gather_fragments, cnf.sources, cnf.suffix)
-    build_func = partial(build, cnf.destination, cnf.message)
+    gather = partial(gather_fragments, cnf.sources, cnf.suffix)
+    build = partial(build_config, cnf.destination, cnf.message)
     if cnf.watch:
-        inotify_eventloop(cnf.sources, cnf.suffix, gather_func, build_func)
+        inotify_eventloop(
+            cnf.sources, cnf.suffix, gather, build, i3_reload, notify)
     elif cnf.daemon:
         log.debug("daemonizing ...")
         with daemon.DaemonContext():
-            inotify_eventloop(cnf.sources, cnf.suffix, gather_func, build_func)
+            inotify_eventloop(cnf.sources, cnf.suffix, gather, build)
     else:
-        build_func(fragments=gather_func())
+        build(fragments=gather())
 
 
 if __name__ == '__main__':
