@@ -31,11 +31,10 @@ def inotify_eventloop(sources, suffix, gather, build, refresh, notify):
                 (header, typeNames, watchPath, filename) = event
                 filename = filename.decode()
                 if filename.endswith(suffix):
-                    log.debug(
-                        "WD=(%d) MASK=(%d) COOKIE=(%d) LEN=(%d) MASK->NAMES=%s "
-                        "WATCH-PATH=[%s] FILENAME=[%s]",
-                        header.wd, header.mask, header.cookie, header.len,
-                        typeNames, watchPath.decode('utf-8'), filename)
+                    log.debug("wd=%d mask=%d MASK->NAMES=%s "
+                              "WATCH-PATH=[%s] FILENAME=[%s]",
+                              header.wd, header.mask, typeNames,
+                              watchPath.decode(), filename)
                     if (filename == lastFilename
                             and time.time() - lastChange < BACKOFF_DELAY):
                         log.debug("ignore %s changed too quick", filename)
