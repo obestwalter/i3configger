@@ -53,31 +53,30 @@ class I3Configger:
                     raise RuntimeError("%s: giving up" % self)
 
     def get_events(self):
-        for path in self.buildDefs.paths:
-            self.inotify_watcher.add_watch(path, mask=self.MASK)
+        for buildDef in self.buildDefs:
+            for path in buildDef.watchPaths:
+                bytesPath = str(path).encode()
+                self.inotify_watcher.add_watch(bytesPath, mask=self.MASK)
         for event in self.inotify_watcher.event_gen():
             if not event:
                 continue
             yield event
 
     def get_event_data(self, event):
-        (header, typeNames, watchPath, filename) = event
-        watchPath = Path(watchPath.decode())
-        filename = Path(filename.decode())
-        log.debug("wd=%d mask=%d MASK->NAMES=%s "
-                  "WATCH-PATH=[%s] FILENAME=[%s]",
-                  header.wd, header.mask, typeNames,
-                  watchPath, filename)
-        return header, typeNames, watchPath, filename
+        header, typeNames, watchPath, filename = event
+        filePath = Path(watchPath.decode()) / filename.decode()
+        log.debug("wd=%d|mask=%d|mask->names=%s|filePath=[%s]",
+                  header.wd, header.mask, typeNames, filePath)
+        return header, typeNames, filePath
 
     def process_event(self, event):
-        header, typeNames, watchPath, filename = self.get_event_data(event)
+        header, typeNames, filePath = self.get_event_data(event)
         # todo handle IN_DELETE_SELF and IN_MOVE_SELF (error?)
         for buildDef in self.buildDefs:
-            if buildDef.needs_build(header, typeNames, watchPath, filename):
-                log.info("%s triggered build", filename)
+            if buildDef.needs_build(header, typeNames, filePath):
+                log.info("%s triggered build", filePath)
                 buildDef.build()
-                IpcControl.notify_send('build %s', buildDef)
+                IpcControl.notify_send('build %s' % buildDef.name)
         IpcControl.restart_i3()
 
 
@@ -111,7 +110,7 @@ class BuildDef:
             self.theme = None
         # derived values and states
         self.watchPaths: [Path] = self.themes + self.sources
-        self.lastFilename = None
+        self.lastFilePath = None
         self.lastBuild = None
 
     def __str__(self):
@@ -119,26 +118,6 @@ class BuildDef:
 
     def __repr__(self):
         return str(self)
-
-    def needs_build(self, header, typeNames, watchPath, filename) -> bool:
-        if not self.matches(filename, watchPath):
-            return False
-        if not self.lastBuild:
-            return True
-        if filename != self.lastFilename:
-            log.debug("%s != %s", filename, self.lastFilename)
-            return True
-        if time.time() - self.lastBuild >= self.BUILD_DELAY:
-            return True
-        log.debug("ignore %s changed too quick", filename)
-        return False
-
-    def matches(self, path):
-        if path.suffix != self.suffix:
-            return False
-        # FIXME this is just a placeholder - likely wrong check
-        if path.stem not in self.watchPaths:
-            return False
 
     def build(self):
         out = []
@@ -156,6 +135,20 @@ class BuildDef:
             out.append(content)
         self.target.write_text('\n'.join(out))
         log.debug("built %s from %s", self.target, self.sources)
+
+    # noinspection PyUnusedLocal
+    def needs_build(self, header, typeNames, filePath) -> bool:
+        if self.lastBuild and time.time() - self.lastBuild < self.BUILD_DELAY:
+            log.debug("ignore %s changed too quick", filePath)
+            return False
+        if filePath.suffix != self.suffix:
+            return False
+        if filePath.parent not in self.watchPaths:
+            return False
+        if filePath != self.lastFilePath:
+            log.debug("%s != %s", filePath, self.lastFilePath)
+            return True
+        return False
 
     def get_theme(self):
         themePaths = []
@@ -194,9 +187,6 @@ class BuildDef:
             log.error("mutually exclusive keys used in %s", self)
             raise BuildDefError("files and excludes can't be used together.")
 
-    # def as_bytes(self, watchPaths):
-    #     return [p.encode() for p in watchPaths]
-
 
 class BuildDefError(Exception):
     pass
@@ -216,9 +206,14 @@ class IpcControl:
     @classmethod
     def _send_i3_msg(cls, msg):
         # todo use Adaephons i3 library
-        cmd = ['i3', msg]
-        output = subprocess.check_output(cmd).decode()
-        if '"success": true' in output:
+        cmd = ['i3-msg', msg]
+        try:
+            output = subprocess.check_output(cmd).decode()
+        except subprocess.CalledProcessError as e:
+            if msg == 'restart' and e.returncode == 1:
+                log.debug("[IGNORE] exit 1 is ok for restart")
+                return True
+        if '"success":true' in output:
             return True
         cls.notify_send("%s failed: %s" % (cmd, output), urgency='critical')
         return False

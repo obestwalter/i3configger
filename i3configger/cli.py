@@ -5,7 +5,7 @@ from pathlib import Path
 
 from i3configger import __version__
 from i3configger.as_daemon import daemonize
-from i3configger.lib import IniConfig, I3Configger
+from i3configger.lib import IniConfig, I3Configger, IpcControl
 
 log = logging.getLogger()
 
@@ -30,7 +30,9 @@ def parse_args():
     p.add_argument('--verbose', action="store_true", default=False)
     p.add_argument('--version', action='version', version=__version__)
     p.add_argument('--daemon', action="store_true",
-                   help="run as deamon", default=False)
+                   help="watch and build as daemon", default=False)
+    p.add_argument('--watch', action="store_true",
+                   help="watch and build in foreground", default=False)
     p.add_argument('--kill', action="store_true",
                    help="kill the deamon if it is running", default=False)
     return p.parse_args()
@@ -38,21 +40,24 @@ def parse_args():
 
 def main():
     args = parse_args()
-    cnf = IniConfig(IniConfig.get_config(args.iniPath))
+    cnf = IniConfig(IniConfig.get_config(args.ini_path))
     configure_logging(args.verbose, cnf.logfile)
     log.debug("config: %s", cnf)
     if args.kill:
         raise NotImplementedError  # TODO
-    i3Configger = I3Configger(cnf.buildDefs, cnf.suffix, cnf.maxerrors)
-    if args.daemon:
+    i3Configger = I3Configger(cnf.buildDefs, cnf.maxerrors)
+    if args.watch:
+        i3Configger.watch()
+    elif args.daemon:
         daemonize()
         # todo make work with real code
         #daemonize(I3Configger)
     else:
         i3Configger.build()
-        i3Configger.restart()
+        # todo is there a way to reload the status bar without restarting i3?
+        IpcControl.reload_i3()
 
 
 if __name__ == '__main__':
-    sys.argv = ['dev', '--verbose']
+    sys.argv = ['dev', '--verbose', '--watch']
     sys.exit(main())
