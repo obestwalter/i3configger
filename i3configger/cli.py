@@ -37,6 +37,8 @@ def parse_args():
     p.add_argument('--ini-path', action="store",
                    help="path to i3configger.ini", default=None)
     p.add_argument('--verbose', action="store_true", default=False)
+    p.add_argument('--reload', action="store_true", default=False,
+                   help="reload i3 instead of restart (not i3bar update)")
     p.add_argument('--version', action='version', version=__version__)
     p.add_argument('--daemon', action="store_true",
                    help="watch and build as daemon", default=False)
@@ -85,6 +87,8 @@ def main():
             print("killing %s" % process.pid)
             process.kill()
         return 0
+    if args.reload:
+        IpcControl.refresh = IpcControl.reload_i3
     if args.daemon:
         daemonize(cnf.buildDefs, cnf.maxerrors, args.verbose, cnf.logfile)
     configure_logging(args.verbose, cnf.logfile)
@@ -97,7 +101,7 @@ def main():
     else:
         i3Configger.build()
         # todo is there a way to reload the status bar without restarting i3?
-        IpcControl.restart_i3()
+        IpcControl.refresh()
 
 
 if __name__ == '__main__':

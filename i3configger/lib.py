@@ -83,7 +83,7 @@ class I3Configger:
                 buildDef.lastBuild = time.time()
                 buildDef.lastFilePath = filePath
                 IpcControl.notify_send('build %s' % buildDef.name)
-        IpcControl.restart_i3()
+        IpcControl.refresh()
 
 
 class BuildDef:
@@ -212,6 +212,8 @@ class IpcControl:
     def restart_i3(cls):
         if cls._send_i3_msg('restart'):
             cls.notify_send("restarted i3")
+
+    refresh = restart_i3
 
     @classmethod
     def _send_i3_msg(cls, msg):
