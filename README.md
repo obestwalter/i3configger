@@ -1,3 +1,5 @@
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
+
 # i3configger
 
 Generate i3 config files from a set of partial config files in a config folder.
@@ -43,6 +45,8 @@ more info:
 Everything that is set with `set $<whatever> <value>` can be replaced using string template substitutions
 
 It is then possible to switch sets of settings by simply replacing the source of variables.
+
+This overcomes the restriction of the i3config that I can't assig variables to other variables (e.g. you can't say `set $someVar $someOtherVar`).
 
 ## Dynamic settings
 
