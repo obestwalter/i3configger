@@ -53,9 +53,13 @@ class I3Configger:
                     raise RuntimeError("%s: giving up" % self)
 
     def get_events(self):
+        seenPaths = []
         for buildDef in self.buildDefs:
             for path in buildDef.watchPaths:
                 bytesPath = str(path).encode()
+                if bytesPath in seenPaths:
+                    continue
+                seenPaths.append(bytesPath)
                 self.inotify_watcher.add_watch(bytesPath, mask=self.MASK)
         for event in self.inotify_watcher.event_gen():
             if not event:
@@ -74,8 +78,10 @@ class I3Configger:
         # todo handle IN_DELETE_SELF and IN_MOVE_SELF (error?)
         for buildDef in self.buildDefs:
             if buildDef.needs_build(header, typeNames, filePath):
-                log.info("%s triggered build", filePath)
+                log.info("%s triggered build for %s", filePath, buildDef.name)
                 buildDef.build()
+                buildDef.lastBuild = time.time()
+                buildDef.lastFilePath = filePath
                 IpcControl.notify_send('build %s' % buildDef.name)
         IpcControl.restart_i3()
 
@@ -143,6 +149,10 @@ class BuildDef:
             return False
         if filePath.suffix != self.suffix:
             return False
+        if self.files:
+            if filePath.name not in self.files:
+                log.debug("%s not in %s", filePath.name, self.files)
+                return False
         if filePath.parent not in self.watchPaths:
             return False
         if filePath != self.lastFilePath:
