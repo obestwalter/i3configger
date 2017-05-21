@@ -209,14 +209,14 @@ class IpcControl:
         cmd = ['i3-msg', msg]
         try:
             output = subprocess.check_output(cmd).decode()
+            if '"success":true' in output:
+                return True
+            cls.notify_send("%s: %s" % (cmd, output), urgency='critical')
+            return False
         except subprocess.CalledProcessError as e:
             if msg == 'restart' and e.returncode == 1:
                 log.debug("[IGNORE] exit 1 is ok for restart")
                 return True
-        if '"success":true' in output:
-            return True
-        cls.notify_send("%s failed: %s" % (cmd, output), urgency='critical')
-        return False
 
     @classmethod
     def notify_send(cls, msg, urgency='low'):
