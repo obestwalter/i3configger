@@ -90,7 +90,10 @@ def main():
     configure_logging(args.verbose, cnf.logfile)
     i3Configger = I3Configger(cnf.buildDefs, cnf.maxerrors)
     if args.watch:
-        i3Configger.watch()
+        try:
+            i3Configger.watch()
+        except KeyboardInterrupt:
+            sys.exit("bye")
     else:
         i3Configger.build()
         # todo is there a way to reload the status bar without restarting i3?
