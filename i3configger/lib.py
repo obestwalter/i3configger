@@ -41,7 +41,7 @@ class I3Configger:
         for event in self.get_events():
             self.process_event(event)
 
-    def watch_guarded(self, func):
+    def watch_guarded(self):
         for event in self.get_events():
             try:
                 self.process_event(event)

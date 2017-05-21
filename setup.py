@@ -7,7 +7,7 @@ setup(
     entry_points={'console_scripts': [
         'i3configger = i3configger.cli:main',
     ]},
-    install_requires=['inotify', 'python-daemon'],
+    install_requires=['inotify', 'psutil', 'python-daemon'],
     packages=find_packages(),
     use_scm_version=True,
     setup_requires=['setuptools_scm'],

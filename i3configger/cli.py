@@ -1,18 +1,27 @@
 import logging
+import os
 import sys
+import tempfile
 from argparse import ArgumentParser
 from pathlib import Path
 
+import daemon
+import psutil
+
 from i3configger import __version__
-from i3configger.as_daemon import daemonize
-from i3configger.lib import IniConfig, I3Configger, IpcControl
+from i3configger.lib import I3Configger, IniConfig, IpcControl
 
 log = logging.getLogger()
 
 
-def configure_logging(verbose, logfile):
+def configure_logging(verbose, logfile=None, daemon=False):
     level = logging.DEBUG if verbose else logging.INFO
     fmt = '%(asctime)s %(name)s %(levelname)s: %(message)s'
+    if daemon:
+        if not logfile:
+            logfile = Path(tempfile.gettempdir()) / 'i3configger.log'
+        logging.basicConfig(filename=logfile, format=fmt, level=level)
+        return
     logging.basicConfig(stream=sys.stdout, format=fmt, level=level)
     if not logfile:
         return
@@ -38,26 +47,57 @@ def parse_args():
     return p.parse_args()
 
 
+def get_foreign_processes():
+    procs = [p for p in psutil.process_iter() if p.name() == 'i3configger']
+    return [p for p in procs if p.pid != os.getpid()]
+
+
+def daemonize(buildDefs, maxerrors, verbose, logfile=None):
+    foreignProcesses = get_foreign_processes()
+    if foreignProcesses:
+        sys.exit("i3configger already running (%s)" % foreignProcesses)
+    context = daemon.DaemonContext(
+        working_directory=Path(__file__).parent,
+        # TODO check if this umask is ok
+        umask=0o002)
+    # todo handle signals properly
+    # context.signal_map = {
+    #     signal.SIGTERM: program_cleanup,
+    #     signal.SIGHUP: 'terminate',
+    #     signal.SIGUSR1: reload_program_config}
+    if verbose:
+        # spew output to terminal from where daemon was started
+        context.stdout = sys.stdout
+        context.stderr = sys.stderr
+    with context:
+        configure_logging(verbose, logfile, daemon=True)
+        i3configger = I3Configger(buildDefs, maxerrors)
+        i3configger.watch_guarded()
+
+
 def main():
     args = parse_args()
     cnf = IniConfig(IniConfig.get_config(args.ini_path))
-    configure_logging(args.verbose, cnf.logfile)
     log.debug("config: %s", cnf)
     if args.kill:
-        raise NotImplementedError  # TODO
+        # todo some error handling
+        for process in get_foreign_processes():
+            print("killing %s" % process.pid)
+            process.kill()
+        return 0
+    if args.daemon:
+        daemonize(cnf.buildDefs, cnf.maxerrors, args.verbose, cnf.logfile)
+    configure_logging(args.verbose, cnf.logfile)
     i3Configger = I3Configger(cnf.buildDefs, cnf.maxerrors)
     if args.watch:
         i3Configger.watch()
-    elif args.daemon:
-        daemonize()
-        # todo make work with real code
-        #daemonize(I3Configger)
     else:
         i3Configger.build()
         # todo is there a way to reload the status bar without restarting i3?
-        IpcControl.reload_i3()
+        IpcControl.restart_i3()
 
 
 if __name__ == '__main__':
+    # for dev
     sys.argv = ['dev', '--verbose', '--watch']
     sys.exit(main())
