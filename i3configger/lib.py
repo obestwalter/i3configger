@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 
 class I3Configger:
-    """Watch a directory tree and build/refresh/notify on changes"""
+    """Watch a config directories and build/refresh/notify on changes"""
     MASK = (
         ic.IN_CREATE | ic.IN_ATTRIB | ic.IN_DELETE |
         ic.IN_MODIFY | ic.IN_CLOSE_WRITE |
@@ -29,8 +29,6 @@ class I3Configger:
             [bd.watchPaths for bd in self.buildDefs])
         self.maxerrors = maxerrors
         self.inotify_watcher = Inotify()
-        self.lastBuild = None
-        self.lastFilename = None
         self.errors = 0
 
     def build(self):
