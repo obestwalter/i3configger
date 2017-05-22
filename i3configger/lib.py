@@ -135,7 +135,7 @@ class BuildDef:
                         else filePath.name))
                 content = info + content
             out.append(content)
-        self.target.write_text('\n'.join(out))
+        self.target.write_text(''.join(out))
         log.debug("built %s from %s", self.target, self.sources)
 
     # noinspection PyUnusedLocal
