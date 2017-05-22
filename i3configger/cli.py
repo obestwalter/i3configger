@@ -91,18 +91,19 @@ def main():
         IpcControl.refresh = IpcControl.reload_i3
     if args.daemon:
         daemonize(cnf.buildDefs, cnf.maxerrors, args.verbose, cnf.logfile)
-    configure_logging(args.verbose, cnf.logfile)
-    i3Configger = I3Configger(cnf.buildDefs, cnf.maxerrors)
-    if args.watch:
-        try:
-            i3Configger.watch()
-        except KeyboardInterrupt:
-            sys.exit("bye")
     else:
-        i3Configger.build()
-        # todo is there a way to reload the status bar without restarting i3?
-        IpcControl.refresh()
-
+        configure_logging(args.verbose, cnf.logfile)
+        i3Configger = I3Configger(cnf.buildDefs, cnf.maxerrors)
+        if args.watch:
+            try:
+                i3Configger.watch()
+            except KeyboardInterrupt:
+                sys.exit("bye")
+        else:
+            i3Configger.build()
+            # todo need a way to refresh i3bar config without restarting i3
+            IpcControl.refresh()
+        return 0
 
 if __name__ == '__main__':
     # for dev
