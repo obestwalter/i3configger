@@ -14,10 +14,10 @@ from i3configger.lib import I3Configger, IniConfig, IpcControl
 log = logging.getLogger()
 
 
-def configure_logging(verbose, logfile=None, daemon=False):
+def configure_logging(verbose, logfile=None, isDaemon=False):
     level = logging.DEBUG if verbose else logging.INFO
     fmt = '%(asctime)s %(name)s %(levelname)s: %(message)s'
-    if daemon:
+    if isDaemon:
         if not logfile:
             logfile = Path(tempfile.gettempdir()) / 'i3configger.log'
         logging.basicConfig(filename=logfile, format=fmt, level=level)
@@ -73,7 +73,7 @@ def daemonize(buildDefs, maxerrors, verbose, logfile=None):
         context.stdout = sys.stdout
         context.stderr = sys.stderr
     with context:
-        configure_logging(verbose, logfile, daemon=True)
+        configure_logging(verbose, logfile, isDaemon=True)
         i3configger = I3Configger(buildDefs, maxerrors)
         i3configger.watch_guarded()
 
