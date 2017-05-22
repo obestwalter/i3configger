@@ -23,7 +23,7 @@ See [my i3 config](https://github.com/obestwalter/i3config) for an example: [.i3
 
 # Usage
 
-**Default uses `.i3config` files in `~/.i3/config.d` and writes to `~/.i3/config`.**
+**Default uses `.i3config` files in `~/.i3/config.d` and writes to `~/.i3/config` and `~/.i3/status-bar.conf` see [i3configger.ini](i3configger/i3configger.ini).**
 
 one shot:
 
