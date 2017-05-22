@@ -40,15 +40,15 @@ more info:
 
 # Ideas
 
-# build on startup
+## Build on startup
 
 It i3configger is started/run once before i3 is started the config can be build depending on settings and environments. e.g in xinitrc before i3wm is started.
 
-# pick different sources depending on host/env/cmdline
+## Pick different sources depending on host/env/cmdline
 
 A certain sub group of configuration is dependent on the environment. e.g. different sub folders qith hostnames are only used if the host fits
 
-# backup of last config
+## Backup of last config
 
 Don't clobber by default to protect users who don't have their config under SCM.
 
