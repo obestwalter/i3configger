@@ -64,13 +64,6 @@ class Builder:
                 continue
             yield event
 
-    def get_event_data(self, event):
-        header, typeNames, watchPath, filename = event
-        filePath = Path(watchPath.decode()) / filename.decode()
-        log.debug("wd=%d|mask=%d|mask->names=%s|filePath=[%s]",
-                  header.wd, header.mask, typeNames, filePath)
-        return header, typeNames, filePath
-
     def process_event(self, event):
         header, typeNames, filePath = self.get_event_data(event)
         # todo handle IN_DELETE_SELF and IN_MOVE_SELF (error?)
@@ -82,6 +75,13 @@ class Builder:
                 buildDef.lastFilePath = filePath
                 IpcControl.notify_send('build %s' % buildDef.name)
         IpcControl.refresh()
+
+    def get_event_data(self, event):
+        header, typeNames, watchPath, filename = event
+        filePath = Path(watchPath.decode()) / filename.decode()
+        log.debug("wd=%d|mask=%d|mask->names=%s|filePath=[%s]",
+                  header.wd, header.mask, typeNames, filePath)
+        return header, typeNames, filePath
 
 
 class BuildDef:
@@ -100,7 +100,7 @@ class BuildDef:
         self.target: Path = prep(config.get(section, 'target'))[0]
         self.sources: [Path] = prep(config.get(section, 'sources'))
         self.addheader: bool = config.getboolean(section, 'addheader')
-        self.addinfo: bool = config.getboolean(section, 'addinfo')
+        self.partsinfo: str = config.get(section, 'partsinfo')
         self.suffix = config.get(section, 'suffix')
         self.themes: [Path] = prep(config.get(section, 'themes'))
         # optional settings
@@ -118,10 +118,7 @@ class BuildDef:
         self.lastBuild = None
 
     def __str__(self):
-        return pformat(vars(self))
-
-    def __repr__(self):
-        return str(self)
+        return 'BuildDef:%s:\n%s' % (self.name, pformat(vars(self)))
 
     def build(self):
         out = []
@@ -133,8 +130,9 @@ class BuildDef:
             out.append(self.get_theme())
         for filePath in self.get_config_parts():
             content = filePath.read_text()
-            if self.addinfo:
-                info = "### %s ###\n" % filePath
+            if self.partsinfo != 'off':
+                info = ("### %s ###\n" % (filePath if self.partsinfo == 'full'
+                        else filePath.name))
                 content = info + content
             out.append(content)
         self.target.write_text('\n'.join(out))
