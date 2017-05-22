@@ -49,15 +49,16 @@ def parse_args():
     return p.parse_args()
 
 
-def get_foreign_processes():
-    procs = [p for p in psutil.process_iter() if p.name() == 'i3configger']
-    return [p for p in procs if p.pid != os.getpid()]
+def get_other_i3configgers():
+    """should always be max one, but you never know ..."""
+    others = [p for p in psutil.process_iter() if p.name() == 'i3configger']
+    return [p for p in others if p.pid != os.getpid()]
 
 
 def daemonize(buildDefs, maxerrors, verbose, logfile=None):
-    foreignProcesses = get_foreign_processes()
-    if foreignProcesses:
-        sys.exit("i3configger already running (%s)" % foreignProcesses)
+    others = get_other_i3configgers()
+    if others:
+        sys.exit("i3configger already running (%s)" % others)
     context = daemon.DaemonContext(
         working_directory=Path(__file__).parent,
         # TODO check if this umask is ok
@@ -80,10 +81,9 @@ def daemonize(buildDefs, maxerrors, verbose, logfile=None):
 def main():
     args = parse_args()
     cnf = IniConfig(IniConfig.get_config(args.ini_path))
-    log.debug("config: %s", cnf)
     if args.kill:
         # todo some error handling
-        for process in get_foreign_processes():
+        for process in get_other_i3configgers():
             print("killing %s" % process.pid)
             process.kill()
         return 0
