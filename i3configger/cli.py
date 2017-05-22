@@ -105,7 +105,7 @@ def main():
             IpcControl.refresh()
         return 0
 
+
 if __name__ == '__main__':
-    # for dev
-    sys.argv = ['dev', '--verbose', '--watch']
+    sys.argv = ['dev-run', '--verbose', '--watch']
     sys.exit(main())
