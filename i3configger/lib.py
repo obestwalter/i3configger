@@ -125,7 +125,7 @@ class BuildDef:
         if self.addheader:
             msg = '# %s (i3configger: %s) #' % (self.name, time.asctime())
             sep = "#" * len(msg)
-            out = ["%s\n%s\n%s" % (sep, msg, sep)]
+            out = ["%s\n%s\n%s\n" % (sep, msg, sep)]
         if self.theme:
             out.append(self.get_theme())
         for filePath in self.get_config_parts():
