@@ -9,7 +9,7 @@ import daemon
 import psutil
 
 from i3configger import __version__
-from i3configger.lib import I3Configger, IniConfig, IpcControl
+from i3configger.lib import Builder, IniConfig, IpcControl
 
 log = logging.getLogger()
 
@@ -74,8 +74,8 @@ def daemonize(buildDefs, maxerrors, verbose, logfile=None):
         context.stderr = sys.stderr
     with context:
         configure_logging(verbose, logfile, isDaemon=True)
-        i3configger = I3Configger(buildDefs, maxerrors)
-        i3configger.watch_guarded()
+        builder = Builder(buildDefs, maxerrors)
+        builder.watch_guarded()
 
 
 def main():
@@ -93,14 +93,14 @@ def main():
         daemonize(cnf.buildDefs, cnf.maxerrors, args.verbose, cnf.logfile)
     else:
         configure_logging(args.verbose, cnf.logfile)
-        i3Configger = I3Configger(cnf.buildDefs, cnf.maxerrors)
+        builder = Builder(cnf.buildDefs, cnf.maxerrors)
         if args.watch:
             try:
-                i3Configger.watch()
+                builder.watch()
             except KeyboardInterrupt:
                 sys.exit("bye")
         else:
-            i3Configger.build()
+            builder.build()
             # todo need a way to refresh i3bar config without restarting i3
             IpcControl.refresh()
         return 0

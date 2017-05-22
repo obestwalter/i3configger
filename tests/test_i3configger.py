@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest as pytest
 from inotify.adapters import Inotify
 
-from i3configger.lib import I3Configger, IniConfig
+from i3configger.lib import Builder, IniConfig
 
 
 class ConfDouble:
@@ -60,6 +60,6 @@ def test_build_defs():
 
 def test_i3configger(miniConf):
     config = IniConfig(IniConfig.get_config())
-    i3configger = I3Configger(config.buildDefs, config.suffix)
+    i3configger = Builder(config.buildDefs, config.suffix)
     assert isinstance(i3configger.inotify_watcher, Inotify)
     i3configger.build()

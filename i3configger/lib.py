@@ -14,7 +14,7 @@ from inotify.adapters import Inotify
 log = logging.getLogger(__name__)
 
 
-class I3Configger:
+class Builder:
     """Watch a config directories and build/refresh/notify on changes"""
     MASK = (
         ic.IN_CREATE | ic.IN_ATTRIB | ic.IN_DELETE |
