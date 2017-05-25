@@ -21,7 +21,6 @@ kwargs = dict(
         'License :: OSI Approved :: MIT License',
         'Environment :: Console',
         'Topic :: Utilities',
-        'Topic :: Desktop Environment :: Window Managers :: i3wm',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.6',
     ],
