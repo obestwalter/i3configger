@@ -1,4 +1,5 @@
 import logging
+import pprint
 import time
 from pathlib import Path
 
@@ -27,13 +28,17 @@ class Watchman:
         ic.IN_DELETE_SELF | ic.IN_MOVE_SELF)
     """Tell inotify to trigger on changes"""
 
-    def __init__(self, sourcePath):
-        self.configger = I3Configger(sourcePath=sourcePath, targetPath=targetPath,
-            suffix=SOURCE_SUFFIX, types=DEFAULT_TYPES)
-        self.configPath = str(sourcePath).encode()
+    def __init__(self, configgerArgs):
+        self.configger = I3Configger(*configgerArgs)
+        self.configPath = str(self.configger.sourcePath).encode()
         self.lastBuild = None
         self.lastFilePath = None
         self.errors = 0
+        log.debug("initialized %s", self)
+
+    def __str__(self):
+        return "%s(%s)" % (
+            self.__class__.__name__, pprint.pformat(self.__dict__))
 
     def watch(self):
         for event in self._get_events():
@@ -60,11 +65,9 @@ class Watchman:
 
     def _process_event(self, event):
         header, typeNames, filePath = self._get_event_data(event)
-        # todo handle IN_DELETE_SELF and IN_MOVE_SELF (error?)
         if self.needs_build(header, typeNames, filePath):
             log.info("%s triggered build", filePath)
-            configger = I3Configger()
-            configger.build()
+            self.configger.build()
             self.lastBuild = time.time()
             self.lastFilePath = filePath
             util.IpcControl.refresh()
@@ -82,7 +85,7 @@ class Watchman:
         if self.lastBuild and time.time() - self.lastBuild < self.BUILD_DELAY:
             log.debug("ignore %s changed too quick", filePath)
             return False
-        if filePath.suffix != I3Configger.SOURCE_SUFFIX:
+        if filePath.suffix != self.configger.suffix:
             return False
         if filePath != self.lastFilePath:
             log.debug("%s != %s", filePath, self.lastFilePath)

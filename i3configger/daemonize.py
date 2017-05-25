@@ -15,14 +15,14 @@ def get_other_i3configgers():
     return [p for p in others if p.pid != os.getpid()]
 
 
-def daemonize(verbosity, writeLog=False):
+def daemonize(verbosity, logpath, configgerArgs):
     others = get_other_i3configgers()
     if others:
         sys.exit("i3configger already running (%s)" % others)
     context = daemon.DaemonContext(
-        working_directory=Path(__file__).parent,
-        # TODO check if this umask is ok
-        umask=0o002)
+        working_directory=Path(__file__).parent
+        # TODO check if this umask is ok umask=0o002
+    )
     # todo handle signals properly
     # context.signal_map = {
     #     signal.SIGTERM: program_cleanup,
@@ -33,9 +33,8 @@ def daemonize(verbosity, writeLog=False):
         context.stdout = sys.stdout
         context.stderr = sys.stderr
     with context:
-        configure_logging(verbosity, writeLog, isDaemon=True)
-        builder = Watchman()
-        builder.watch_guarded()
+        configure_logging(verbosity, logpath, isDaemon=True)
+        Watchman(configgerArgs).watch_guarded()
 
 
 def exorcise():

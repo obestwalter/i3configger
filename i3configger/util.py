@@ -1,25 +1,44 @@
 import logging
+import os
 import subprocess
-import tempfile
-from pathlib import Path
 
 log = logging.getLogger(__name__)
-LOG_PATH = Path(tempfile.gettempdir()) / 'i3configger.log'
+DEBUG = os.getenv('DEBUG', 0)
 
 
-def configure_logging(verbosity, writeLog=False, isDaemon=False):
+def dbg_print(msg, *args):
+    if not DEBUG:
+        return
+    if args:
+        msg %= args
+    print(msg)
+
+
+def get_selectors(parser, argv):
+    selectors = []
+    unrecognized = []
+    marker = '--select-'
+    markerLen = len(marker)
+    for arg in argv:
+        if not arg.startswith(marker):
+            unrecognized.append(arg)
+        if '=' not in arg:
+            parser.error("arg '%s': need format --select-key=value" % (arg))
+        selectors.append(arg[markerLen:].split('='))
+    if unrecognized:
+        parser.error('unrecognized arguments: %s' % ' '.join(argv))
+    return selectors
+
+
+def configure_logging(verbosity, logpath, isDaemon=False):
     level = logging.getLevelName(
         {0: 'ERROR', 1: 'WARNING', 2: 'INFO'}.get(verbosity, 'DEBUG'))
     fmt = '%(asctime)s %(name)s %(levelname)s: %(message)s'
     if isDaemon:
-        if not writeLog:
-            return
-        logging.basicConfig(filename=str(LOG_PATH), format=fmt, level=level)
+        logging.basicConfig(filename=str(logpath), format=fmt, level=level)
     else:
         logging.basicConfig(format=fmt, level=level)
-        if not writeLog:
-            return
-        fileHandler = logging.FileHandler(str(LOG_PATH))
+        fileHandler = logging.FileHandler(str(logpath))
         fileHandler.setFormatter(logging.Formatter(fmt))
         fileHandler.setLevel(level)
         log.addHandler(fileHandler)

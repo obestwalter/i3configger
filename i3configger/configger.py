@@ -1,76 +1,69 @@
 import logging
-import socket
+import pprint
+import re
 import time
 from pathlib import Path
 from string import Template
 
-import re
-
-from i3configger import util
+from i3configger import defaults
 
 log = logging.getLogger(__name__)
-HOSTNAME = socket.gethostname()
 
 
 class I3Configger:
-    SOURCES_PATH = Path('~/.i3/config.d').expanduser()
-    TARGET_PATH = Path('~/.i3/config').expanduser()
-    SOURCE_SUFFIX = '.conf'
-
-    def __init__(self, sourcePath=SOURCES_PATH, targetPath=TARGET_PATH):
+    def __init__(self,
+                 sourcePath=defaults.SOURCES_PATH,
+                 targetPath=defaults.TARGET_PATH,
+                 suffix=defaults.SOURCE_SUFFIX,
+                 selectors=None, statusMarker=None):
         self.sourcePath = sourcePath
-        self.configTargetPath = targetPath
+        self.mainTargetPath = targetPath
+        self.suffix = suffix
+        self.selectors = selectors or []
+        self.statusMarker = statusMarker
+        log.info("initialized %s", self)
+
+    def __str__(self):
+        return "%s(%s)" % (
+            self.__class__.__name__, pprint.pformat(self.__dict__))
 
     def build(self):
-        self.prepare()
         self.build_main_config()
         self.build_i3status()
 
-    def prepare(self):
-        mainPaths = self.get_file_paths(
-            self.sourcePath,
-            # TODO these can be set and read as i3configger settings
-            filters=(('host', HOSTNAME), )
-        )
-        self.mainContent = self.get_contents(mainPaths)
-        vars_ = self.parse(self.mainContent)
-        resolvedVars_ = self.resolve(vars_)
-        self.vars = self.clean(vars_)
-
-        # TODO this looks like a two pass thing
-        filters = self.fetch_settings('filter', self.vars)
-        additionalPaths = self.get_file_paths(
-            self.sourcePath, filters=[(k, v) for k, v in filters.items()])
-        self.additionalContent = self.get_contents(additionalPaths)
-        vars_ = self.parse(self.additionalContent)
-        resolvedVars_ = self.resolve(vars_)
-        cleanVars = self.clean(vars_)
-        self.vars.update(cleanVars)
-
-        # TODO prune all (now unnecessary) set statements from mainContent
-
-
     def build_main_config(self):
-        self.render_config(
-            self.mainContent, self.vars, self.configTargetPath)
+        """two pass rendering to figure out from content what"""
+        paths = self.get_file_paths(
+            self.sourcePath,
+            selectors=self.selectors + [[self.statusMarker, None]])
+        self.content = self.get_content(paths)
+        self.vars = self.render_vars(self.content)
+        config = self.render_config(self.content, self.vars)
+        self.mainTargetPath.write_text(config)
 
     def build_i3status(self):
-        settings = self.fetch_settings(
-            'i3status', self.vars)
-        for bar, target in settings.items():
+        settings = self.fetch_settings('i3status', self.vars)
+        for _, target in settings.items():
             targetPath = Path(target).expanduser()
             srcPath = self.sourcePath / targetPath.name
-            content = self.get_contents(srcPath)
-            self.render_config(content, self.vars, targetPath)
+            content = self.get_content(srcPath)
+            status = self.render_config(content, self.vars)
+            targetPath.write_text(status)
 
     @classmethod
-    def render_config(cls, content, vars_, targetPath):
-        # configTargetPath.chmod(0o644)
+    def render_config(cls, content, vars_):
+        """Works out of the box, because $ is the standard substitution marker 
+        for string.Template"""
         tpl = Template(content)
         renderedContent = tpl.safe_substitute(vars_)
-        log.debug('\n' + ''.join(renderedContent))
-        targetPath.write_text(''.join(renderedContent))
-        # configTargetPath.chmod(0o444)
+        return renderedContent
+
+    @classmethod
+    def render_vars(cls, content):
+        """resolve and remove $prefix for string substitution"""
+        vars_ = cls.parse(content)
+        resolvedVars = cls.resolve(vars_)
+        return {key[1:]: value for key, value in resolvedVars.items()}
 
     @staticmethod
     def fetch_settings(marker, vars_):
@@ -88,19 +81,21 @@ class I3Configger:
         return {k[markerLen:]: v for k, v in vars_.items()
                 if k.startswith(marker)}
 
-    def get_file_paths(self, sourcePath, filters=None):
+    def get_file_paths(self, sourcePath, selectors=None):
         """:returns: list of pathlib.Path"""
         filePaths = []
         for sp in [p for p in self.sourcePath.iterdir()]:
             if not sp.is_file():
                 continue
-            if sp.suffix != self.SOURCE_SUFFIX:
+            if sp.suffix != self.suffix:
                 continue
             parts = sp.stem.split('.')
-            if len(parts) > 1 and filters:
+            if len(parts) > 1 and selectors:
                 criterion, spec, *_ = parts
-                for wanted, value in filters:
+                for wanted, value in selectors:
                     if criterion == wanted:
+                        if not value:
+                            continue
                         if ((isinstance(spec, str) and spec == value)
                                 or spec in value):
                             filePaths.append(sp)
@@ -121,7 +116,7 @@ class I3Configger:
         return resolvedVars
 
     @staticmethod
-    def get_contents(pathOrPaths):
+    def get_content(pathOrPaths):
         paths = [pathOrPaths] if isinstance(pathOrPaths, Path) else pathOrPaths
         msg = '# generated by i3configger (%s) #' % (time.asctime())
         sep = "#" * len(msg)
@@ -136,7 +131,7 @@ class I3Configger:
     def parse(cls, content):
         """read all set commands"""
         vars_ = {}
-        for line in [l.strip() for l in content.splitlines(keepends=False)]:
+        for line in [l.strip() for l in content.splitlines()]:
             if cls.looks_like_assignment(line):
                 key, value = cls.get_assignment(line)
                 vars_[key] = value
@@ -158,18 +153,6 @@ class I3Configger:
             raise MalformedAssignment("can't match properly: '%s'", line)
         return match.group(1), match.group(2)
 
-    @staticmethod
-    def clean(vars_):
-        return {key[1:]: value for key, value in vars_.items()}
-
 
 class MalformedAssignment(Exception):
     pass
-
-
-if __name__ == '__main__':
-    util.configure_logging(3)
-    configger = I3Configger(types=('solarized-dark', 'solarized-vars'))
-    configger.build()
-    util.IpcControl.restart_i3()
-    assert True
