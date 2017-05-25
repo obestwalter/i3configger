@@ -1,6 +1,6 @@
 # i3configger
 
-[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 
 Generate i3 config files from a set of partial config files in a config folder. Do some nifty conditional integration and variable resolution (aslo for i3status configs). This makes switching of themes (optical or key bindings or whatever) possible and things like having per host settings.
 
