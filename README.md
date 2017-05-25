@@ -23,9 +23,7 @@ Creates [config](https://github.com/obestwalter/i3config/tree/master/config) and
 * notify when new config has been created and activated (using `notify-send`)
 * conditional building of config depending on settings
 * simple way to communicate settings to renderer
-* build config as one shot script
-* watch sources for changes and build automatically
-* run as daemon or in foreground
+* build config as one shot script or watch for changes (foreground and daemon)
 
 Some things are still in the air - see [notes](notes.md).
 
