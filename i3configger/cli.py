@@ -70,14 +70,4 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.argv = [
-        'dev-run', '-vvv', '--daemon',
-        # 'dev-run', '-vvv',
-        '--select-host=ob1',
-        '--select-theme=solarized-dark',
-        # TODO something like ...
-        #'--select-status-dp-3-clock',
-        #'--select-status-dp-1-main',
-        #'--select-status-hdmi-1-clock',
-    ]
     sys.exit(main())
