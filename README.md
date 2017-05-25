@@ -12,7 +12,7 @@ Generate i3 config files from a set of partials in a config folder. Do some nift
 
 ## How?
 
-This can best be understood by how I use this to generate [my own i3 config](https://github.com/obestwalter/i3config) - here are the config partias: [.i3/config.d](https://github.com/obestwalter/i3config/tree/master/config.d)
+This can best be understood by how I use this to generate [my own i3 config](https://github.com/obestwalter/i3config) - here are the config partials: [.i3/config.d](https://github.com/obestwalter/i3config/tree/master/config.d)
 
 The call
 
@@ -25,7 +25,7 @@ The idea is simple:
 Config partials that follow the naming scheme \<selector\>.\<name\>.conf are only rendered into the config if explicitly requested.
 
 * The partial `host.ob1.conf` will be rendered if the option `--select-host-ob1` is passed to `i3configger`.
-* The partial `theme.solaris-dark.conf` will only be rendered if `--select-theme-solaris-dark`.
+* The partial `theme.solaris-dark.conf` will only be rendered if `--select-theme-solaris-dark` is passed.
 
 `host` and `theme` are selector names I chose for my use case, but they can be freely chosen as long as the naming scheme is adhered to.
 
