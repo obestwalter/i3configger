@@ -4,3 +4,8 @@ include setup.py
 include tox.ini
 graft i3configger
 graft tests
+
+global-exclude __pycache__
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.pyd
