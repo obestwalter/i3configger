@@ -24,8 +24,9 @@ kwargs = dict(
         'Topic :: Desktop Environment :: Window Managers :: i3wm',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.6',
-        ],
+    ],
 )
+
 
 if __name__ == '__main__':
     setup(**kwargs)
