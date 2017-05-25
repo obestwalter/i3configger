@@ -1,11 +1,3 @@
-# conditional integration of files
-
-e.g.
-
-* `host.ob1.conf` will only be integrated if `ob1` is the hostname:
-* `host.ob1.conf` will only be integrated if `ob1` is the hostname:
-* `type.solaris-light.conf` will only be integrated if the active theme is solaris-light:
-
 # Build process
 
 1. merge all files that fit the conditions and configuration
