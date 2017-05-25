@@ -29,9 +29,7 @@ Some things are still in the air - see [notes](notes.md).
 
 # Installation
 
-    $ pip install "git+https://github.com/obestwalter/i3configger.git#egg=i3configger"
-
-Pypi release will be done, once the project reached beta state.
+    $ pip install i3configger
 
 # Usage
 
