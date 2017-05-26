@@ -41,14 +41,14 @@ def parse_args():
                    help="prefix of status bar configurations")
 
     args, argv = p.parse_known_args()
-    args.selectors = utils.get_selectors(p, argv)
+    args.selectors = utils.get_selector_map(p, argv)
     utils.dbg_print("initialized with %s", args)
     return args
 
 
 def main():
     args = parse_args()
-    configgerArgs = (args.sources, args.target, args.suffix, args.selectors,
+    configgerArgs = (args.sources, args.target, args.suffix, args.selectorMap,
                      args.statusmarker)
     if args.daemon:
         daemonize.daemonize(args.v, args.log_path, configgerArgs)

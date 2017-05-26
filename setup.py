@@ -6,6 +6,7 @@ try:
 except(OSError, IOError, ImportError):
     longDescription = open('README.md').read()
 
+
 kwargs = dict(
     name='i3configger',
     author='Oliver Bestwalter',
@@ -15,7 +16,7 @@ kwargs = dict(
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     entry_points={'console_scripts': ['i3configger = i3configger.cli:main']},
-    install_requires=['inotify', 'psutil', 'python-daemon'],
+    install_requires=['inotify', 'psutil', 'python-daemon', 'cached_property'],
     packages=find_packages(),
     classifiers=[
         'Development Status :: 4 - Beta',

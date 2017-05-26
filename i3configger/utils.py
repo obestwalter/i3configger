@@ -2,8 +2,17 @@ import logging
 import os
 import subprocess
 
+import sys
+from cached_property import cached_property_with_ttl
+
 log = logging.getLogger(__name__)
 DEBUG = os.getenv('DEBUG', 0)
+
+try:
+    from IPython import embed
+except ImportError:
+    def embed():
+        sys.exit("needs Ipython installed")
 
 
 def dbg_print(msg, *args):
@@ -14,20 +23,25 @@ def dbg_print(msg, *args):
     print(msg)
 
 
-def get_selectors(parser, argv):
-    selectors = []
-    lefotvers = []
+def timed_cached_property():
+    return cached_property_with_ttl(1)
+
+
+def get_selector_map(parser, argv):
+    selectorMap = {}
+    leftovers = []
     marker = '--select-'
     markerLen = len(marker)
     for arg in argv:
         if not arg.startswith(marker) or '=' not in arg:
-            lefotvers.append(arg)
-        selectors.append(arg[markerLen:].split('='))
-    if lefotvers:
-        hint = "hint: selectors must use the form: --select-<key>=<value>"
+            leftovers.append(arg)
+        key, value = arg[markerLen:].split('=')
+        selectorMap[key] = value
+    if leftovers:
+        hint = "hint: selectorMap must use the form: --select-<key>=<value>"
         parser.error(
             'unrecognized arguments: %s\n%s' % ('; '.join(argv), hint))
-    return selectors
+    return selectorMap
 
 
 def configure_logging(verbosity, logPath, isDaemon=False):
