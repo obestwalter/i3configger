@@ -8,6 +8,8 @@ except(OSError, IOError, ImportError):
 
 kwargs = dict(
     name='i3configger',
+    author='Oliver Bestwalter',
+    url='https://github.com/obestwalter/i3configger',
     description="i3 config generation tool",
     long_description=longDescription,
     use_scm_version=True,
