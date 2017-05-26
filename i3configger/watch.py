@@ -6,7 +6,7 @@ from pathlib import Path
 from inotify import constants as ic
 from inotify.adapters import Inotify
 
-from i3configger import util
+from i3configger import utils
 from i3configger.configger import I3Configger
 
 log = logging.getLogger(__name__)
@@ -70,8 +70,8 @@ class Watchman:
             self.configger.build()
             self.lastBuild = time.time()
             self.lastFilePath = filePath
-            util.IpcControl.refresh()
-            util.IpcControl.notify_send('new config active')
+            utils.IpcControl.refresh()
+            utils.IpcControl.notify_send('new config active')
 
     def _get_event_data(self, event):
         header, typeNames, watchPath, filename = event

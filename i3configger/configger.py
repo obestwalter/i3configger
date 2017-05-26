@@ -1,13 +1,18 @@
 import logging
 import pprint
-import re
 import time
 from pathlib import Path
 from string import Template
 
 from i3configger import defaults
+from i3configger.files import get_file_paths
+from i3configger.variables import render_vars
 
 log = logging.getLogger(__name__)
+
+
+# TODO selectors: introduce default. If any selector has value default it
+# will be chosen if no value is set.
 
 
 class I3Configger:
@@ -33,14 +38,16 @@ class I3Configger:
 
     def build_main_config(self):
         """two pass rendering to figure out from content what"""
-        paths = self.get_file_paths(
-            self.sourcePath,
+        # fixme this statusmarker special case is ugly, get rid of it
+        paths = get_file_paths(
+            self.sourcePath, self.suffix,
             selectors=self.selectors + [[self.statusMarker, None]])
         self.content = self.get_content(paths)
-        self.vars = self.render_vars(self.content)
+        self.vars = render_vars(self.content)
         config = self.render_config(self.content, self.vars)
         self.mainTargetPath.write_text(config)
 
+    # TODO extract this to it's own class with own handling
     def build_i3status(self):
         settings = self.fetch_settings('i3status', self.vars)
         for _, target in settings.items():
@@ -58,13 +65,6 @@ class I3Configger:
         renderedContent = tpl.safe_substitute(vars_)
         return renderedContent
 
-    @classmethod
-    def render_vars(cls, content):
-        """resolve and remove $prefix for string substitution"""
-        vars_ = cls.parse(content)
-        resolvedVars = cls.resolve(vars_)
-        return {key[1:]: value for key, value in resolvedVars.items()}
-
     @staticmethod
     def fetch_settings(marker, vars_):
         """Simple way of communicating settings to i3configger
@@ -81,40 +81,6 @@ class I3Configger:
         return {k[markerLen:]: v for k, v in vars_.items()
                 if k.startswith(marker)}
 
-    def get_file_paths(self, sourcePath, selectors=None):
-        """:returns: list of pathlib.Path"""
-        filePaths = []
-        for sp in [p for p in self.sourcePath.iterdir()]:
-            if not sp.is_file():
-                continue
-            if sp.suffix != self.suffix:
-                continue
-            parts = sp.stem.split('.')
-            if len(parts) > 1 and selectors:
-                criterion, spec, *_ = parts
-                for wanted, value in selectors:
-                    if criterion == wanted:
-                        if not value:
-                            continue
-                        if ((isinstance(spec, str) and spec == value)
-                                or spec in value):
-                            filePaths.append(sp)
-            else:
-                filePaths.append(sp)
-        return sorted(filePaths)
-
-    @staticmethod
-    def resolve(vars_):
-        resolvedVars = vars_.copy()
-        """resolve values that are vars_ (e.g. set $var $ otherVar)"""
-        for key, value in resolvedVars.items():
-            if value.startswith('$'):
-                try:
-                    resolvedVars[key] = resolvedVars[value]
-                except KeyError:
-                    log.exception("[IGNORED] %s, %s", key, value)
-        return resolvedVars
-
     @staticmethod
     def get_content(pathOrPaths):
         paths = [pathOrPaths] if isinstance(pathOrPaths, Path) else pathOrPaths
@@ -126,33 +92,3 @@ class I3Configger:
             content = "### %s ###\n%s\n" % (filePath.name, content)
             out.append(content)
         return ''.join(out)
-
-    @classmethod
-    def parse(cls, content):
-        """read all set commands"""
-        vars_ = {}
-        for line in [l.strip() for l in content.splitlines()]:
-            if cls.looks_like_assignment(line):
-                key, value = cls.get_assignment(line)
-                vars_[key] = value
-        return vars_
-
-    @staticmethod
-    def looks_like_assignment(line):
-        return line.startswith('set ')
-
-    ASSIGNMENT_RE = re.compile(r'(\$\S+)\s+(.*)')
-
-    @classmethod
-    def get_assignment(cls, line):
-        sanitizedLine = (line.split('set')[1].split(' # ')[0]).strip()
-        if len([c for c in sanitizedLine if c == '#']) > 1:
-            raise MalformedAssignment("comments need space: '%s'", line)
-        match = re.match(cls.ASSIGNMENT_RE, sanitizedLine)
-        if not match or len(match.groups()) != 2:
-            raise MalformedAssignment("can't match properly: '%s'", line)
-        return match.group(1), match.group(2)
-
-
-class MalformedAssignment(Exception):
-    pass

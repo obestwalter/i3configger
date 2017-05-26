@@ -16,35 +16,46 @@ def dbg_print(msg, *args):
 
 def get_selectors(parser, argv):
     selectors = []
-    unrecognized = []
+    lefotvers = []
     marker = '--select-'
     markerLen = len(marker)
     for arg in argv:
-        if not arg.startswith(marker):
-            unrecognized.append(arg)
-        if '=' not in arg:
-            parser.error("arg '%s': need format --select-key=value" % (arg))
+        if not arg.startswith(marker) or '=' not in arg:
+            lefotvers.append(arg)
         selectors.append(arg[markerLen:].split('='))
-    if unrecognized:
-        parser.error('unrecognized arguments: %s' % ' '.join(argv))
+    if lefotvers:
+        hint = "hint: selectors must use the form: --select-<key>=<value>"
+        parser.error(
+            'unrecognized arguments: %s\n%s' % ('; '.join(argv), hint))
     return selectors
 
 
-def configure_logging(verbosity, logpath, isDaemon=False):
-    level = logging.getLevelName(
-        {0: 'ERROR', 1: 'WARNING', 2: 'INFO'}.get(verbosity, 'DEBUG'))
+def configure_logging(verbosity, logPath, isDaemon=False):
+    rootLogger = logging.getLogger()
+    if DEBUG:
+        level = 'DEBUG'
+    else:
+        level = logging.getLevelName(
+            {0: 'ERROR', 1: 'WARNING', 2: 'INFO'}.get(verbosity, 'DEBUG'))
     fmt = '%(asctime)s %(name)s %(levelname)s: %(message)s'
     if isDaemon:
-        logging.basicConfig(filename=str(logpath), format=fmt, level=level)
+        logging.basicConfig(filename=str(logPath), format=fmt, level=level)
     else:
         logging.basicConfig(format=fmt, level=level)
-        fileHandler = logging.FileHandler(str(logpath))
+        fileHandler = logging.FileHandler(str(logPath))
         fileHandler.setFormatter(logging.Formatter(fmt))
         fileHandler.setLevel(level)
-        log.addHandler(fileHandler)
+        rootLogger.addHandler(fileHandler)
 
 
 class IpcControl:
+    @classmethod
+    def set_i3_msg(cls, which):
+        cls.refresh = {
+            'restart': cls.restart_i3,
+            'reload': cls.reload_i3,
+        }.get(which, cls.nop)
+
     @classmethod
     def reload_i3(cls):
         if cls._send_i3_msg('reload'):
@@ -54,6 +65,10 @@ class IpcControl:
     def restart_i3(cls):
         if cls._send_i3_msg('restart'):
             cls.notify_send("restarted i3")
+
+    @classmethod
+    def nop(cls):
+        pass
 
     refresh = restart_i3
 

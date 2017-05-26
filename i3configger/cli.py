@@ -2,7 +2,7 @@ import argparse
 import logging
 import sys
 
-from i3configger import __version__, daemonize, defaults, util
+from i3configger import __version__, daemonize, defaults, utils
 from i3configger.configger import I3Configger
 from i3configger.watch import Watchman
 
@@ -11,7 +11,8 @@ log = logging.getLogger(__name__)
 
 def parse_args():
     p = argparse.ArgumentParser(
-        'i3configger', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        'i3configger',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     p.add_argument('--version', action='version', version=__version__)
     p.add_argument('-v', action="count", help="raise verbosity", default=0)
     p.add_argument('--sources', action="store",
@@ -22,9 +23,9 @@ def parse_args():
     p.add_argument('--suffix', action="store",
                    default=defaults.SOURCE_SUFFIX,
                    help="suffix of config source files")
-    p.add_argument('--reload', action="store_true", default=False,
-                   help="reload i3 instead of restart (not i3bar update)")
-    p.add_argument('--logpath', action="store", default=defaults.LOG_PATH,
+    p.add_argument('--i3-refresh-msg', action="store", default='none',
+                   help="i3-msg to send after build (restart, reload, none)")
+    p.add_argument('--log-path', action="store", default=defaults.LOG_PATH,
                    help="log to given path")
     g = p.add_mutually_exclusive_group()
     g.add_argument('--watch', action="store_true",
@@ -40,8 +41,8 @@ def parse_args():
                    help="prefix of status bar configurations")
 
     args, argv = p.parse_known_args()
-    args.selectors = util.get_selectors(p, argv)
-    util.dbg_print("initialized with %s", args)
+    args.selectors = utils.get_selectors(p, argv)
+    utils.dbg_print("initialized with %s", args)
     return args
 
 
@@ -50,13 +51,13 @@ def main():
     configgerArgs = (args.sources, args.target, args.suffix, args.selectors,
                      args.statusmarker)
     if args.daemon:
-        daemonize.daemonize(args.v, args.logpath, configgerArgs)
+        daemonize.daemonize(args.v, args.log_path, configgerArgs)
     if args.kill:
         daemonize.exorcise()
         return 0
-    if args.reload:
-        util.IpcControl.refresh = util.IpcControl.reload_i3
-    util.configure_logging(verbosity=args.v, logpath=args.logpath)
+    utils.configure_logging(verbosity=args.v, logPath=args.log_path)
+    utils.IpcControl.set_i3_msg(args.i3_refresh_msg)
+    log.info("set i3 refresh method to %s", utils.IpcControl.refresh)
     if args.watch:
         try:
             Watchman(configgerArgs).watch()
@@ -66,7 +67,7 @@ def main():
         configger = I3Configger(*configgerArgs)
         configger.build()
         # TODO need a way to refresh i3bar config without restarting i3
-        util.IpcControl.refresh()
+        utils.IpcControl.refresh()
 
 
 if __name__ == '__main__':

@@ -6,7 +6,7 @@ import daemon
 import psutil
 
 from i3configger.watch import Watchman
-from i3configger.util import configure_logging
+from i3configger.utils import configure_logging
 
 
 def get_other_i3configgers():
