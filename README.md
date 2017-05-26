@@ -52,7 +52,7 @@ You should install this into a Python 3.6 interpreter.
 
 ## Usage
 
-**Default uses `.i3config` files in `~/.i3/config.d` and writes to `~/.i3/config`.**
+**Default renders and merges `.config` files in `~/.i3/config.d` and writes to `~/.i3/config` and to i3status files determined by `$i3configger_i3status` settings.**
 
 one shot:
 
