@@ -24,8 +24,8 @@ The idea is simple:
 
 Config partials that follow the naming scheme \<selector\>.\<name\>.conf are only rendered into the config if explicitly requested.
 
-* The partial `host.ob1.conf` will be rendered if the option `--select-host-ob1` is passed to `i3configger`.
-* The partial `theme.solaris-dark.conf` will only be rendered if `--select-theme-solaris-dark` is passed.
+* The partial `host.ob1.conf` will be rendered if the option `--select-host=ob1` is passed to `i3configger`.
+* The partial `theme.solaris-dark.conf` will only be rendered if `--select-theme=solaris-dark` is passed.
 
 `host` and `theme` are selector names I chose for my use case, but they can be freely chosen as long as the naming scheme is adhered to.
 
