@@ -40,7 +40,7 @@ Config partials that follow the naming scheme \<selector\>.\<name\>.conf are onl
 * simple way to communicate settings to renderer (`$i3configger_key value`)
 * build config as one shot script or watch for changes (foreground and daemon)
 
-Some things are still in the air - see [notes](notes.md).
+Some things are still in the air - see [notes](https://github.com/obestwalter/i3configger/blob/master/notes.md).
 
 ## Installation
 
