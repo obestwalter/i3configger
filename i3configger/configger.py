@@ -5,14 +5,8 @@ from pathlib import Path
 from string import Template
 
 from i3configger import defaults
-from i3configger.files import get_file_paths
-from i3configger.variables import render_vars
 
 log = logging.getLogger(__name__)
-
-
-# TODO selectors: introduce default. If any selector has value default it
-# will be chosen if no value is set.
 
 
 class I3Configger:
@@ -59,7 +53,7 @@ class I3Configger:
 
     @classmethod
     def render_config(cls, content, vars_):
-        """Works out of the box, because $ is the standard substitution marker 
+        """Works out of the box, because $ is the standard substitution marker
         for string.Template"""
         tpl = Template(content)
         renderedContent = tpl.safe_substitute(vars_)
@@ -73,7 +67,7 @@ class I3Configger:
         $i3configger_somecommonsetting_otherkeyname othervalue
 
         will be turned into ...
-        
+
         dict(keyname=value, otherkeyname=othervalue)
         """
         marker = 'i3configger_' + marker + '_'

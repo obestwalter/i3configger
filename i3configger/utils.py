@@ -1,8 +1,8 @@
 import logging
 import os
 import subprocess
-
 import sys
+
 from cached_property import cached_property_with_ttl
 
 log = logging.getLogger(__name__)

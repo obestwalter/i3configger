@@ -73,7 +73,8 @@ class Watchman:
             utils.IpcControl.refresh()
             utils.IpcControl.notify_send('new config active')
 
-    def _get_event_data(self, event):
+    @staticmethod
+    def _get_event_data(event):
         header, typeNames, watchPath, filename = event
         filePath = Path(watchPath.decode()) / filename.decode()
         log.debug("wd=%d|mask=%d|mask->names=%s|filePath=[%s]",

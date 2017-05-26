@@ -16,5 +16,6 @@ class DuplicateKey(I3configgerException):
 class MalformedAssignment(I3configgerException):
     pass
 
+
 class ParseError(I3configgerException):
     pass
