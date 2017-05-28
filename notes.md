@@ -1,3 +1,8 @@
+# TODO
+
+try the defaults again for a change: http://i3wm.org/docs/refcard.html
+
+
 # Build process
 
 1. merge all files that fit the conditions and configuration
@@ -42,11 +47,13 @@ Switching from docked to laptop only would need this readjustment:
         
         ... rest stays the same as vars are used
 
-I also might want application windows to go somewhere else by default (e.g. my IDE windows on multi monitor setups should be in different workspaces on differetn monitors and on laptop they should all be on the same workspace).
+I also might want application windows to go somewhere else by default (e.g. my IDE windows on multi monitor setups should be in different workspaces on different monitors and on laptop they should all be on the same workspace).
 
 ### Display specific bars on specific displays
 
 Those bars should only be integrated if the display is present
+
+Use http://python-xlib.sourceforge.net/doc/html/python-xlib_16.html to read display infos?
 
 ### Changing appearance
 

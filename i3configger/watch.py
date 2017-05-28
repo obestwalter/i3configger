@@ -6,8 +6,8 @@ from pathlib import Path
 from inotify import constants as ic
 from inotify.adapters import Inotify
 
-from i3configger import utils
-from i3configger.configger import I3Configger
+from i3configger import base
+from i3configger.build import I3Configger
 
 log = logging.getLogger(__name__)
 
@@ -67,11 +67,11 @@ class Watchman:
         header, typeNames, filePath = self._get_event_data(event)
         if self.needs_build(header, typeNames, filePath):
             log.info("%s triggered build", filePath)
-            self.configger.build()
+            self.configger.render()
             self.lastBuild = time.time()
             self.lastFilePath = filePath
-            utils.IpcControl.refresh()
-            utils.IpcControl.notify_send('new config active')
+            base.IpcControl.refresh()
+            base.IpcControl.notify_send('new config active')
 
     @staticmethod
     def _get_event_data(event):

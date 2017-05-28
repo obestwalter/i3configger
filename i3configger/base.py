@@ -2,31 +2,23 @@ import logging
 import os
 import subprocess
 import sys
+import tempfile
+from pathlib import Path
 
 from cached_property import cached_property_with_ttl
 
+from i3configger import exc
+
 log = logging.getLogger(__name__)
 DEBUG = os.getenv('DEBUG', 0)
-
-try:
-    from IPython import embed
-except ImportError:
-    def embed():
-        sys.exit("needs Ipython installed")
-
-
-def dbg_print(msg, *args):
-    if not DEBUG:
-        return
-    if args:
-        msg %= args
-    print(msg)
+PROJECT_PATH = Path(__file__).parents[1]
+LOG_PATH = Path(tempfile.gettempdir()) / 'i3configger.log'
+SOURCES_PATH = Path('~/.i3/config.d').expanduser()
+TARGET_PATH = Path('~/.i3/config').expanduser()
+SOURCE_SUFFIX = '.conf'
 
 
-def timed_cached_property():
-    return cached_property_with_ttl(1)
-
-
+# FIXME adapt to new style
 def get_selector_map(parser, argv):
     selectorMap = {}
     leftovers = []
@@ -42,24 +34,6 @@ def get_selector_map(parser, argv):
         parser.error(
             'unrecognized arguments: %s\n%s' % ('; '.join(argv), hint))
     return selectorMap
-
-
-def configure_logging(verbosity, logPath, isDaemon=False):
-    rootLogger = logging.getLogger()
-    if DEBUG:
-        level = 'DEBUG'
-    else:
-        level = logging.getLevelName(
-            {0: 'ERROR', 1: 'WARNING', 2: 'INFO'}.get(verbosity, 'DEBUG'))
-    fmt = '%(asctime)s %(name)s %(levelname)s: %(message)s'
-    if isDaemon:
-        logging.basicConfig(filename=str(logPath), format=fmt, level=level)
-    else:
-        logging.basicConfig(format=fmt, level=level)
-        fileHandler = logging.FileHandler(str(logPath))
-        fileHandler.setFormatter(logging.Formatter(fmt))
-        fileHandler.setLevel(level)
-        rootLogger.addHandler(fileHandler)
 
 
 class IpcControl:
@@ -105,3 +79,49 @@ class IpcControl:
     def notify_send(cls, msg, urgency='low'):
         subprocess.check_call([
             'notify-send', '-a', 'i3configger', '-t', '1', '-u', urgency, msg])
+
+
+def configure_logging(verbosity, logPath, isDaemon=False):
+    rootLogger = logging.getLogger()
+    if DEBUG:
+        level = 'DEBUG'
+    else:
+        level = logging.getLevelName(
+            {0: 'ERROR', 1: 'WARNING', 2: 'INFO'}.get(verbosity, 'DEBUG'))
+    fmt = '%(asctime)s %(name)s %(levelname)s: %(message)s'
+    if isDaemon:
+        logging.basicConfig(filename=str(logPath), format=fmt, level=level)
+    else:
+        logging.basicConfig(format=fmt, level=level)
+        fileHandler = logging.FileHandler(str(logPath))
+        fileHandler.setFormatter(logging.Formatter(fmt))
+        fileHandler.setLevel(level)
+        rootLogger.addHandler(fileHandler)
+
+
+def i3configger_excepthook(type, value, traceback):
+    if DEBUG or not issubclass(type, exc.I3configgerException):
+        _ORIGINAL_EXCEPTHOOK(type, value, traceback)
+    try:
+        # Is there a saner way to get the simple exception name?
+        friendlyExc = str(type).split('.')[-1][:-2]
+    except:
+        friendlyExc = type
+    sys.exit("%s: %s" % (friendlyExc, value))
+
+_ORIGINAL_EXCEPTHOOK = sys.excepthook
+sys.excepthook = i3configger_excepthook
+
+if not DEBUG:
+    # TODO add this when stable to speed things up?
+    def timed_cached_property():
+        return property
+else:
+    def timed_cached_property():
+        return cached_property_with_ttl(1)
+
+try:
+    from IPython import embed
+except ImportError:
+    def embed():
+        raise exc.I3configgerException("embed() needs Ipython installed")

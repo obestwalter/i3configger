@@ -19,3 +19,7 @@ class MalformedAssignment(I3configgerException):
 
 class ParseError(I3configgerException):
     pass
+
+
+class SelectError(I3configgerException):
+    pass

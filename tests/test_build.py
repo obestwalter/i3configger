@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from pytest import fixture
 
-from i3configger.configger import I3Configger, MalformedAssignment
+from i3configger.build import I3Configger, MalformedAssignment
 
 
 # noinspection PyShadowingNames
