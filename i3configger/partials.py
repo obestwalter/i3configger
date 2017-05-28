@@ -78,13 +78,14 @@ def create(sourcePath: Path, suffix: str) -> t.List[Partial]:
         return sorted([Partial(p) for p in sourcePath.glob('*%s' % suffix)])
 
 
-def select(prts: t.List[Partial], selectorMap: dict) -> t.List[Partial]:
+def select(prts: t.List[Partial], selectorMap: t.Union[None, dict]
+           ) -> t.List[Partial]:
     def _select():
         selected.append(partial)
         if partial.key in selectorMap:
             del selectorMap[partial.key]
 
-    selected = []
+    selected: t.List[Partial] = []
     selectorMap = selectorMap or {}
     for partial in prts:
         if not partial.conditional:

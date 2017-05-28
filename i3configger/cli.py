@@ -1,6 +1,7 @@
 import argparse
 import logging
 import sys
+from pathlib import Path
 
 from i3configger import __version__, base, daemonize, build, watch
 
@@ -34,6 +35,9 @@ def parse_args():
     g.add_argument('--kill', action="store_true", default=False,
                    help="exorcise daemon if running")
     args, argv = p.parse_known_args()
+    args.sources = Path(args.sources)
+    args.target = Path(args.target)
+    args.log_path = Path(args.log_path)
     args.selectorMap = base.get_selector_map(p, argv)
     args.configger = (args.sources, args.target, args.suffix, args.selectorMap)
     return args

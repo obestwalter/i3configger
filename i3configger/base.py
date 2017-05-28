@@ -99,17 +99,12 @@ def configure_logging(verbosity, logPath, isDaemon=False):
         rootLogger.addHandler(fileHandler)
 
 
-def i3configger_excepthook(type, value, traceback):
-    if DEBUG or not issubclass(type, exc.I3configgerException):
-        _ORIGINAL_EXCEPTHOOK(type, value, traceback)
-    try:
-        # Is there a saner way to get the simple exception name?
-        friendlyExc = str(type).split('.')[-1][:-2]
-    except:
-        friendlyExc = type
-    sys.exit("%s: %s" % (friendlyExc, value))
+def i3configger_excepthook(type_, value, traceback):
+    if DEBUG or not isinstance(value, exc.I3configgerException):
+        _REAL_EXCEPTHOOK(type_, value, traceback)
+    sys.exit("%s: %s" % (value.__class__.__name__, value))
 
-_ORIGINAL_EXCEPTHOOK = sys.excepthook
+_REAL_EXCEPTHOOK = sys.excepthook
 sys.excepthook = i3configger_excepthook
 
 if not DEBUG:
