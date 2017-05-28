@@ -1,5 +1,9 @@
+"""This is still just a sketch ... """
+
 BINDCODE = 'bindcode'
 BINDSYM = 'bindsym'
+
+raise NotImplementedError()
 
 
 # TODO set after rendering
