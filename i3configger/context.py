@@ -12,6 +12,7 @@ def create(prts: t.List[partials.Partial]) -> dict:
     for context in [fetch(p.payload) for p in prts]:
         ctx.update(context)
     ctx = resolve(ctx)
+    assert all(k.startswith(base.VAR_MARK) for k in ctx.keys()), ctx
     ctx = remove_variable_markers(ctx)
     assert not any(k.startswith(base.VAR_MARK) for k in ctx.keys()), ctx
     assert not any(v.startswith(base.VAR_MARK) for v in ctx.values()), ctx
