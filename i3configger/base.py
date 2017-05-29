@@ -43,6 +43,7 @@ def get_selector_map(parser, argv):
 class I3Status:
     MARKER = "marker"
     TEMPLATE = "template"
+    SOURCE = "source"
     TARGET = "targetPath"
     DEFAULT_SETTINGS = {MARKER: "i3status", TEMPLATE: "tpl", TARGET: "~/.i3"}
     BARS = "bars"
