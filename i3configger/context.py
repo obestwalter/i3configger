@@ -4,8 +4,6 @@ import typing as t
 from i3configger import base, exc, partials
 
 log = logging.getLogger(__name__)
-SET_MARK = 'set'
-SETTINGS_MARK = base.VAR_MARK + SET_MARK + '_'
 
 
 def create(prts: t.List[partials.Partial]) -> dict:
@@ -53,7 +51,7 @@ def fetch(content: str) -> dict:
     ctx = {}
     for line in content.splitlines():
         line = line.strip()
-        if not line.startswith(SET_MARK):
+        if not line.startswith(base.SET_MARK):
             continue
         payload = line.split(maxsplit=1)[1]
         key, value = payload.split(maxsplit=1)

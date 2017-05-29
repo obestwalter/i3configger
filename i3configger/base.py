@@ -20,6 +20,8 @@ SOURCES_PATH = I3_PATH / 'config.d'
 TARGET_PATH = I3_PATH / 'config'
 SOURCE_SUFFIX = '.conf'
 VAR_MARK = '$'
+SET_MARK = 'set'
+SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
 
 
 # FIXME adapt to new style

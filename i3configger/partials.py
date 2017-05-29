@@ -4,7 +4,7 @@ import typing as t
 from functools import total_ordering
 from pathlib import Path
 
-from i3configger import exc
+from i3configger import exc, base
 
 log = logging.getLogger(__name__)
 
@@ -42,8 +42,22 @@ class Partial:
         return False
 
     @property
-    def prepared(self) -> str:
-        return "### %s ###\n%s\n\n" % (self.path.name, self.payload)
+    def display(self) -> str:
+        if not self.filtered:
+            return ""
+        return "### %s ###\n%s\n\n" % (self.path.name, self.filtered)
+
+    @property
+    def filtered(self) -> str:
+        filtered = []
+        for line in self._joined.splitlines():
+            l = line.strip()
+            if not l:
+                continue
+            if (not l.startswith(base.SET_MARK)
+                    and not l.startswith(self.COMMENT_MARK)):
+                filtered.append(line)
+        return '\n'.join(filtered)
 
     @property
     def payload(self) -> str:
@@ -78,8 +92,8 @@ def get_content(prts: t.List[Partial], selectorMap: dict,
         raise exc.I3configgerException(
             "No content for %s, %s, %s", prts, selectorMap, excludes)
     if isinstance(selected, list):
-        return ''.join(p.prepared for p in selected)
-    return selected.prepared
+        return ''.join(p.display for p in selected)
+    return selected.display
 
 
 def find(prts: t.List[Partial], key: str, value: str) -> Partial:

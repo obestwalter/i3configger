@@ -47,7 +47,7 @@ class Builder:
                 localCtx = dict(ctx)
                 localCtx.update(barCtx)
                 cnt = self.substitute(prt.payload, localCtx)
-                f.write(cnt + '\n\n')
+                f.write(cnt + '\n')
 
     @classmethod
     def _build_bar_configs(cls, prts, ctx, i3s):
