@@ -17,7 +17,7 @@ def parse_args():
     p.add_argument('-v', action="count", help="raise verbosity", default=0)
     p.add_argument('--sources', action="store",
                    default=base.SOURCES_PATH, help="path to sources")
-    p.add_argument('--target', action="store",
+    p.add_argument('--targetPath', action="store",
                    default=base.TARGET_PATH,
                    help="path to main config file")
     p.add_argument('--suffix', action="store",
@@ -59,8 +59,7 @@ def main():
         except KeyboardInterrupt:
             sys.exit("bye")
     else:
-        dryRun = bool(base.DEBUG)
-        build.Builder(*cnf.configger, dryRun=dryRun).build_all()
+        build.Builder(*cnf.configger).build_all()
         # TODO need a way to refresh i3bar config without restarting i3
         base.IpcControl.refresh()
 

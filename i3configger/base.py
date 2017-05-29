@@ -43,7 +43,7 @@ def get_selector_map(parser, argv):
 class I3Status:
     MARKER = "marker"
     TEMPLATE = "template"
-    TARGET = "target"
+    TARGET = "targetPath"
     DEFAULT_SETTINGS = {MARKER: "i3status", TEMPLATE: "tpl", TARGET: "~/.i3"}
     BARS = "bars"
     SETTINGS = "settings"
@@ -68,8 +68,9 @@ class I3Status:
             for key, value in payload[self.SETTINGS].items():
                 settings[key] = value
         log.info("using settings: %s", pprint.pformat(settings))
+        self.defaults = settings
         if self.DEFAULTS in payload:
-            self.defaults = payload[self.DEFAULTS]
+            self.defaults.update(payload[self.DEFAULTS])
         else:
             log.info("no bar defaults - make sure you have everything in bars")
             self.defaults = {}

@@ -88,31 +88,31 @@ def find(prts: t.List[Partial], key: str, value: str) -> Partial:
             return prt
 
 
-def select(prts: t.List[Partial],
-           selectors: t.Union[None, dict],
+def select(partials: t.List[Partial],
+           selector: t.Union[None, dict],
            excludes: t.Union[None, t.List]=None,
            conditionals=True, defaults=True) \
         -> t.Union[None, Partial, t.List[Partial]]:
     def _select():
         selected.append(partial)
-        if partial.key in selectors:
-            del selectors[partial.key]
+        if partial.key in selector:
+            del selector[partial.key]
 
     selected = []
-    for partial in prts:
+    for partial in partials:
         if partial.conditional:
             if excludes and partial.key in excludes:
                 log.debug("[IGNORE] %s (in %s)", partial, excludes)
                 continue
-            if (selectors and partial.key in selectors and
-                    partial.value == selectors.get(partial.key)):
+            if (selector and partial.key in selector and
+                    partial.value == selector.get(partial.key)):
                 _select()
             elif defaults and partial.isDefault:
                 _select()
         elif conditionals:
             _select()
-    if selectors:
-        raise exc.ConfigError("not all selectors processed: %s", selectors)
+    if selector:
+        raise exc.ConfigError("not all selector processed: %s", selector)
     return selected[0] if len(selected) == 1 else selected
 
 

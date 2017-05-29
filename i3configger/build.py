@@ -12,12 +12,11 @@ log = logging.getLogger(__name__)
 
 class Builder:
     def __init__(self, sourcePath: Path, targetPath: Path, suffix: str,
-                 selectorMap: t.Union[None, dict]=None, dryRun: bool=False):
+                 selectorMap: t.Union[None, dict]=None):
         self.sourcePath = sourcePath
         self.mainTargetPath = targetPath
         self.suffix = suffix
         self.selectorMap = selectorMap or {}
-        self.dryRun = dryRun
         self.i3s = base.I3Status(self.sourcePath)
         log.info("initialized %s", self)
 
@@ -33,34 +32,30 @@ class Builder:
         content = partials.get_content(prts, self.selectorMap, excludes)
         substituted = self.substitute(content, ctx)
         complete = "%s\n\n%s" % (self.get_header(), substituted)
-        if self.dryRun:
-            print(complete)
-        else:
-            self.mainTargetPath.write_text(complete)
+        self.mainTargetPath.write_text(complete)
 
     def build_i3status(self, prts: t.List[partials.Partial],
                        ctx: dict, i3s: I3Status):
-        # TODO render bar {...} stuff into main stuff
-        self.mainTargetPath.open('a')
-
-        for name, barCtx in i3s.bars.items():
-            prt = partials.select(
-                prts, {i3s.marker: barCtx['source']},
-                conditionals=False, defaults=False)
+        allUsedSources = set([s["source"] for s in i3s.bars.values()])
+        for source in allUsedSources:
+            prt = partials.find(prts, i3s.marker, source)
             assert isinstance(prt, partials.Partial), prt
             localCtx = dict(ctx)
-            localCtx.update(barCtx)
             cnt = self.substitute(prt.payload, localCtx)
-            print(cnt)
-            # marker =
+            targetRoot = Path(i3s.target).expanduser()
+            targetPath = targetRoot / ("%s.%s.conf" % (i3s.marker, source))
+            targetPath.write_text(cnt)
 
-        # tpl = self.sourcePath /
-        # for bar in i3j["bars"]
+        with self.mainTargetPath.open('a') as f:
+            for barName, barCtx in i3s.bars.items():
+                barCtx["id"] = barName
+                prt = partials.find(prts, i3s.marker, barCtx[i3s.TEMPLATE])
+                localCtx = dict(ctx)
+                localCtx.update(barCtx)
+                cnt = "### %s ###\n" % barName
+                cnt += self.substitute(prt.payload, localCtx)
+                f.write(cnt + '\n')
 
-        # prts = [prt for prt in prts if prt.i3status]
-        # if not prts:
-        #     log.info("no configuration for status found")
-        #     return
         # barTpl = partials.find(prts, 'tpl', 'bar')
         # if not barTpl:
         #     log.warning("can't build: no template found")
@@ -88,10 +83,6 @@ class Builder:
         #         subs['bar_target_path'] = targetPath
         #         cnt = self.substitute(barTpl.payload, subs)
         #         complete = "%s\n\n%s" % (self.get_header(), cnt)
-        #         if self.dryRun:
-        #             print(complete)
-        #         else:
-        #             targetPath.write_text(complete)
 
     @classmethod
     def substitute(cls, content, ctx):

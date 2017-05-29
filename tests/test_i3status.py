@@ -26,9 +26,9 @@ def test_only_bars():
     i3s = I3Status(DATA)
     assert i3s
     assert i3s.bars == {"laptop": {"output": "DP-3", "position": "top"}}
-    assert i3s.marker == I3Status.DEFAULT_SETTINGS[i3s.MARKER]
-    assert i3s.template == I3Status.DEFAULT_SETTINGS[i3s.TEMPLATE]
-    assert i3s.target == I3Status.DEFAULT_SETTINGS[i3s.TARGET]
+    assert i3s.marker == i3s.DEFAULT_SETTINGS[i3s.MARKER]
+    assert i3s.template == i3s.DEFAULT_SETTINGS[i3s.TEMPLATE]
+    assert i3s.target == i3s.DEFAULT_SETTINGS[i3s.TARGET]
     assert i3s.defaults == {}
 
 
