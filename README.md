@@ -1,6 +1,4 @@
-# i3configger
-
-[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+# i3configger [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 
 Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `~/.i3/config.d`. Does some nifty conditional integration of files on demand and variable resolution (also for i3status configs).
 
