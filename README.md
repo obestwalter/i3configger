@@ -6,9 +6,9 @@ Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `~/.i3
 
 ## Why?
 
-* To be able to split my long and messy config file in many short, aptly named, messy files
+* To be able to split my long and messy config file in many short, aptly named, messy config files
 * To be able to assign variables to variables (`set $var $otherVar`)
-* To bea able to use variables in `i3status.conf`
+* To be able to also use variables in i3status configurations
 * To be able to change the config dynamically without having to manually make changes to the config file
 
 ## Usage
@@ -22,78 +22,6 @@ Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `~/.i3
 Nothing exiting. Quite nice though, if you don't like long files.
 
 **This is already working with the current release (plus variable resolution, and i3status variable resolution).**
-
-### RFC
-
-Description of different workflows I would like to use myself. Comments very welcome in the issues.
-
-### Slightly less simple use case
-
-**NOTE** Since 4.13 color variables can be set system wide via Xresources: http://i3wm.org/docs/userguide.html#xresources
-
-Say you have a dark color scheme for your window decorations. Now you want to add a light scheme for when you hack at the beach in the glaring sun. You want to be able to switch that easily with a keyboard shortcut or a simple command line call.
-
-1. Put all relevant settings regarding color in an extra configuration file
-3. Name that file `scheme.dark.conf`
-4. Copy that file to `scheme.light.conf`
-5. Change the color values or variables in the new file to your liking
-
-To switch to the next scheme, call:
-
-    $ `i3configger --next-scheme`
-
-`scheme` is an arbitrary name here and can be used with anything depending how you call the config partials. If you called your files `colors.dark.conf` and colors `colors.light.conf` `i3configger --next-colors` would do the job.
-
-If you want to choose a specific partial configuration using the example from above, you can do:
-
-
-    (i3) 03:13:11 oliver@ob1 [0] < ~ >  7842 %
-    i3configger theme="#very dark" i3status=main "host=$(hostname)" 
-    ['theme=#very dark', 'i3status=main', 'host=ob1']
-
-
-
-    $ `i3configger --select-scheme=dark`
-
-or :
-
-    $ `i3configger --select-scheme=light`
-
-
-### Getting even more specific
-
-If you want to alter a specific setting:
-
-    $ `i3configger --config-hide_edge_borders=smart`
-
-If you want to set the value of a specific variable, you can do:
-
-    $ `i3configger --set-<variable name>=<variable value>`
-
-e.g. if you configuration containes `set $lock_screen_color #00000` you can change by calling:
-
-#FIXME try out the limitations of the command line here ... spaces? other special chars?
-
-    $ `i3configger --set-lock_screen_color=#00000`
-
-
-All these changes don't touch your source files but are still persistent unless you either wipe them:
-
-
-    $ `i3configger --wipe
-
-... or make them permanent by writing the changes back to your source files
-
-    $ `i3configger --freeze
-
-
-### Switching status bar scheme
-
-... now the i3status settings don't allow use of variables in the default use of i3. With i3configger you can also use variable names there
-
-### Different settings depending on which monitors are connected
-
-**TODO**
 
 ### Watch files in the background
 
@@ -110,7 +38,6 @@ stop the daemon:
 Run it in the foreground:
 
     $ i3configger --watch
-
 
 ## How?
 
@@ -159,6 +86,7 @@ You should install this into a Python 3.6 interpreter.
 
 * [i3wm](https://i3wm.org/)
 * [reddit group](https://www.reddit.com/r/i3wm/)
+* [Archlinux Wiki](https://wiki.archlinux.org/index.php/I3)
 
 ### Other Tools
 
