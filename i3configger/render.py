@@ -16,4 +16,3 @@ class Renderer:
                 except KeyError:
                     log.exception("[IGNORED] %s, %s", key, value)
         return resolvedVars
-

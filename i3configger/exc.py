@@ -21,5 +21,5 @@ class ParseError(I3configgerException):
     pass
 
 
-class SelectError(I3configgerException):
+class ConfigError(I3configgerException):
     pass

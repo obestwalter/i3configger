@@ -1,5 +1,7 @@
+import json
 import logging
 import os
+import pprint
 import subprocess
 import sys
 import tempfile
@@ -13,13 +15,11 @@ log = logging.getLogger(__name__)
 DEBUG = os.getenv('DEBUG', 0)
 PROJECT_PATH = Path(__file__).parents[1]
 LOG_PATH = Path(tempfile.gettempdir()) / 'i3configger.log'
-SOURCES_PATH = Path('~/.i3/config.d').expanduser()
-TARGET_PATH = Path('~/.i3/config').expanduser()
+I3_PATH = Path('~/.i3').expanduser()
+SOURCES_PATH = I3_PATH / 'config.d'
+TARGET_PATH = I3_PATH / 'config'
 SOURCE_SUFFIX = '.conf'
 VAR_MARK = '$'
-I3STATUS_BAR_MARKER = 'i3status'
-BAR_VAR_MARKER = 'bar_'
-BAR_EXCLUDES = ['bar', 'tpl']
 
 
 # FIXME adapt to new style
@@ -38,6 +38,48 @@ def get_selector_map(parser, argv):
         parser.error(
             'unrecognized arguments: %s\n%s' % ('; '.join(argv), hint))
     return selectorMap
+
+
+class I3Status:
+    MARKER = "marker"
+    TEMPLATE = "template"
+    TARGET = "target"
+    DEFAULT_SETTINGS = {
+        MARKER: "i3status",
+        TEMPLATE: "tpl",
+        TARGET: "~/.i3"}
+    BARS = "bars"
+    SETTINGS = "settings"
+    DEFAULTS = "defaults"
+    I3STATUS = "i3status"
+    FILE_NAME = I3STATUS + ".json"
+
+    def __init__(self, sourcePath):
+        path = Path(sourcePath) / self.FILE_NAME
+        log.debug("use %s", path)
+        if not path.exists():
+            log.info("no bar settings - nothing to do")
+            return
+        with path.open() as f:
+            payload = json.load(f)
+        if self.BARS not in payload:
+            log.info("nothing to do - no bars defined in %s", payload)
+            return
+        self.bars = payload[self.BARS]
+        self.settings = self.DEFAULT_SETTINGS
+        if self.SETTINGS in payload:
+            for key, value in payload[self.SETTINGS].items():
+                self.settings[key] = value
+        log.info("using settings: %s", pprint.pformat(self.settings))
+        if self.DEFAULTS in payload:
+            self.defaults = payload[self.DEFAULTS]
+        else:
+            log.info("no bar defaults - make sure you have everything in bars")
+            self.defaults = {}
+        for _, bar in self.bars.items():
+            for defaultKey, defaultValue in self.defaults.items():
+                if defaultKey not in bar:
+                    bar[defaultKey] = defaultValue
 
 
 class IpcControl:

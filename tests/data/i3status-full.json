@@ -1,0 +1,20 @@
+{
+  "settings": {
+    "marker": "not marker default",
+    "template": "not template default"
+  },
+  "defaults": {
+    "font": "some default font",
+    "source": "some default source"
+  },
+  "bars": {
+    "first bar": {
+      "font": "should override font default",
+      "output": "first output"
+    },
+    "second bar": {
+      "output": "second output",
+      "source": "should override source default"
+    }
+  }
+}
