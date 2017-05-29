@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from pytest import fixture
 
-from i3configger.build import I3Configger, MalformedAssignment
+from i3configger.build import Builder, MalformedAssignment
 
 
 # noinspection PyShadowingNames
@@ -32,6 +32,6 @@ def tmpdir(tmpdir):
 def test_get_assignment(line, exp):
     if not isinstance(exp, tuple):
         with pytest.raises(MalformedAssignment):
-            I3Configger.get_assignment(line)
+            Builder.get_assignment(line)
     else:
-        assert I3Configger.get_assignment(line) == exp
+        assert Builder.get_assignment(line) == exp

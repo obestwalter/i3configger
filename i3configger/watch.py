@@ -7,7 +7,7 @@ from inotify import constants as ic
 from inotify.adapters import Inotify
 
 from i3configger import base
-from i3configger.build import I3Configger
+from i3configger.build import Builder
 
 log = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ class Watchman:
     """Tell inotify to trigger on changes"""
 
     def __init__(self, configgerArgs):
-        self.configger = I3Configger(*configgerArgs)
+        self.configger = Builder(*configgerArgs)
         self.configPath = str(self.configger.sourcePath).encode()
         self.lastBuild = None
         self.lastFilePath = None

@@ -16,6 +16,10 @@ LOG_PATH = Path(tempfile.gettempdir()) / 'i3configger.log'
 SOURCES_PATH = Path('~/.i3/config.d').expanduser()
 TARGET_PATH = Path('~/.i3/config').expanduser()
 SOURCE_SUFFIX = '.conf'
+VAR_MARK = '$'
+I3STATUS_BAR_MARKER = 'i3status'
+BAR_VAR_MARKER = 'bar_'
+BAR_EXCLUDES = ['bar', 'tpl']
 
 
 # FIXME adapt to new style
@@ -102,7 +106,8 @@ def configure_logging(verbosity, logPath, isDaemon=False):
 def i3configger_excepthook(type_, value, traceback):
     if DEBUG or not isinstance(value, exc.I3configgerException):
         _REAL_EXCEPTHOOK(type_, value, traceback)
-    sys.exit("%s: %s" % (value.__class__.__name__, value))
+    else:
+        sys.exit("%s: %s" % (value.__class__.__name__, value))
 
 _REAL_EXCEPTHOOK = sys.excepthook
 sys.excepthook = i3configger_excepthook

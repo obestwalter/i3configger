@@ -4,7 +4,7 @@ import typing as t
 from functools import total_ordering
 from pathlib import Path
 
-from i3configger import exc
+from i3configger import base, exc
 
 log = logging.getLogger(__name__)
 
@@ -16,16 +16,26 @@ class Partial:
     END_OF_LINE_COMMENT_MARK = ' # '
     DEFAULT_NAME = 'default'
     DEFAULT_MARKER = '# i3configger default'
-    STATUS_MARKER = 'i3status'
 
     def __init__(self, path: Path):
         self.path = path
         self.name = self.path.name
         self.selectors = self.path.stem.split('.')
-        self.conditional = len(self.selectors) > 1
-        self.key = self.selectors[0] if self.conditional else None
-        self.value = self.selectors[1] if self.conditional else None
-        self.rendered = None
+        self.i3status = self.selectors[0] == base.I3STATUS_BAR_MARKER
+        self.conditional = len(self.selectors) > 1 and not self.i3status
+        if self.i3status:
+            self.key = self.selectors[1]
+            try:
+                self.value = self.selectors[2]
+            except IndexError:
+                self.value = None
+        elif self.conditional:
+            self.key = self.selectors[0]
+            self.value = self.selectors[1]
+        else:
+            self.key = None
+            self.value = None
+        self._raw = self.path.read_text()
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, self.path.name)
@@ -37,7 +47,6 @@ class Partial:
 
     @property
     def isDefault(self) -> bool:
-        assert self.conditional, self
         if self.value == self.DEFAULT_NAME:
             return True
         if self.DEFAULT_MARKER in self._raw:
@@ -69,27 +78,35 @@ class Partial:
         https://i3wm.org/docs/userguide.html#line_continuation"""
         return re.sub(self.CONTINUATION_RE, ' ', self._raw)
 
-    @property
-    def _raw(self) -> str:
-        return self.path.read_text()
+
+def get_content(prts: t.List[Partial], selectorMap: dict,
+                excludes: t.Union[None, t.List]=None) -> str:
+    selected = select(prts, selectorMap, excludes)
+    return ''.join(p.prepared for p in selected)
 
 
-def create(sourcePath: Path, suffix: str) -> t.List[Partial]:
-        return sorted([Partial(p) for p in sourcePath.glob('*%s' % suffix)])
+def find(prts: t.List[Partial], key: str, value: str) -> Partial:
+    for prt in prts:
+        if prt.key == key and prt.value == value:
+            return prt
 
 
-def select(prts: t.List[Partial], selectorMap: t.Union[None, dict]
-           ) -> t.List[Partial]:
+def select(prts: t.List[Partial], selectorMap: t.Union[None, dict],
+           excludes: t.Union[None, t.List]=None) -> t.List[Partial]:
     def _select():
         selected.append(partial)
         if partial.key in selectorMap:
             del selectorMap[partial.key]
 
-    selected: t.List[Partial] = []
     selectorMap = selectorMap or {}
+    excludes = excludes or []
+    selected = []
     for partial in prts:
         if not partial.conditional:
             _select()
+        if partial.key in excludes:
+            log.debug("[IGNORE] %s (in %s)", partial, excludes)
+            continue
         else:
             if partial.key in selectorMap:
                 if partial.value == selectorMap.get(partial.key):
@@ -100,3 +117,7 @@ def select(prts: t.List[Partial], selectorMap: t.Union[None, dict]
     if selectorMap:
         raise exc.SelectError("not all selectors processed: %s", selectorMap)
     return selected
+
+
+def create(sourcePath: Path, suffix: str) -> t.List[Partial]:
+        return sorted([Partial(p) for p in sourcePath.glob('*%s' % suffix)])
