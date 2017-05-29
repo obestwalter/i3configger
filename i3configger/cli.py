@@ -17,7 +17,7 @@ def parse_args():
     p.add_argument('-v', action="count", help="raise verbosity", default=0)
     p.add_argument('--sources', action="store",
                    default=base.SOURCES_PATH, help="path to sources")
-    p.add_argument('--targetPath', action="store",
+    p.add_argument('--target', action="store",
                    default=base.TARGET_PATH,
                    help="path to main config file")
     p.add_argument('--suffix', action="store",

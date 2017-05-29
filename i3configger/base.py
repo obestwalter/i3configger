@@ -46,7 +46,7 @@ class I3Status:
     MARKER = "marker"
     TEMPLATE = "template"
     SOURCE = "source"
-    TARGET = "targetPath"
+    TARGET = "target"
     DEFAULT_SETTINGS = {MARKER: "i3status", TEMPLATE: "tpl", TARGET: "~/.i3"}
     BARS = "bars"
     SETTINGS = "settings"
