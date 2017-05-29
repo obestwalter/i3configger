@@ -74,7 +74,12 @@ class Partial:
 def get_content(prts: t.List[Partial], selectorMap: dict,
                 excludes: t.Union[None, t.List]=None) -> str:
     selected = select(prts, selectorMap, excludes)
-    return ''.join(p.prepared for p in selected)
+    if not selected:
+        raise exc.I3configgerException(
+            "No content for %s, %s, %s", prts, selectorMap, excludes)
+    if isinstance(selected, list):
+        return ''.join(p.prepared for p in selected)
+    return selected.prepared
 
 
 def find(prts: t.List[Partial], key: str, value: str) -> Partial:
@@ -83,31 +88,37 @@ def find(prts: t.List[Partial], key: str, value: str) -> Partial:
             return prt
 
 
-def select(prts: t.List[Partial], selectorMap: t.Union[None, dict],
-           excludes: t.Union[None, t.List]=None) -> t.List[Partial]:
+def select(prts: t.List[Partial],
+           selectors: t.Union[None, dict],
+           excludes: t.Union[None, t.List]=None,
+           conditionals=True, defaults=True) \
+        -> t.Union[None, Partial, t.List[Partial]]:
     def _select():
         selected.append(partial)
-        if partial.key in selectorMap:
-            del selectorMap[partial.key]
+        if partial.key in selectors:
+            del selectors[partial.key]
 
     selected = []
     for partial in prts:
-        if not partial.conditional:
+        if partial.conditional:
+            if excludes and partial.key in excludes:
+                log.debug("[IGNORE] %s (in %s)", partial, excludes)
+                continue
+            if (selectors and partial.key in selectors and
+                    partial.value == selectors.get(partial.key)):
+                _select()
+            elif defaults and partial.isDefault:
+                _select()
+        elif conditionals:
             _select()
-        if excludes and partial.key in excludes:
-            log.debug("[IGNORE] %s (in %s)", partial, excludes)
-            continue
-        else:
-            if selectorMap and partial.key in selectorMap:
-                if partial.value == selectorMap.get(partial.key):
-                    _select()
-            else:
-                if partial.isDefault:
-                    _select()
-    if selectorMap:
-        raise exc.ConfigError("not all selectors processed: %s", selectorMap)
-    return selected
+    if selectors:
+        raise exc.ConfigError("not all selectors processed: %s", selectors)
+    return selected[0] if len(selected) == 1 else selected
 
 
 def create(sourcePath: Path, suffix: str) -> t.List[Partial]:
-        return sorted([Partial(p) for p in sourcePath.glob('*%s' % suffix)])
+    prts = [Partial(p) for p in sourcePath.glob('*%s' % suffix)]
+    if not prts:
+        raise exc.I3configgerException(
+            "no partials found at %s with suffix '%s'", sourcePath, suffix)
+    return sorted(prts)

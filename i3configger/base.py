@@ -44,10 +44,7 @@ class I3Status:
     MARKER = "marker"
     TEMPLATE = "template"
     TARGET = "target"
-    DEFAULT_SETTINGS = {
-        MARKER: "i3status",
-        TEMPLATE: "tpl",
-        TARGET: "~/.i3"}
+    DEFAULT_SETTINGS = {MARKER: "i3status", TEMPLATE: "tpl", TARGET: "~/.i3"}
     BARS = "bars"
     SETTINGS = "settings"
     DEFAULTS = "defaults"
@@ -66,11 +63,11 @@ class I3Status:
             log.info("nothing to do - no bars defined in %s", payload)
             return
         self.bars = payload[self.BARS]
-        self.settings = self.DEFAULT_SETTINGS
+        settings = self.DEFAULT_SETTINGS
         if self.SETTINGS in payload:
             for key, value in payload[self.SETTINGS].items():
-                self.settings[key] = value
-        log.info("using settings: %s", pprint.pformat(self.settings))
+                settings[key] = value
+        log.info("using settings: %s", pprint.pformat(settings))
         if self.DEFAULTS in payload:
             self.defaults = payload[self.DEFAULTS]
         else:
@@ -80,6 +77,12 @@ class I3Status:
             for defaultKey, defaultValue in self.defaults.items():
                 if defaultKey not in bar:
                     bar[defaultKey] = defaultValue
+        self.marker = settings[self.MARKER]
+        self.template = settings[self.TEMPLATE]
+        self.target = settings[self.TARGET]
+
+    def __bool__(self):
+        return hasattr(self, 'bars')
 
 
 class IpcControl:

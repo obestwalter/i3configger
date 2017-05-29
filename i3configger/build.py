@@ -25,9 +25,9 @@ class Builder:
         prts = partials.create(self.sourcePath, self.suffix)
         ctx = context.create(prts)
         i3s = I3Status(self.sourcePath)
-        excludes = i3j["settings"].get("marker") if i3j else self.I3STATUS
-        self.build_main(prts, ctx, excludes)
-        self.build_i3status(prts, ctx, i3j)
+        self.build_main(prts, ctx, [i3s.marker] if i3s else None)
+        if i3s:
+            self.build_i3status(prts, ctx, i3s)
 
     def build_main(self, prts, ctx, excludes):
         content = partials.get_content(prts, self.selectorMap, excludes)
@@ -38,11 +38,21 @@ class Builder:
         else:
             self.mainTargetPath.write_text(complete)
 
-    def build_i3status(self, prts, ctx, i3j):
-        pass
+    def build_i3status(self, prts: t.List[partials.Partial],
+                       ctx: dict, i3s: I3Status):
         # TODO render bar {...} stuff into main stuff
         self.mainTargetPath.open('a')
-        # marker =
+
+        for name, barCtx in i3s.bars.items():
+            prt = partials.select(
+                prts, {i3s.marker: barCtx['source']},
+                conditionals=False, defaults=False)
+            assert isinstance(prt, partials.Partial), prt
+            localCtx = dict(ctx)
+            localCtx.update(barCtx)
+            cnt = self.substitute(prt.payload, localCtx)
+            print(cnt)
+            # marker =
 
         # tpl = self.sourcePath /
         # for bar in i3j["bars"]
