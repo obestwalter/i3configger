@@ -26,6 +26,7 @@ SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
 
 # FIXME adapt to new style
 def get_selector_map(parser, argv):
+    log.debug("found extra arguments, reading into selector map ...")
     selectorMap = {}
     leftovers = []
     marker = '--select-'
@@ -33,8 +34,9 @@ def get_selector_map(parser, argv):
     for arg in argv:
         if not arg.startswith(marker) or '=' not in arg:
             leftovers.append(arg)
-        key, value = arg[markerLen:].split('=')
-        selectorMap[key] = value
+        else:
+            key, value = arg[markerLen:].split('=')
+            selectorMap[key] = value
     if leftovers:
         hint = "hint: selectorMap must use the form: --select-<key>=<value>"
         parser.error(
