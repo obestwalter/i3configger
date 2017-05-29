@@ -23,7 +23,7 @@ def parse_args():
     p.add_argument('--suffix', action="store",
                    default=base.SOURCE_SUFFIX,
                    help="suffix of config source files")
-    p.add_argument('--i3-refresh-msg', action="store", default='none',
+    p.add_argument('--i3-refresh-msg', action="store", default='restart',
                    help="i3-msg to send after build (restart, reload, none)")
     p.add_argument('--log-path', action="store", default=base.LOG_PATH,
                    help="log to given path")
@@ -38,15 +38,15 @@ def parse_args():
     args.sources = Path(args.sources)
     args.target = Path(args.target)
     args.log_path = Path(args.log_path)
-    args.selectorMap = base.get_selector_map(p, argv)
-    args.configger = (args.sources, args.target, args.suffix, args.selectorMap)
+    args.selectors = base.get_selectors(p, argv)
+    args.builder = (args.sources, args.target, args.suffix, args.selectors)
     return args
 
 
 def main():
     cnf = parse_args()
     if cnf.daemon:
-        daemonize.daemonize(cnf.v, cnf.log_path, cnf.configger)
+        daemonize.daemonize(cnf.v, cnf.log_path, cnf.builder)
     if cnf.kill:
         daemonize.exorcise()
         return 0
@@ -55,11 +55,11 @@ def main():
     log.info("set i3 refresh method to %s", base.IpcControl.refresh)
     if cnf.watch:
         try:
-            watch.Watchman(cnf.configger).watch()
+            watch.Watchman(cnf.builder).watch()
         except KeyboardInterrupt:
             sys.exit("bye")
     else:
-        build.Builder(*cnf.configger).build()
+        build.Builder(*cnf.builder).build()
         # TODO need a way to refresh i3bar config without restarting i3
         base.IpcControl.refresh()
 

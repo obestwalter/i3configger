@@ -1,10 +1,11 @@
 import logging
+import pprint
 import time
 import typing as t
 from pathlib import Path
 from string import Template
 
-from i3configger import base, context, partials
+from i3configger import base, context, partials, exc
 from i3configger.base import I3Status
 
 log = logging.getLogger(__name__)
@@ -12,24 +13,33 @@ log = logging.getLogger(__name__)
 
 class Builder:
     def __init__(self, sourcePath: Path, targetPath: Path, suffix: str,
-                 selectorMap: t.Union[None, dict]=None):
+                 selectors: t.Union[None, dict]=None):
         self.sourcePath = sourcePath
         self.mainTargetPath = targetPath
         self.suffix = suffix
-        self.selectorMap = selectorMap or {}
+        self.selectors = selectors or {}
         self.i3s = base.I3Status(self.sourcePath)
         log.info("initialized %s", self)
 
-    def build(self):
-        prts = partials.create(self.sourcePath, self.suffix)
-        ctx = context.create(prts)
-        i3s = I3Status(self.sourcePath)
-        self.build_main(prts, ctx, [i3s.marker] if i3s else None)
-        if i3s:
-            self.build_i3status(prts, ctx, i3s)
+    def __str__(self):
+        return "%s\n%s" % (self.__class__.__name__, pprint.pformat(vars(self)))
 
-    def build_main(self, prts, ctx, excludes):
-        content = partials.get_content(prts, self.selectorMap, excludes)
+    def build(self):
+        allPrts = partials.create(self.sourcePath, self.suffix)
+        i3s = I3Status(self.sourcePath)
+        excludes = [i3s.marker] if i3s else None
+        selected = partials.select(allPrts, self.selectors, excludes)
+        if not selected:
+            raise exc.I3configgerException(
+                "No content for %s, %s, %s", allPrts, self.selectors, excludes)
+
+        ctx = context.create(selected)
+        self.build_main(selected, ctx)
+        if i3s:
+            self.build_i3status(allPrts, ctx, i3s)
+
+    def build_main(self, prts, ctx):
+        content = '\n'.join(prt.display for prt in prts)
         substituted = self.substitute(content, ctx)
         complete = "%s\n\n%s" % (self.get_header(), substituted)
         self.mainTargetPath.write_text(complete)
@@ -46,6 +56,7 @@ class Builder:
                 prt = partials.find(prts, i3s.marker, barCtx[i3s.TEMPLATE])
                 localCtx = dict(ctx)
                 localCtx.update(barCtx)
+                localCtx.update(context.create([prt]))
                 cnt = self.substitute(prt.payload, localCtx)
                 f.write(cnt + '\n')
 
@@ -56,6 +67,7 @@ class Builder:
             prt = partials.find(prts, i3s.marker, source)
             assert isinstance(prt, partials.Partial), prt
             localCtx = dict(ctx)
+            localCtx.update(context.create([prt]))
             sourceCnt = cls.substitute(prt.payload, localCtx)
             targetRoot = Path(i3s.target).expanduser()
             targetPath = targetRoot / ("%s.%s.conf" % (i3s.marker, source))

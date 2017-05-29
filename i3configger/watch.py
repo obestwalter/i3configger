@@ -28,9 +28,9 @@ class Watchman:
         ic.IN_DELETE_SELF | ic.IN_MOVE_SELF)
     """Tell inotify to trigger on changes"""
 
-    def __init__(self, configgerArgs):
-        self.configger = Builder(*configgerArgs)
-        self.configPath = str(self.configger.sourcePath).encode()
+    def __init__(self, builderArgs):
+        self.builder = Builder(*builderArgs)
+        self.configPath = str(self.builder.sourcePath).encode()
         self.lastBuild = None
         self.lastFilePath = None
         self.errors = 0
@@ -67,7 +67,7 @@ class Watchman:
         header, typeNames, filePath = self._get_event_data(event)
         if self.needs_build(header, typeNames, filePath):
             log.info("%s triggered build", filePath)
-            self.configger.build()
+            self.builder.build()
             self.lastBuild = time.time()
             self.lastFilePath = filePath
             base.IpcControl.refresh()
@@ -86,7 +86,7 @@ class Watchman:
         if self.lastBuild and time.time() - self.lastBuild < self.BUILD_DELAY:
             log.debug("ignore %s changed too quick", filePath)
             return False
-        if filePath.suffix != self.configger.suffix:
+        if filePath.suffix != self.builder.suffix:
             return False
         if filePath != self.lastFilePath:
             log.debug("%s != %s", filePath, self.lastFilePath)

@@ -1,3 +1,4 @@
+import pprint
 import re
 import logging
 import typing as t
@@ -15,7 +16,6 @@ class Partial:
     COMMENT_MARK = '#'
     END_OF_LINE_COMMENT_MARK = ' # '
     DEFAULT_NAME = 'default'
-    DEFAULT_MARKER = '# i3configger default'
 
     def __init__(self, path: Path):
         self.path = path
@@ -36,8 +36,6 @@ class Partial:
     @property
     def isDefault(self) -> bool:
         if self.value == self.DEFAULT_NAME:
-            return True
-        if self.DEFAULT_MARKER in self._raw:
             return True
         return False
 
@@ -73,6 +71,7 @@ class Partial:
             prunes.append(line)
         return '\n'.join(prunes)
 
+    # FIXME I think this does not do anything
     @property
     def _joined(self) -> str:
         """Join line continuations.
@@ -83,17 +82,6 @@ class Partial:
     @property
     def _raw(self) -> str:
         return self.path.read_text()
-
-
-def get_content(prts: t.List[Partial], selectorMap: dict,
-                excludes: t.Union[None, t.List]=None) -> str:
-    selected = select(prts, selectorMap, excludes)
-    if not selected:
-        raise exc.I3configgerException(
-            "No content for %s, %s, %s", prts, selectorMap, excludes)
-    if isinstance(selected, list):
-        return ''.join(p.display for p in selected)
-    return selected.display
 
 
 def find(prts: t.List[Partial], key: str, value: str) -> Partial:
@@ -125,6 +113,7 @@ def select(partials: t.List[Partial],
                 _select()
         elif conditionals:
             _select()
+    log.debug("selected:\n%s", pprint.pformat(selected))
     if selector:
         raise exc.ConfigError("not all selector processed: %s", selector)
     return selected[0] if len(selected) == 1 else selected

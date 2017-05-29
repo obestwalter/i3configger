@@ -25,7 +25,7 @@ SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
 
 
 # FIXME adapt to new style
-def get_selector_map(parser, argv):
+def get_selectors(parser, argv):
     log.debug("found extra arguments, reading into selector map ...")
     selectorMap = {}
     leftovers = []
@@ -38,7 +38,7 @@ def get_selector_map(parser, argv):
             key, value = arg[markerLen:].split('=')
             selectorMap[key] = value
     if leftovers:
-        hint = "hint: selectorMap must use the form: --select-<key>=<value>"
+        hint = "hint: selectors must use the form: --select-<key>=<value>"
         parser.error(
             'unrecognized arguments: %s\n%s' % ('; '.join(argv), hint))
     return selectorMap
