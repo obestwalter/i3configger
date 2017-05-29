@@ -1,6 +1,7 @@
 import pprint
 import re
 import logging
+import socket
 import typing as t
 from functools import total_ordering
 from pathlib import Path
@@ -8,6 +9,10 @@ from pathlib import Path
 from i3configger import exc, base
 
 log = logging.getLogger(__name__)
+
+SPECIAL_SELECTORS = {
+    "hostname": socket.gethostname()
+}
 
 
 @total_ordering
@@ -110,6 +115,9 @@ def select(partials: t.List[Partial],
                     partial.value == selector.get(partial.key)):
                 _select()
             elif defaults and partial.isDefault:
+                _select()
+            elif (partial.key in SPECIAL_SELECTORS and
+                    partial.value == SPECIAL_SELECTORS[partial.key]):
                 _select()
         elif conditionals:
             _select()

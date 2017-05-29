@@ -32,7 +32,6 @@ class Builder:
         if not selected:
             raise exc.I3configgerException(
                 "No content for %s, %s, %s", allPrts, self.selectors, excludes)
-
         ctx = context.create(selected)
         self.build_main(selected, ctx)
         if i3s:
