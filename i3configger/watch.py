@@ -67,7 +67,7 @@ class Watchman:
         header, typeNames, filePath = self._get_event_data(event)
         if self.needs_build(header, typeNames, filePath):
             log.info("%s triggered build", filePath)
-            self.configger.build_all()
+            self.configger.build()
             self.lastBuild = time.time()
             self.lastFilePath = filePath
             base.IpcControl.refresh()

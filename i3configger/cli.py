@@ -59,7 +59,7 @@ def main():
         except KeyboardInterrupt:
             sys.exit("bye")
     else:
-        build.Builder(*cnf.configger).build_all()
+        build.Builder(*cnf.configger).build()
         # TODO need a way to refresh i3bar config without restarting i3
         base.IpcControl.refresh()
 

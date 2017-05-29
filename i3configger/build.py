@@ -20,7 +20,7 @@ class Builder:
         self.i3s = base.I3Status(self.sourcePath)
         log.info("initialized %s", self)
 
-    def build_all(self):
+    def build(self):
         prts = partials.create(self.sourcePath, self.suffix)
         ctx = context.create(prts)
         i3s = I3Status(self.sourcePath)
