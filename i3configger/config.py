@@ -72,10 +72,8 @@ class COMMAND:
 
 
 class I3configgerConfig:
-    NAME = "i3configger.json"
-
     def __init__(self, sourcesPath):
-        self.payload = self._read(Path(sourcesPath) / self.NAME)
+        self.payload = self._read(Path(sourcesPath) / CNF_NAME)
         self.configure_main()
         self.configure_i3status()
 

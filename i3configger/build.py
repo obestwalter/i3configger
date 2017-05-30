@@ -28,10 +28,8 @@ class Builder:
     def build(self):
         allPrts = partials.create(self.sourcePath, self.suffix)
         excludes = [self.cnf.marker] if self.cnf.hasStatusConfig else None
-        with open(self.sourcePath / 'saved-selector.json') as f:
-            savedSelector = json.load(f)
         selected = partials.select(
-            allPrts, self.selectors, excludes, savedSelector=savedSelector)
+            allPrts, self.selectors, excludes, self.selectors)
         if not selected:
             raise exc.I3configgerException(
                 "No content for %s, %s, %s", allPrts, self.selectors, excludes)
