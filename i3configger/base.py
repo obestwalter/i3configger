@@ -1,10 +1,7 @@
-import json
 import logging
 import os
-import pprint
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
 from cached_property import cached_property_with_ttl
@@ -14,81 +11,9 @@ from i3configger import exc
 log = logging.getLogger(__name__)
 DEBUG = os.getenv('DEBUG', 0)
 PROJECT_PATH = Path(__file__).parents[1]
-LOG_PATH = Path(tempfile.gettempdir()) / 'i3configger.log'
-I3_PATH = Path('~/.i3').expanduser()
-SOURCES_PATH = I3_PATH / 'config.d'
-TARGET_PATH = I3_PATH / 'config'
-SOURCE_SUFFIX = '.conf'
 VAR_MARK = '$'
 SET_MARK = 'set'
 SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
-
-
-# FIXME adapt to new style
-def get_selectors(parser, argv):
-    log.debug("found extra arguments, reading into selector map ...")
-    selectorMap = {}
-    leftovers = []
-    marker = '--select-'
-    markerLen = len(marker)
-    for arg in argv:
-        if not arg.startswith(marker) or '=' not in arg:
-            leftovers.append(arg)
-        else:
-            key, value = arg[markerLen:].split('=')
-            selectorMap[key] = value
-    if leftovers:
-        hint = "hint: selectors must use the form: --select-<key>=<value>"
-        parser.error(
-            'unrecognized arguments: %s\n%s' % ('; '.join(argv), hint))
-    return selectorMap
-
-
-class I3Status:
-    MARKER = "marker"
-    TEMPLATE = "template"
-    SOURCE = "source"
-    TARGET = "target"
-    DEFAULT_SETTINGS = {MARKER: "i3status", TEMPLATE: "tpl", TARGET: "~/.i3"}
-    BARS = "bars"
-    SETTINGS = "settings"
-    DEFAULTS = "defaults"
-    I3STATUS = "i3status"
-    FILE_NAME = I3STATUS + ".json"
-
-    def __init__(self, sourcePath):
-        path = Path(sourcePath) / self.FILE_NAME
-        log.debug("use %s", path)
-        if not path.exists():
-            log.info("no bar settings - nothing to do")
-            return
-        with path.open() as f:
-            payload = json.load(f)
-        if self.BARS not in payload:
-            log.info("nothing to do - no bars defined in %s", payload)
-            return
-        self.bars = payload[self.BARS]
-        settings = self.DEFAULT_SETTINGS
-        if self.SETTINGS in payload:
-            for key, value in payload[self.SETTINGS].items():
-                settings[key] = value
-        log.info("using settings: %s", pprint.pformat(settings))
-        self.defaults = settings
-        if self.DEFAULTS in payload:
-            self.defaults.update(payload[self.DEFAULTS])
-        else:
-            log.info("no bar defaults - make sure you have everything in bars")
-            self.defaults = {}
-        for _, bar in self.bars.items():
-            for defaultKey, defaultValue in self.defaults.items():
-                if defaultKey not in bar:
-                    bar[defaultKey] = defaultValue
-        self.marker = settings[self.MARKER]
-        self.template = settings[self.TEMPLATE]
-        self.target = settings[self.TARGET]
-
-    def __bool__(self):
-        return hasattr(self, 'bars')
 
 
 class IpcControl:

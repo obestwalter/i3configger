@@ -10,17 +10,17 @@ def test_create():
     prts = partials.create(path, base.SOURCE_SUFFIX)
     assert len(prts) == 4
 
-    # selectorMap = {'scheme': 'solarized-light'}
+    # selectors = {'scheme': 'solarized-light'}
     #
-    # for p in sorted(prts):
-    #     print(p)
+    # for parser in sorted(prts):
+    #     print(parser)
     # print()
     #
     # for sl1 in sorted(partials.select(prts, None)):
     #     print(sl1)
     # print()
     #
-    # for sl2 in sorted(partials.select(prts, selectorMap)):
+    # for sl2 in sorted(partials.select(prts, selectors)):
     #     print(sl2)
     # print()
     #

@@ -97,8 +97,8 @@ def find(prts: t.List[Partial], key: str, value: str) -> Partial:
 
 def select(partials: t.List[Partial],
            selector: t.Union[None, dict],
-           excludes: t.Union[None, t.List]=None,
-           conditionals=True, defaults=True) \
+           excludes: t.Union[None, t.List[str]]=None,
+           unconditionals=True, defaults=True, savedSelector=None) \
         -> t.Union[None, Partial, t.List[Partial]]:
     def _select():
         selected.append(partial)
@@ -119,7 +119,13 @@ def select(partials: t.List[Partial],
             elif (partial.key in SPECIAL_SELECTORS and
                     partial.value == SPECIAL_SELECTORS[partial.key]):
                 _select()
-        elif conditionals:
+            else:
+                try:
+                    if savedSelector[partial.key] == partial.value:
+                        _select()
+                except KeyError:
+                        pass
+        elif unconditionals:
             _select()
     log.debug("selected:\n%s", pprint.pformat(selected))
     if selector:
