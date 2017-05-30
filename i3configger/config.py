@@ -1,12 +1,33 @@
 import json
 import logging
 import pprint
-import tempfile
 from pathlib import Path
 
 from i3configger import exc
 
 log = logging.getLogger(__name__)
+CNF_NAME = 'i3configger.json'
+_DEFAULT_CNF_PATH = Path(__file__).parent
+
+
+def get_config(sources) -> dict:
+    path = Path(sources).expanduser() / CNF_NAME
+    if sources != _DEFAULT_CNF_PATH and not path.exists():
+        log.info("create a new config from default at %s", path)
+        freeze_config(sources, cnf)
+        return cnf
+    log.info("read config from %s", path)
+    with open(path) as f:
+        return json.load(f)
+
+
+cnf = get_config(_DEFAULT_CNF_PATH)
+
+
+def freeze_config(sources, obj):
+    path = Path(sources).expanduser() / CNF_NAME
+    with open(path, 'w') as f:
+        json.dump(obj, f, sort_keys=True, indent=4)
 
 
 class DEFAULT:
@@ -14,11 +35,10 @@ class DEFAULT:
 
     command line wins over config file, wins over defaults
     """
-    I3_PATH = Path('~/.i3').expanduser()
-    LOG_PATH = Path(tempfile.gettempdir()) / 'i3configger.log'
-    SOURCES_PATH = I3_PATH / 'config.d'
-    SOURCE_SUFFIX = '.conf'
-    TARGET_PATH = I3_PATH / 'config'
+    _default = cnf['default']
+    sources = _default['sources']
+    suffix = _default['suffix']
+    target = _default['target']
 
 
 class KEY:

@@ -6,8 +6,7 @@ from pathlib import Path
 from inotify import constants as ic
 from inotify.adapters import Inotify
 
-from i3configger import base
-from i3configger.build import Builder
+from i3configger import build, ipc
 
 log = logging.getLogger(__name__)
 
@@ -29,7 +28,7 @@ class Watchman:
     """Tell inotify to trigger on changes"""
 
     def __init__(self, builderArgs):
-        self.builder = Builder(*builderArgs)
+        self.builder = build.Builder(*builderArgs)
         self.configPath = str(self.builder.sourcePath).encode()
         self.lastBuild = None
         self.lastFilePath = None
@@ -70,8 +69,8 @@ class Watchman:
             self.builder.build()
             self.lastBuild = time.time()
             self.lastFilePath = filePath
-            base.IpcControl.refresh()
-            base.IpcControl.notify_send('new config active')
+            ipc.I3msg.refresh()
+            ipc.Notify.send('new config active')
 
     @staticmethod
     def _get_event_data(event):
