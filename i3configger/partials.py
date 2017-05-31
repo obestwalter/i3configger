@@ -104,9 +104,9 @@ def find(prts: t.List[Partial], key: str, value: str= None) \
 
 def select(partials: t.List[Partial],
            selector: t.Optional[dict],
-           excludes: t.Optional[t.List[str], t.Set[str]]=None,
+           excludes: t.Union[None, t.List[str], t.Set[str]]=None,
            unconditionals=True, defaults=True, savedSelector=None) \
-        -> t.Optional[Partial, t.List[Partial]]:
+        -> t.Union[None, Partial, t.List[Partial]]:
     def _select():
         selected.append(partial)
         if partial.key in selector:

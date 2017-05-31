@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 def main():
     args = cli.process_command_line()
     if args.init:
-        config.init_i3configger(args.config)
+        config.init(args.config)
         return 0
     if args.kill:
         daemonize.exorcise()

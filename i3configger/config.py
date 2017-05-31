@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 NAME = 'i3configger.json'
 
 
-def init_i3configger(path):
+def init(path):
     path = get_config_path(init=True, override=path)
     if path.exists():
         raise exc.ConfigError(f"{path} exists already, remove it first.")
