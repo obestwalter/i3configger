@@ -21,8 +21,9 @@ def create(prts: t.List[partials.Partial]) -> dict:
 
 def remove_variable_markers(ctx: dict) -> dict:
     cleaned = {}
+    lvm = len(base.VAR_MARK)
     for key, value in ctx.items():
-        key = key[1:] if key.startswith(base.VAR_MARK) else key
+        key = key[lvm:] if key.startswith(base.VAR_MARK) else key
         cleaned[key] = value
     return cleaned
 
