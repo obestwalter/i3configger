@@ -15,7 +15,7 @@ def get_other_i3configgers():
     return [p for p in others if p.pid != os.getpid()]
 
 
-def daemonize(verbosity, logPath, configgerArgs):
+def daemonize(verbosity, logPath, cnf):
     others = get_other_i3configgers()
     if others:
         sys.exit("i3configger already running (%s)" % others)
@@ -34,7 +34,7 @@ def daemonize(verbosity, logPath, configgerArgs):
         context.stderr = sys.stderr
     with context:
         configure_logging(verbosity, logPath, isDaemon=True)
-        Watchman(configgerArgs).watch_guarded()
+        Watchman(cnf).watch_guarded()
 
 
 def exorcise():
