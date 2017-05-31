@@ -95,10 +95,10 @@ def find(prts: t.List[Partial], key: str, value: str= None) \
     for prt in prts:
         if prt.key != key:
             continue
-        if not value:
-            findings.append(prt)
-        elif prt.value == value:
+        if prt.value == value:
             return prt
+        elif not value:
+            findings.append(prt)
     return findings
 
 
