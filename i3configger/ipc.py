@@ -4,7 +4,7 @@ from i3configger.base import log
 
 
 # todo use Adaephons i3 library
-class I3msg:
+class I3:
     @classmethod
     def set_msg_type(cls, which):
         cls.refresh = {
@@ -48,3 +48,10 @@ class Notify:
     def send(cls, msg, urgency='low'):
         subprocess.check_call([
             'notify-send', '-a', 'i3configger', '-t', '1', '-u', urgency, msg])
+
+
+class StatusBar:
+    @classmethod
+    def refresh(cls):
+        # TODO Hopefully this reloads the config?
+        subprocess.check_call(['killall', '-SIGUSR1', 'i3status'])
