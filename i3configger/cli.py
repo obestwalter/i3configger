@@ -1,10 +1,9 @@
 import argparse
 import logging
-import tempfile
 from pathlib import Path
 
-from i3configger import __version__, exc, base, config
-from i3configger.config import COMMAND, DEFAULT
+from i3configger import __version__, base, exc
+from i3configger.build import COMMAND
 
 log = logging.getLogger(__name__)
 
@@ -15,15 +14,13 @@ def process_command_line():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     args, command = _parse_known(parser)
     base.configure_logging(verbosity=args.v, logPath=args.log)
-    args.sources = Path(args.sources)
     verify_command(command)
-    args.build = (args.sources, Path(args.target), args.suffix, command)
-    if command and (args.daemon or args.kill or args.watch):
+    args.config = Path(args.config).expanduser() if args.config else None
+    args.command = command
+    if command and any([args.daemon, args.kill, args.watch, args.init]):
         parser.error(
-            'commands and daemon/watch actions not possible together: %s;%s' %
+            "'commands and daemon/watch/init can't be used together: %s;%s" %
             (args, command))
-    del args.target
-    del args.suffix
     return args
 
 
@@ -32,8 +29,6 @@ def _parse_known(p):
     p.add_argument('--version', action='version',
                    version="%s %s" % (p.prog, __version__))
     p.add_argument('-v', action="count", help="raise verbosity", default=0)
-    p.add_argument('--sources', action="store",
-                   default=DEFAULT.sources, help="path to sources")
     g = p.add_mutually_exclusive_group()
     g.add_argument('--watch', action="store_true",
                    help="watch and build in foreground", default=False)
@@ -44,9 +39,15 @@ def _parse_known(p):
     p.add_argument('--i3-refresh-msg', action="store", default='restart',
                    choices=['restart', 'reload', 'nop'],
                    help="i3-msg to send after build")
-    _logs = str(Path(tempfile.gettempdir()) / 'i3configger.log')
-    p.add_argument('--log', action="store", default=_logs,
+    p.add_argument('--log', action="store", default=None,
                    help="path to where log should be stored")
+    p.add_argument('-c', '--config', action="store",
+                   default=None, help="path to config file")
+    p.add_argument('--init', action="store_true", default=False,
+                   help="create default config in your i3 folder or at path"
+                        "passed in with -c|--config (this will never be found"
+                        "automatically then and has to be passed with every "
+                        "call to i3configger).")
     p.add_argument("command", help="command to give to i3configger", nargs="*")
     return p.parse_known_args()
 
