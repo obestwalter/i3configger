@@ -142,22 +142,19 @@ class COMMAND:
                 prts: t.List[partials.Partial],
                 cnf: config.I3configgerConfig,
                 command: list):
-        action, *rest = command
+        action, key, *rest = command
+        value = rest[0] if rest else None
         if action in [cls.SELECT_NEXT, cls.SELECT_PREVIOUS]:
-            key = rest[0]
             candidates = partials.find(prts, key)
             if not candidates:
                 raise exc.CommandError(f"No candidates for {command}")
             current = cnf.select.get(key) or candidates[-1]
             new = cls.FUNC_MAP[action](current, candidates)
             cnf.select[key] = new.value
-            return
-        key, value = rest
-        if action == cls.SELECT:
+        elif action == cls.SELECT:
             candidate = partials.find(prts, key, value)
             if not candidate:
                 raise exc.CommandError(f"No candidate for {command}")
             cnf.select[key] = candidate.value
-            return
-        if action == cls.SET:
+        elif action == cls.SET:
             cnf.set[key] = value
