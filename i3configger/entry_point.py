@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from i3configger import cli, base, build, config, daemonize, ipc, watch
+from i3configger import cli, build, config, daemonize, ipc, watch
 
 log = logging.getLogger(__name__)
 

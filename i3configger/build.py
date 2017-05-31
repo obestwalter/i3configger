@@ -29,7 +29,7 @@ class Builder:
             raise exc.I3configgerException(
                 "no content for %s, %s, %s", prts, self.cnf)
         ctx = context.create(selected)
-        rawContent = self.get_header()
+        rawContent = self.make_header()
         rawContent += '\n'.join(prt.display for prt in prts)
         if self.cnf.bars:
             rawContent += self.make_bars(prts, ctx)
@@ -74,7 +74,7 @@ class Builder:
         """
         return Template(content).safe_substitute(ctx)
 
-    def get_header(self):
+    def make_header(self):
         msg = (f'# Generated from {self.cnf.partialsPath} by i3configger '
                f'({time.asctime()}) #')
         sep = "#" * len(msg)

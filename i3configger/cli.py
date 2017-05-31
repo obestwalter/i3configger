@@ -2,7 +2,7 @@ import argparse
 import logging
 from pathlib import Path
 
-from i3configger import __version__, base, build, exc
+from i3configger import __version__, base, config, exc
 
 log = logging.getLogger(__name__)
 
@@ -43,10 +43,10 @@ def _parse_known(p):
     p.add_argument('-c', '--config', action="store",
                    default=None, help="i3configgerPath to config file")
     p.add_argument('--init', action="store_true", default=False,
-                   help="create default config in your i3 folder or at i3configgerPath"
-                        "passed in with -c|--config (this will never be found"
-                        "automatically then and has to be passed with every "
-                        "call to i3configger).")
+                   help="create default config in your i3 folder or at "
+                        "i3configgerPathpassed in with -c|--config (this will "
+                        "never be foundautomatically then and has to be passed "
+                        "with every call to i3configger).")
     p.add_argument("message", help="message to send to i3configger", nargs="*")
     return p.parse_known_args()
 
@@ -57,7 +57,7 @@ def check_sanity(message):
         return
     log.debug("processing %s", message)
     command, *rest = args
-    spec = build.Message.get_spec(command)
+    spec = config.Message.get_spec(command)
     if len(rest) != spec:
         raise exc.I3configgerException(
             f"message '{command}' needs {spec} args - got: {rest}")

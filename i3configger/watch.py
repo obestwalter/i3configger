@@ -29,7 +29,8 @@ class Watchman:
 
     def __init__(self, cnf):
         self.builder = build.Builder(cnf)
-        self.partialsPath = str(self.builder.partialsPath).encode()
+        self.partialsPath = str(cnf.partialsPath).encode()
+        self.suffix = cnf.suffix
         self.lastBuild = None
         self.lastFilePath = None
         self.errors = 0
@@ -86,7 +87,7 @@ class Watchman:
         if self.lastBuild and time.time() - self.lastBuild < self.BUILD_DELAY:
             log.debug("ignore %s changed too quick", filePath)
             return False
-        if filePath.suffix != self.builder.suffix:
+        if filePath.suffix != self.suffix:
             return False
         if filePath != self.lastFilePath:
             log.debug("%s != %s", filePath, self.lastFilePath)

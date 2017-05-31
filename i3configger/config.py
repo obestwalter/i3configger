@@ -49,8 +49,8 @@ def get_config_path(init=False, override=None):
     else:
         if not path.exists():
             msg = "Is i3 installed? I Can't find any config locations. " \
-                  "Pass the i3configgerPath to your i3configger config directly or run " \
-                  "'i3configger --init' first"
+                  "Pass the i3configgerPath to your i3configger config " \
+                  "directly or run 'i3configger --init' first"
             raise exc.ConfigError(msg)
         if path.is_dir():
             raise exc.ConfigError(
