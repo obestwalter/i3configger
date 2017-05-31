@@ -1,12 +1,12 @@
+import logging
 import pprint
 import re
-import logging
 import socket
 import typing as t
 from functools import total_ordering
 from pathlib import Path
 
-from i3configger import exc, base
+from i3configger import base, exc
 
 log = logging.getLogger(__name__)
 
