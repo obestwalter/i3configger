@@ -9,7 +9,13 @@ Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `~/.i3
 * To be able to also use variables in i3status configurations
 * To be able to change the config dynamically without having to manually make changes to the config file
 
-## Usage
+## Getting started
+
+
+    $ i3configger --init [/path/to/your/i3/config/dir]
+
+If you use the standard location for saving your config (`~/.i3`)
+* Creates a backup copy of your config (config.bak)
 
 ### Simple
 

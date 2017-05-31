@@ -1,5 +1,5 @@
 {
-  "command": {
+  "message": {
     "set" : {},
     "select": {}
   },
@@ -9,12 +9,12 @@
     "suffix": ".conf",
     "target": "~/.i3"
   },
-  "status": {
-    "bars": {},
-    "default": {
+  "bars": {
+    "defaults": {
       "target": "~/.i3",
       "marker": "i3status",
       "template": "tpl"
-    }
+    },
+    "bars": {}
   }
 }

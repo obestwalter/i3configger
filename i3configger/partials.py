@@ -140,9 +140,8 @@ def select(partials: t.List[Partial],
     return selected[0] if len(selected) == 1 else selected
 
 
-def create(sourcePath: Path, suffix: str) -> t.List[Partial]:
-    prts = [Partial(p) for p in sourcePath.glob('*%s' % suffix)]
+def create(partialsPath: Path, suffix: str) -> t.List[Partial]:
+    prts = [Partial(p) for p in partialsPath.glob('*%s' % suffix)]
     if not prts:
-        raise exc.I3configgerException(
-            "no partials found at %s with suffix '%s'", sourcePath, suffix)
+        raise exc.PartialsError(f"no '*.{suffix}' at {partialsPath}")
     return sorted(prts)

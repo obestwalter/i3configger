@@ -9,6 +9,14 @@ class I3configgerException(Exception):
             super().__init__(*args, **kwargs)
 
 
+class MessageError(I3configgerException):
+    pass
+
+
+class ConfigError(I3configgerException):
+    pass
+
+
 class DuplicateKey(I3configgerException):
     pass
 
@@ -17,9 +25,9 @@ class MalformedAssignment(I3configgerException):
     pass
 
 
-class ParseError(I3configgerException):
+class PartialsError(I3configgerException):
     pass
 
 
-class ConfigError(I3configgerException):
+class ParseError(I3configgerException):
     pass

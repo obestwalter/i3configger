@@ -21,25 +21,25 @@ class Builder:
         return "%s\n%s" % (self.__class__.__name__, pprint.pformat(vars(self)))
 
     def build(self):
-        if self.cnf.command:
-            COMMAND.execute(self, command)
+        prts = partials.create(
+            Path(self.cnf.settings['partials']), self.cnf.settings['suffix'])
+        if self.cnf.message:
+            Message.process(self.cnf, prts)
 
         targetPath = Path(self.cnf.settings['target'])
         name = self.cnf.settings['name']
 
-        allPrts = partials.create(
-            Path(self.cnf.settings['partials']), self.cnf.settings['suffix'])
 
         excludes = [self.cnf.marker] if self.cnf.hasStatusConfig else None
         selected = partials.select(
-            allPrts, self.selectors, excludes, self.selectors)
+            prts, self.selectors, excludes, self.selectors)
         if not selected:
             raise exc.I3configgerException(
-                "No content for %s, %s, %s", allPrts, self.selectors, excludes)
+                "No content for %s, %s, %s", prts, self.selectors, excludes)
         ctx = context.create(selected)
         self.build_main(selected, ctx)
         if self.cnf.hasStatusConfig:
-            self.build_i3status(allPrts, ctx)
+            self.build_i3status(prts, ctx)
         if self.buildIsOk():
             self.replace_configs()
 
@@ -101,60 +101,3 @@ class Builder:
     def replace_configs(self):
         raise NotImplementedError()
         # Go through stagingMap and replace all files
-
-
-class COMMAND:
-    """commands issued from the command line can change the configuration,
-
-    Tuple contains name and number of expected additional arguments
-    """
-    SELECT_NEXT = ("select-next", 1)
-    SELECT_PREVIOUS = ("select-previous", 1)
-    SELECT = ("select", 2)
-    SET = ("set", 2)
-    _ALL = [SELECT_NEXT, SELECT_NEXT, SELECT, SET]
-
-    @staticmethod
-    def _next(current, items: list):
-        try:
-            return items[items.index(current) + 1]
-        except IndexError:
-            return items[0]
-
-    @staticmethod
-    def _previous(current, items: list):
-        try:
-            return items[items.index(current) - 1]
-        except IndexError:
-            return items[-1]
-
-    FUNC_MAP = {SELECT_NEXT: _next, SELECT_PREVIOUS: _previous}
-
-    @classmethod
-    def get_spec(cls, command):
-        for c in cls._ALL:
-            if c[0] == command:
-                return c[1]
-        raise exc.I3configgerException(f"unknown command: {command}")
-
-    @classmethod
-    def execute(cls,
-                prts: t.List[partials.Partial],
-                cnf: config.I3configgerConfig,
-                command: list):
-        action, key, *rest = command
-        value = rest[0] if rest else None
-        if action in [cls.SELECT_NEXT, cls.SELECT_PREVIOUS]:
-            candidates = partials.find(prts, key)
-            if not candidates:
-                raise exc.CommandError(f"No candidates for {command}")
-            current = cnf.select.get(key) or candidates[-1]
-            new = cls.FUNC_MAP[action](current, candidates)
-            cnf.select[key] = new.value
-        elif action == cls.SELECT:
-            candidate = partials.find(prts, key, value)
-            if not candidate:
-                raise exc.CommandError(f"No candidate for {command}")
-            cnf.select[key] = candidate.value
-        elif action == cls.SET:
-            cnf.set[key] = value

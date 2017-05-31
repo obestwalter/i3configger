@@ -27,9 +27,9 @@ class Watchman:
         ic.IN_DELETE_SELF | ic.IN_MOVE_SELF)
     """Tell inotify to trigger on changes"""
 
-    def __init__(self, builderArgs):
-        self.builder = build.Builder(*builderArgs)
-        self.configPath = str(self.builder.sourcePath).encode()
+    def __init__(self, cnf):
+        self.builder = build.Builder(cnf)
+        self.partialsPath = str(self.builder.partialsPath).encode()
         self.lastBuild = None
         self.lastFilePath = None
         self.errors = 0
@@ -56,7 +56,7 @@ class Watchman:
 
     def _get_events(self):
         inotify_watcher = Inotify()
-        inotify_watcher.add_watch(self.configPath, mask=self.MASK)
+        inotify_watcher.add_watch(self.partialsPath, mask=self.MASK)
         for event in inotify_watcher.event_gen():
             if not event:
                 continue
@@ -69,7 +69,8 @@ class Watchman:
             self.builder.build()
             self.lastBuild = time.time()
             self.lastFilePath = filePath
-            ipc.I3msg.refresh()
+            ipc.I3.refresh()
+            ipc.StatusBar.refresh()
             ipc.Notify.send('new config active')
 
     @staticmethod

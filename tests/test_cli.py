@@ -23,9 +23,9 @@ from i3configger import cli, exc
         (['previous', 'scheme', 'extra'], False),
     )
 )
-def test_make_command(args, exp):
+def test_check_sanity(args, exp):
     if exp:
-        cli.verify_command(args)
+        cli.check_sanity(args)
     else:
         with pytest.raises(exc.I3configgerException):
-            cli.verify_command(args)
+            cli.check_sanity(args)
