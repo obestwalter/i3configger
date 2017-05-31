@@ -167,7 +167,8 @@ class Message:
     def process(cls, message: list, cnf: I3configgerConfig):
         command, key, *rest = message
         value = rest[0] if rest else None
-        prts = partials.select(cnf.settings)
+        prts = partials.select(
+            partials.create(cnf.partialsPath, cnf.suffix), cnf.select)
         if command in [cls.SELECT_NEXT, cls.SELECT_PREVIOUS]:
             candidates = partials.find(prts, key)
             if not candidates:
