@@ -1,13 +1,15 @@
 import logging
 import os
 import sys
+import tempfile
+from pathlib import Path
 
 from cached_property import cached_property_with_ttl
 
 from i3configger import exc
 
 log = logging.getLogger(__name__)
-DEBUG = os.getenv('DEBUG', 0)
+DEBUG = os.getenv('DEBUG', 1)  # FIXME deactivate before next release
 VAR_MARK = '$'
 SET_MARK = 'set'
 SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
@@ -15,7 +17,10 @@ SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
 
 def configure_logging(verbosity: int, logPath: str, isDaemon=False):
     rootLogger = logging.getLogger()
+    _log = str(Path(tempfile.gettempdir()) / 'i3configger.log')
+    logPath = Path(logPath).expanduser() if logPath else _log
     if DEBUG:
+        print('logging to %s' % logPath)
         level = 'DEBUG'
     else:
         level = logging.getLevelName(
