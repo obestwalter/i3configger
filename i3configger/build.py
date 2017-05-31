@@ -1,4 +1,3 @@
-import json
 import logging
 import pprint
 import time
@@ -6,27 +5,31 @@ import typing as t
 from pathlib import Path
 from string import Template
 
-from i3configger import base, config, context, partials, exc
+from i3configger import config, context, exc, partials
 
 log = logging.getLogger(__name__)
 
 
 class Builder:
-    def __init__(self, sourcePath: Path, targetPath: Path, suffix: str,
-                 selectors: t.Union[None, dict]=None, command=None):
-        self.sourcePath = sourcePath
-        self.mainTargetPath = targetPath
-        self.suffix = suffix
-        self.selectors = selectors or {}
-        self.command = command   # TODO do something with this (but only once)
-        self.cnf = config.I3configgerConfig(self.sourcePath)
+    def __init__(self, cnf: config.I3configgerConfig):
+        self.cnf = cnf
+        self.stagingPathMap = {}
+        """staging path -> final location"""
         log.info("initialized %s", self)
 
     def __str__(self):
         return "%s\n%s" % (self.__class__.__name__, pprint.pformat(vars(self)))
 
     def build(self):
-        allPrts = partials.create(self.sourcePath, self.suffix)
+        if self.cnf.command:
+            COMMAND.execute(self, command)
+
+        targetPath = Path(self.cnf.settings['target'])
+        name = self.cnf.settings['name']
+
+        allPrts = partials.create(
+            Path(self.cnf.settings['partials']), self.cnf.settings['suffix'])
+
         excludes = [self.cnf.marker] if self.cnf.hasStatusConfig else None
         selected = partials.select(
             allPrts, self.selectors, excludes, self.selectors)
@@ -37,6 +40,8 @@ class Builder:
         self.build_main(selected, ctx)
         if self.cnf.hasStatusConfig:
             self.build_i3status(allPrts, ctx)
+        if self.buildIsOk():
+            self.replace_configs()
 
     def build_main(self, prts, ctx):
         content = '\n'.join(prt.display for prt in prts)
@@ -87,3 +92,72 @@ class Builder:
                f'({time.asctime()}) #')
         sep = "#" * len(msg)
         return "%s\n%s\n%s" % (sep, msg, sep)
+
+    @property
+    def buildIsOk(self):
+        raise NotImplementedError()
+        # check with i3 -C if config is o.k.
+
+    def replace_configs(self):
+        raise NotImplementedError()
+        # Go through stagingMap and replace all files
+
+
+class COMMAND:
+    """commands issued from the command line can change the configuration,
+
+    Tuple contains name and number of expected additional arguments
+    """
+    SELECT_NEXT = ("select-next", 1)
+    SELECT_PREVIOUS = ("select-previous", 1)
+    SELECT = ("select", 2)
+    SET = ("set", 2)
+    _ALL = [SELECT_NEXT, SELECT_NEXT, SELECT, SET]
+
+    @staticmethod
+    def _next(current, items: list):
+        try:
+            return items[items.index(current) + 1]
+        except IndexError:
+            return items[0]
+
+    @staticmethod
+    def _previous(current, items: list):
+        try:
+            return items[items.index(current) - 1]
+        except IndexError:
+            return items[-1]
+
+    FUNC_MAP = {SELECT_NEXT: _next, SELECT_PREVIOUS: _previous}
+
+    @classmethod
+    def get_spec(cls, command):
+        for c in cls._ALL:
+            if c[0] == command:
+                return c[1]
+        raise exc.I3configgerException(f"unknown command: {command}")
+
+    @classmethod
+    def execute(cls,
+                prts: t.List[partials.Partial],
+                cnf: config.I3configgerConfig,
+                command: list):
+        action, *rest = command
+        if action in [cls.SELECT_NEXT, cls.SELECT_PREVIOUS]:
+            key = rest[0]
+            candidates = partials.find(prts, key)
+            if not candidates:
+                raise exc.CommandError(f"No candidates for {command}")
+            current = cnf.select.get(key) or candidates[-1]
+            new = cls.FUNC_MAP[action](current, candidates)
+            cnf.select[key] = new.value
+            return
+        key, value = rest
+        if action == cls.SELECT:
+            candidate = partials.find(prts, key, value)
+            if not candidate:
+                raise exc.CommandError(f"No candidate for {command}")
+            cnf.select[key] = candidate.value
+            return
+        if action == cls.SET:
+            cnf.set[key] = value
