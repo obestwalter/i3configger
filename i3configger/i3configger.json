@@ -1,14 +1,17 @@
 {
-  "bars": {},
-  "default": {
-    "sources": "~/.i3/config.d",
-    "target": "~/.i3/config",
-    "suffix": ".conf"
+  "command": {
+    "set" : {},
+    "select": {}
   },
-  "set" : {},
-  "select": {},
+  "settings": {
+    "name": "config",
+    "partials": "~/.i3/config.d",
+    "suffix": ".conf",
+    "target": "~/.i3"
+  },
   "status": {
-    "defaults": {
+    "bars": {},
+    "default": {
       "target": "~/.i3",
       "marker": "i3status",
       "template": "tpl"
