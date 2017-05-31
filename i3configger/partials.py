@@ -89,10 +89,17 @@ class Partial:
         return self.path.read_text()
 
 
-def find(prts: t.List[Partial], key: str, value: str) -> Partial:
+def find(prts: t.List[Partial], key: str, value: str= None) \
+        -> t.Union[Partial, t.List[Partial]]:
+    findings = []
     for prt in prts:
-        if prt.key == key and prt.value == value:
+        if prt.key != key:
+            continue
+        if not value:
+            findings.append(prt)
+        elif prt.value == value:
             return prt
+    return findings
 
 
 def select(partials: t.List[Partial],
