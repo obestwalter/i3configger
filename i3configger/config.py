@@ -67,13 +67,14 @@ class KEY:
     NAME = "name"
     PARTIALS = "partials"
     SETTINGS = "settings"
+    SELECTOR = "selector"
     SUFFIX = "suffix"
     TARGET = "target"
     TEMPLATE = "template"
 
 
 class I3configgerConfig:
-    def __init__(self, configPath, message: list=None):
+    def __init__(self, configPath, message: list=None, freeze=True):
         # TODO checks with helpful errors for screwed up configurations
         self.configPath = Path(configPath)
         self.payload = self.read(self.configPath)
@@ -87,21 +88,24 @@ class I3configgerConfig:
         msgMap = self.payload.get(KEY.MESSAGE, {})
         self.set = msgMap.get(Message.SET[0], {})
         self.select = msgMap.get(Message.SELECT[0], {})
+        bars = self.payload.get(KEY.BARS, {})
+        self.bars = self.resolve_bars(bars)
+        log.debug("initialized config  %s", self)
         if message:
             Message.process(message, self)
-        bars = self.payload.get(KEY.BARS, {})
-        self.bars = self.make_bars_config(bars)
-        log.debug("initialized config  %s", self)
+            if freeze:
+                log.info("freezing config to %s", self.configPath)
+                self._freeze()
 
     def __str__(self):
         return "%s:\n%s" % (self.__class__.__name__,
                             pprint.pformat(vars(self.__class__)))
 
-    def make_bars_config(self, incoming):
+    def resolve_bars(self, incoming):
         defaults = incoming.get(KEY.DEFAULTS, {})
         bars = incoming.get(KEY.BARS)
         if not bars:
-            return
+            return {}
         resolvedBars = {}
         for name, bar in self.bars.items():
             for defaultKey, defaultValue in defaults.items():
@@ -167,19 +171,21 @@ class Message:
     def process(cls, message: list, cnf: I3configgerConfig):
         command, key, *rest = message
         value = rest[0] if rest else None
-        prts = partials.select(
-            partials.create(cnf.partialsPath, cnf.suffix), cnf.select)
-        if command in [cls.SELECT_NEXT, cls.SELECT_PREVIOUS]:
-            candidates = partials.find(prts, key)
-            if not candidates:
-                raise exc.MessageError(f"No candidates for {message}")
-            current = cnf.select.get(key) or candidates[-1]
-            new = cls.FUNC_MAP[command](current, candidates)
-            cnf.select[key] = new.value
-        elif command == cls.SELECT:
-            candidate = partials.find(prts, key, value)
-            if not candidate:
-                raise exc.MessageError(f"No candidate for {message}")
-            cnf.select[key] = candidate.value
-        elif command == cls.SET:
+        log.debug(f"sending message {message} to {cnf}")
+        if command == cls.SET:
             cnf.set[key] = value
+        else:
+            prts = partials.create(cnf.partialsPath, cnf.suffix)
+            prts = partials.select(prts, cnf.select)
+            if command in [cls.SELECT_NEXT, cls.SELECT_PREVIOUS]:
+                candidates = partials.find(prts, key)
+                if not candidates:
+                    raise exc.MessageError(f"No candidates for {message}")
+                current = cnf.select.get(key) or candidates[-1]
+                new = cls.FUNC_MAP[command](current, candidates)
+                cnf.select[key] = new.value
+            elif command == cls.SELECT:
+                candidate = partials.find(prts, key, value)
+                if not candidate:
+                    raise exc.MessageError(f"No candidate for {message}")
+                cnf.select[key] = candidate.value

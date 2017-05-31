@@ -42,6 +42,16 @@ class I3:
                 log.debug("[IGNORE] exit 1 is ok for restart")
                 return True
 
+    @classmethod
+    def config_is_ok(cls, path):
+        cmd = ['i3', '-C', str(path)]
+        try:
+            subprocess.check_output(cmd)
+            return True
+        except subprocess.CalledProcessError as e:
+            Notify.send(f"error in {path}:\n{e.output}")
+            return False
+
 
 class Notify:
     @classmethod

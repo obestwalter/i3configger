@@ -6,7 +6,7 @@ from i3configger import base, exc, partials
 log = logging.getLogger(__name__)
 
 
-def create(prts: t.List[partials.Partial]) -> dict:
+def create(prts: t.Iterable[partials.Partial]) -> dict:
     """Read variables from all partials into a dictionary and resolve them."""
     ctx = {}
     for context in [fetch(p.payload) for p in prts]:

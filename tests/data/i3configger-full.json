@@ -5,7 +5,7 @@
   },
   "defaults": {
     "font": "some default font",
-    "source": "some default source"
+    "selector": "some default source"
   },
   "bars": {
     "first bar": {
@@ -14,7 +14,7 @@
     },
     "second bar": {
       "output": "second output",
-      "source": "should override source default"
+      "selector": "should override source default"
     }
   }
 }

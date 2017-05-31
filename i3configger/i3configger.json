@@ -11,8 +11,9 @@
   },
   "bars": {
     "defaults": {
-      "target": "~/.i3",
       "marker": "i3status",
+      "selector": "full",
+      "target": "~/.i3",
       "template": "tpl"
     },
     "bars": {}
