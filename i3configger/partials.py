@@ -24,11 +24,11 @@ class Partial:
 
     def __init__(self, path: Path):
         self.path = path
-        self.name = self.path.name
+        self.name = self.path.stem
         self.selectors = self.path.stem.split('.')
-        self.conditional = len(self.selectors) > 1
-        self.key = self.selectors[0] if self.conditional else None
-        self.value = self.selectors[1] if self.conditional else None
+        self.needsSelection = len(self.selectors) > 1
+        self.key = self.selectors[0] if self.needsSelection else None
+        self.value = self.selectors[1] if self.needsSelection else None
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, self.path.name)
@@ -37,12 +37,6 @@ class Partial:
 
     def __lt__(self, other):
         return self.name < other.name
-
-    @property
-    def isDefault(self) -> bool:
-        if self.value == self.DEFAULT_NAME:
-            return True
-        return False
 
     @property
     def display(self) -> str:
@@ -103,45 +97,36 @@ def find(prts: t.List[Partial], key: str, value: str= None) \
 
 
 def select(partials: t.List[Partial],
-           selector: t.Optional[dict],
-           excludes: t.Union[None, t.List[str], t.Set[str]]=None,
-           unconditionals=True, defaults=True, savedSelector=None) \
+           selection: t.Optional[dict],
+           excludes: t.Union[None, t.List[str], t.Set[str]]=None) \
         -> t.Union[None, Partial, t.List[Partial]]:
     def _select():
         selected.append(partial)
-        if partial.key in selector:
-            del selector[partial.key]
+        if partial.needsSelection:
+            del selection[partial.key]
 
     selected = []
     for partial in partials:
-        if partial.conditional:
+        if partial.needsSelection:
             if excludes and partial.key in excludes:
                 log.debug("[IGNORE] %s (in %s)", partial, excludes)
                 continue
-            if (selector and partial.key in selector and
-                    partial.value == selector.get(partial.key)):
-                _select()
-            elif defaults and partial.isDefault:
+            if (selection and partial.key in selection and
+                    partial.value == selection.get(partial.key)):
                 _select()
             elif (partial.key in SPECIAL_SELECTORS and
                     partial.value == SPECIAL_SELECTORS[partial.key]):
                 _select()
-            else:
-                try:
-                    if savedSelector[partial.key] == partial.value:
-                        _select()
-                except KeyError:
-                        pass
-        elif unconditionals:
+        else:
             _select()
     log.debug("selected:\n%s", pprint.pformat(selected))
-    if selector:
-        raise exc.ConfigError("not all selector processed: %s", selector)
+    if selection:
+        raise exc.ConfigError("selection processed incompletely: %s", selection)
     return selected[0] if len(selected) == 1 else selected
 
 
-def create(partialsPath: Path, suffix: str) -> t.List[Partial]:
-    prts = [Partial(p) for p in partialsPath.glob('*%s' % suffix)]
+def create(partialsPath: Path) -> t.List[Partial]:
+    prts = [Partial(p) for p in partialsPath.glob('*%s' % base.SUFFIX)]
     if not prts:
-        raise exc.PartialsError(f"no '*.{suffix}' at {partialsPath}")
+        raise exc.PartialsError(f"no '*{base.SUFFIX}' at {partialsPath}")
     return sorted(prts)

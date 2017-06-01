@@ -1,21 +1,18 @@
 {
+  "main": {
+    "target": "../config"
+  },
   "message": {
     "set" : {},
     "select": {}
   },
-  "settings": {
-    "name": "config",
-    "partials": "~/.i3/config.d",
-    "suffix": ".conf",
-    "target": "~/.i3"
-  },
   "bars": {
     "defaults": {
-      "marker": "i3status",
-      "selector": "full",
-      "target": "~/.i3",
+      "select-key": "i3status",
+      "select-value": "full",
+      "target": "..",
       "template": "tpl"
     },
-    "bars": {}
+    "targets": {}
   }
 }

@@ -2,7 +2,7 @@ import argparse
 import logging
 from pathlib import Path
 
-from i3configger import __version__, base, config, exc
+from i3configger import __version__, base, build, exc, config
 
 log = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ def process_command_line():
     base.configure_logging(verbosity=args.v, logPath=args.log)
     check_sanity(message)
     args.config = Path(args.config).expanduser() if args.config else None
-    args.command = message
+    args.message = message
     if message and any([args.daemon, args.kill, args.watch, args.init]):
         parser.error(
             "'commands and daemon/watch/init can't be used together: %s;%s" %
@@ -42,11 +42,6 @@ def _parse_known(p):
                    help="i3configgerPath to where log should be stored")
     p.add_argument('-c', '--config', action="store",
                    default=None, help="i3configgerPath to config file")
-    p.add_argument('--init', action="store_true", default=False,
-                   help="create default config in your i3 folder or at "
-                        "i3configgerPathpassed in with -c|--config (this will "
-                        "never be foundautomatically then and has to be passed "
-                        "with every call to i3configger).")
     p.add_argument("message", help="message to send to i3configger", nargs="*")
     return p.parse_known_args()
 
@@ -56,7 +51,7 @@ def check_sanity(message):
     if not message:
         return
     log.debug("processing %s", message)
-    command, *rest = args
+    command, *rest = message
     spec = config.Message.get_spec(command)
     if len(rest) != spec:
         raise exc.I3configgerException(

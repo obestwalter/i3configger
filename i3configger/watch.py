@@ -6,7 +6,7 @@ from pathlib import Path
 from inotify import constants as ic
 from inotify.adapters import Inotify
 
-from i3configger import build, ipc
+from i3configger import base, build, ipc
 
 log = logging.getLogger(__name__)
 
@@ -29,8 +29,7 @@ class Watchman:
 
     def __init__(self, cnf):
         self.builder = build.Builder(cnf)
-        self.partialsPath = str(cnf.partialsPath).encode()
-        self.suffix = cnf.suffix
+        self.configPath = str(cnf.configPath).encode()
         self.lastBuild = None
         self.lastFilePath = None
         self.errors = 0
@@ -57,7 +56,7 @@ class Watchman:
 
     def _get_events(self):
         inotify_watcher = Inotify()
-        inotify_watcher.add_watch(self.partialsPath, mask=self.MASK)
+        inotify_watcher.add_watch(self.configPath, mask=self.MASK)
         for event in inotify_watcher.event_gen():
             if not event:
                 continue
@@ -87,7 +86,7 @@ class Watchman:
         if self.lastBuild and time.time() - self.lastBuild < self.BUILD_DELAY:
             log.debug("ignore %s changed too quick", filePath)
             return False
-        if filePath.suffix != self.suffix:
+        if filePath.suffix != base.SUFFIX:
             return False
         if filePath != self.lastFilePath:
             log.debug("%s != %s", filePath, self.lastFilePath)

@@ -7,89 +7,62 @@ from pathlib import Path
 from i3configger import exc, partials
 
 log = logging.getLogger(__name__)
-NAME = 'i3configger.json'
+MY_CONFIG_NAME = 'i3configger.json'
+MY_CONFIG_FOLDER = 'config.d'
+MY_REL_CONFIG_PATH = MY_CONFIG_FOLDER + '/' + MY_CONFIG_NAME
 
 
-def init(path):
-    path = get_config_path(init=True, override=path)
-    if path.exists():
-        raise exc.ConfigError(f"{path} exists already, remove it first.")
-    if path.is_dir():
-            raise exc.ConfigError(f"{path} exists already, remove it first.")
-    log.info("create a default i3configger configuration at %s", path)
-    blueprint = Path(__file__).parent / NAME
-    with open(blueprint) as f:
-        I3configgerConfig.freeze(path, json.load(f))
+def get_my_config_path():
+    i3ConfigPath = get_i3_config_path()
+    myConfigContainer = i3ConfigPath / MY_CONFIG_FOLDER
+    if not myConfigContainer.exists():
+        log.info("create new config folder at %s", myConfigContainer)
+        myConfigContainer.mkdir()
+    myConfigPath = myConfigContainer / MY_CONFIG_NAME
+    if not myConfigPath.exists():
+        log.info("create default configuration at %s", myConfigPath)
+        myConfigBlueprint = Path(__file__).parent / MY_CONFIG_NAME
+        with open(myConfigBlueprint) as f:
+            I3configgerConfig.freeze(myConfigPath, json.load(f))
+    return myConfigPath
 
 
-def get_config_path(init=False, override=None):
+def get_i3_config_path():
     """Use same search order like i3 (no system stuff though).
 
     see: https://github.com/i3/i3/blob/4.13/libi3/get_config_path.c#L31
     """
-    override = Path(override) if override else None
-    standard = None
-    traditional = Path('~/.i3/').expanduser()
-    if traditional.exists():
-        standard = traditional / NAME
-    else:
-        xdg = Path(os.getenv("XDG_CONFIG_HOME") or '~/.config/').expanduser()
-        xdg /= 'i3'
-        if xdg.exists():
-            standard = xdg / NAME
-    path = override or standard
-    if init:
-        if override and standard.exists():
-            log.warning(f"You have a config already at {standard} "
-                        f"that will be ignored for this run.")
-        if path.exists():
-            raise exc.ConfigError(f"{standard} exists already")
-        if override and not override.parent.exists():
-            raise exc.ConfigError(f"folder {override.parent} needs to exist")
-    else:
-        if not path.exists():
-            msg = "Is i3 installed? I Can't find any config locations. " \
-                  "Pass the i3configgerPath to your i3configger config " \
-                  "directly or run 'i3configger --init' first"
-            raise exc.ConfigError(msg)
-        if path.is_dir():
-            raise exc.ConfigError(
-                f"{path} needs to point to a file - not a directory")
-    return path
-
-
-class KEY:
-    """Fixed keys in config to hold several config items"""
-    BARS = "bars"
-    DEFAULTS = "defaults"
-    MARKER = "marker"
-    MESSAGE = "message"
-    NAME = "name"
-    PARTIALS = "partials"
-    SETTINGS = "settings"
-    SELECTOR = "selector"
-    SUFFIX = "suffix"
-    TARGET = "target"
-    TEMPLATE = "template"
+    candidates = [
+        Path('~/.i3').expanduser(),
+        Path(os.getenv("XDG_CONFIG_HOME", '~/.config/')).expanduser() / 'i3']
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    raise exc.ConfigError(
+        "Is i3 installed? I Can't find at standard locations (%s)"
+        "Please create a config directory there like described in"
+        "i3 user manual.",
+        candidates)
 
 
 class I3configgerConfig:
     def __init__(self, configPath, message: list=None, freeze=True):
         # TODO checks with helpful errors for screwed up configurations
-        self.configPath = Path(configPath)
+        path = Path(configPath)
+        assert path.exists() and path.is_file(), path
+        self.configPath = path
         self.payload = self.read(self.configPath)
-        settings = self.payload[KEY.SETTINGS]
-        self.name = settings[KEY.NAME]
-        self._partials = settings[KEY.PARTIALS]
-        self.partialsPath = Path(self._partials).expanduser()
-        self.suffix = settings[KEY.SUFFIX]
-        self._target = settings[KEY.TARGET]
-        self.targetPath = Path(self._target).expanduser()
-        msgMap = self.payload.get(KEY.MESSAGE, {})
+        main = self.payload["main"]
+        targetPath = Path(main["target"]).expanduser()
+        if targetPath.is_absolute():
+            self.mainTargetPath = targetPath
+        else:
+            self.mainTargetPath = (self.configPath / targetPath).resolve()
+        msgMap = self.payload.get("message", {})
         self.set = msgMap.get(Message.SET[0], {})
         self.select = msgMap.get(Message.SELECT[0], {})
-        bars = self.payload.get(KEY.BARS, {})
-        self.bars = self.resolve_bars(bars)
+        bars = self.payload.get("bars", {})
+        self.bars = self.resolve(bars)
         log.debug("initialized config  %s", self)
         if message:
             Message.process(message, self)
@@ -101,7 +74,7 @@ class I3configgerConfig:
         return "%s:\n%s" % (self.__class__.__name__,
                             pprint.pformat(vars(self.__class__)))
 
-    def resolve_bars(self, incoming):
+    def resolve(self, incoming):
         defaults = incoming.get(KEY.DEFAULTS, {})
         bars = incoming.get(KEY.BARS)
         if not bars:
@@ -143,6 +116,7 @@ class Message:
     SELECT = ("select", 2)
     SET = ("set", 2)
     _ALL = [SELECT_NEXT, SELECT_NEXT, SELECT, SET]
+    DEL = 'del'
 
     @staticmethod
     def _next(current, items: list):
@@ -173,9 +147,12 @@ class Message:
         value = rest[0] if rest else None
         log.debug(f"sending message {message} to {cnf}")
         if command == cls.SET:
-            cnf.set[key] = value
+            if value.lower() == cls.DEL:
+                del cnf.set[key]
+            else:
+                cnf.set[key] = value
         else:
-            prts = partials.create(cnf.partialsPath, cnf.suffix)
+            prts = partials.create(cnf.configPath)
             prts = partials.select(prts, cnf.select)
             if command in [cls.SELECT_NEXT, cls.SELECT_PREVIOUS]:
                 candidates = partials.find(prts, key)
@@ -188,4 +165,7 @@ class Message:
                 candidate = partials.find(prts, key, value)
                 if not candidate:
                     raise exc.MessageError(f"No candidate for {message}")
-                cnf.select[key] = candidate.value
+                if value.lower == cls.DEL:
+                    del cnf.select[key]
+                else:
+                    cnf.select[key] = candidate.value

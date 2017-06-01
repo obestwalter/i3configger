@@ -1,17 +1,17 @@
 import json
 from pathlib import Path
 
-import pytest
-
 from i3configger import config
 
-HERE = Path(__file__).parent
-SOURCES = HERE / 'fake_sources'
-TARGET = HERE / 'fake_target'
 
-
-def test_no_config(tmpdir):
+def test_no_config(tmpdir, monkeypatch):
     """Given empty sources directory a new config is created from defaults"""
-    cnf = config.read_config(tmpdir)
-    with open(Path(config.__file__).parent / config.NAME) as f:
-        assert cnf == json.load(f)
+    monkeypatch.setattr(config, 'get_i3_config_path', lambda: Path(tmpdir))
+    path = config.get_my_config_path()
+    assert path.exists()
+    assert path.is_file()
+    assert path.name == config.MY_CONFIG_NAME
+    payload = json.loads(path.read_text())
+    assert 'main' in payload
+    assert 'bars' in payload
+    assert 'message' in payload
