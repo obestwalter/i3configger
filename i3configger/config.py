@@ -75,8 +75,8 @@ class I3configgerConfig:
                             pprint.pformat(vars(self.__class__)))
 
     def resolve(self, incoming):
-        defaults = incoming.get(KEY.DEFAULTS, {})
-        bars = incoming.get(KEY.BARS)
+        defaults = incoming.get("defaults", {})
+        bars = incoming.get("bars")
         if not bars:
             return {}
         resolvedBars = {}
@@ -115,7 +115,7 @@ class Message:
     SELECT_PREVIOUS = ("select-previous", 1)
     SELECT = ("select", 2)
     SET = ("set", 2)
-    _ALL = [SELECT_NEXT, SELECT_NEXT, SELECT, SET]
+    _ALL = [SELECT_NEXT, SELECT_PREVIOUS, SELECT, SET]
     DEL = 'del'
 
     @staticmethod
@@ -139,7 +139,8 @@ class Message:
         for c in cls._ALL:
             if c[0] == message:
                 return c[1]
-        raise exc.MessageError(f"unknown message: {message}")
+        raise exc.MessageError(f"unknown message: {message}. "
+                               f"I only now: {[m[0] for m in cls._ALL]}")
 
     @classmethod
     def process(cls, message: list, cnf: I3configgerConfig):

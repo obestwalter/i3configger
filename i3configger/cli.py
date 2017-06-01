@@ -2,7 +2,7 @@ import argparse
 import logging
 from pathlib import Path
 
-from i3configger import __version__, base, build, exc, config
+from i3configger import __version__, base, exc, config
 
 log = logging.getLogger(__name__)
 

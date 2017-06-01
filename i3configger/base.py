@@ -15,6 +15,7 @@ SET_MARK = 'set'
 SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
 SUFFIX = '.conf'
 
+
 def configure_logging(verbosity: int, logPath: str, isDaemon=False):
     rootLogger = logging.getLogger()
     _log = str(Path(tempfile.gettempdir()) / 'i3configger.log')
@@ -42,6 +43,7 @@ def i3configger_excepthook(type_, value, traceback):
         _REAL_EXCEPTHOOK(type_, value, traceback)
     else:
         sys.exit("%s: %s" % (value.__class__.__name__, value))
+
 
 _REAL_EXCEPTHOOK = sys.excepthook
 sys.excepthook = i3configger_excepthook

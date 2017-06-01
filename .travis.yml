@@ -1,0 +1,13 @@
+language: python
+cache: pip
+python:
+ - "3.6"
+git:
+  depth: 10
+branches:
+  except:
+    - experimental
+install:
+  - pip install tox
+script:
+  - tox

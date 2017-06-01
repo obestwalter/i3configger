@@ -121,7 +121,8 @@ def select(partials: t.List[Partial],
             _select()
     log.debug("selected:\n%s", pprint.pformat(selected))
     if selection:
-        raise exc.ConfigError("selection processed incompletely: %s", selection)
+        raise exc.ConfigError(
+            "selection processed incompletely: %s", selection)
     return selected[0] if len(selected) == 1 else selected
 
 

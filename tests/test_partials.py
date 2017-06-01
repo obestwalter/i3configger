@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from i3configger import exc, partials, base
+from i3configger import exc, partials
 
 DATA = Path(__file__).parents[1] / 'examples'
 

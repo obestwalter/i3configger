@@ -9,18 +9,18 @@ from i3configger import cli, exc
         ([], True),
         ([''], False),
         (['dunno'], False),
-        (['next'], False),
-        (['previous'], False),
+        (['select-next'], False),
+        (['select-previous'], False),
         (['set'], False),
         (['select'], False),
         # TODO do I want special stuff to be overridable?
         (['select', 'hostname', 'ob1'], True),
         (['set', 'someVar', 'someValue'], True),
         (['set', 'someVar'], False),
-        (['next', 'scheme'], True),
-        (['next', 'scheme', 'extra'], False),
-        (['previous', 'scheme'], True),
-        (['previous', 'scheme', 'extra'], False),
+        (['select-next', 'scheme'], True),
+        (['select-next', 'scheme', 'extra'], False),
+        (['select-previous', 'scheme'], True),
+        (['select-previous', 'scheme', 'extra'], False),
     )
 )
 def test_check_sanity(args, exp):
