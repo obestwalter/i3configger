@@ -51,13 +51,14 @@ class I3configgerConfig:
         path = Path(configPath)
         assert path.exists() and path.is_file(), path
         self.configPath = path
+        self.partialsPath = path.parent.resolve()
         self.payload = self.read(self.configPath)
         main = self.payload["main"]
         targetPath = Path(main["target"]).expanduser()
         if targetPath.is_absolute():
-            self.mainTargetPath = targetPath
+            self.mainTargetPath = targetPath.resolve()
         else:
-            self.mainTargetPath = (self.configPath / targetPath).resolve()
+            self.mainTargetPath = (self.partialsPath / targetPath).resolve()
         msgMap = self.payload.get("message", {})
         self.set = msgMap.get(Message.SET[0], {})
         self.select = msgMap.get(Message.SELECT[0], {})
@@ -72,7 +73,7 @@ class I3configgerConfig:
 
     def __str__(self):
         return "%s:\n%s" % (self.__class__.__name__,
-                            pprint.pformat(vars(self.__class__)))
+                            pprint.pformat(vars(self)))
 
     def resolve(self, incoming):
         defaults = incoming.get("defaults", {})
@@ -153,7 +154,7 @@ class Message:
             else:
                 cnf.set[key] = value
         else:
-            prts = partials.create(cnf.configPath)
+            prts = partials.create(cnf.partialsPath)
             prts = partials.select(prts, cnf.select)
             if command in [cls.SELECT_NEXT, cls.SELECT_PREVIOUS]:
                 candidates = partials.find(prts, key)

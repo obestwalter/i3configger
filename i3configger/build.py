@@ -6,13 +6,12 @@ from pathlib import Path
 from string import Template
 
 from i3configger import base, config, context, exc, partials, ipc
-from i3configger.config import KEY
 
 log = logging.getLogger(__name__)
 
 
 class Builder:
-    STAGING_SUFFIX = '.staged' + base.SUFFIX
+    STAGING_SUFFIX = '.staged'
 
     def __init__(self, cnf: config.I3configgerConfig):
         self.cnf = cnf
@@ -24,7 +23,7 @@ class Builder:
         return "%s\n%s" % (self.__class__.__name__, pprint.pformat(vars(self)))
 
     def build(self):
-        prts = partials.create(self.cnf.configPath)
+        prts = partials.create(self.cnf.partialsPath)
         selected = partials.select(
             prts, self.cnf.select, excludes={b.marker for b in self.cnf.bars})
         if not selected:
@@ -36,35 +35,39 @@ class Builder:
         if self.cnf.bars:
             rawContent += self.make_bars(prts, ctx)
         resolvedContent = self.substitute(rawContent, ctx)
-        tmpPath = self.cnf.mainTargetPath.with_suffix(self.STAGING_SUFFIX)
+        container = self.cnf.mainTargetPath.parent
+        targetName = self.cnf.mainTargetPath.name
+        tmpPath = container / (targetName + base.SUFFIX)
         tmpPath.write_text(resolvedContent)
-        self.results["main"] = (tmpPath, self.cnf.mainTargetPath)
+        self.results[tmpPath] = self.cnf.mainTargetPath
         if ipc.I3.config_is_ok(tmpPath):
             # TODO can I check generated status configs also?
-            for srcPath, dstPath in self.results.items():
-                os.rename(srcPath, dstPath)
+            for src, dst in self.results.items():
+                log.info(f"{src} -> {dst}")
+                os.rename(src, dst)
 
     def make_bars(self, prts, ctx):
         bars = []
         for barName, barCnf in self.cnf.bars.items():
             barCnf["id"] = barName
-            marker = barCnf[KEY.MARKER]
-            select = barCnf[KEY.SELECT]
-            prt = partials.find(prts, marker, select)
+            selectKey = barCnf["select-key"]
+            selectValue = barCnf["select-value"]
+            prt = partials.find(prts, selectKey, selectValue)
             assert isinstance(prt, partials.Partial), prt
-            tpl = partials.find(prts, barCnf[KEY.MARKER], barCnf[KEY.TEMPLATE])
+            tpl = partials.find(prts, selectKey, barCnf["template"])
             assert isinstance(tpl, partials.Partial), tpl
             localCtx = dict(ctx)
             localCtx.update(barCnf)
             localCtx.update(context.create([prt]))
             bars.append(self.substitute(tpl, localCtx))
             if prt.name not in self.results:
-                marker = barCnf[KEY.TARGET]
-                root = Path(marker).expanduser()
-                path = root / ("%s.%s.conf" % (marker, select))
                 content = self.substitute(prt.payload, localCtx)
-                path.write_text(content)
-                self.results[prt.name] = ()
+                container = Path(barCnf["target"])
+                if not container.is_absolute():
+                    container = (self.cnf.partialsPath / container).resolve()
+                tmpPath = container / f"{prt.name}.{self.STAGING_SUFFIX}"
+                self.results[tmpPath] = container / prt.name
+                tmpPath.write_text(content)
         return '\n'.join(bars)
 
     @classmethod
@@ -77,7 +80,6 @@ class Builder:
         return Template(content).safe_substitute(ctx)
 
     def make_header(self):
-        msg = (f'# Generated from {self.cnf.configPath} by i3configger '
-               f'({time.asctime()}) #')
+        msg = f'# Generated from {self.cnf.configPath} ({time.asctime()}) #'
         sep = "#" * len(msg)
         return "%s\n%s\n%s" % (sep, msg, sep)

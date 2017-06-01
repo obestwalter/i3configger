@@ -25,7 +25,7 @@ class Partial:
     def __init__(self, path: Path):
         self.path = path
         self.name = self.path.stem
-        self.selectors = self.path.stem.split('.')
+        self.selectors = self.name.split('.')
         self.needsSelection = len(self.selectors) > 1
         self.key = self.selectors[0] if self.needsSelection else None
         self.value = self.selectors[1] if self.needsSelection else None
@@ -105,6 +105,9 @@ def select(partials: t.List[Partial],
         if partial.needsSelection:
             del selection[partial.key]
 
+    for key, value in SPECIAL_SELECTORS.items():
+        if key not in selection:
+            selection[key] = value
     selected = []
     for partial in partials:
         if partial.needsSelection:
@@ -113,9 +116,6 @@ def select(partials: t.List[Partial],
                 continue
             if (selection and partial.key in selection and
                     partial.value == selection.get(partial.key)):
-                _select()
-            elif (partial.key in SPECIAL_SELECTORS and
-                    partial.value == SPECIAL_SELECTORS[partial.key]):
                 _select()
         else:
             _select()
@@ -127,6 +127,7 @@ def select(partials: t.List[Partial],
 
 
 def create(partialsPath: Path) -> t.List[Partial]:
+    assert partialsPath.is_dir(), partialsPath
     prts = [Partial(p) for p in partialsPath.glob('*%s' % base.SUFFIX)]
     if not prts:
         raise exc.PartialsError(f"no '*{base.SUFFIX}' at {partialsPath}")

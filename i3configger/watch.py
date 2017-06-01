@@ -29,7 +29,7 @@ class Watchman:
 
     def __init__(self, cnf):
         self.builder = build.Builder(cnf)
-        self.configPath = str(cnf.configPath).encode()
+        self.configPath = str(cnf.partialsPath).encode()
         self.lastBuild = None
         self.lastFilePath = None
         self.errors = 0

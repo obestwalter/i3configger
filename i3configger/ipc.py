@@ -1,5 +1,7 @@
 import subprocess
 
+import time
+
 from i3configger.base import log
 
 
@@ -19,8 +21,10 @@ class I3:
 
     @classmethod
     def restart_i3(cls):
-        if cls._send_i3_msg('restart'):
-            Notify.send("restarted i3")
+        cmd = ['i3-msg', 'restart']
+        subprocess.call(cmd)
+        time.sleep(0.5)
+        Notify.send("restarted i3")
 
     @classmethod
     def nop(cls):
