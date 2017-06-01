@@ -61,8 +61,7 @@ class I3configgerConfig:
             self.mainTargetPath = targetPath.resolve()
         else:
             self.mainTargetPath = (self.partialsPath / targetPath).resolve()
-        bars = self.payload.get("bars", {})
-        self.bars = self.resolve(bars)
+        self.bars = self.resolve(self.payload.get("bars", {}))
         log.debug("initialized config  %s", self)
         state = self.payload.get("state", {})
         self.select = state.get(Message.SELECT[0], {})
@@ -79,14 +78,17 @@ class I3configgerConfig:
                             pprint.pformat(vars(self)))
 
     def resolve(self, bars):
+        """Create a resolved copy of the bar settings."""
         defaults = bars.get("defaults", {})
-        del bars["defaults"]
         resolvedBars = {}
         for name, bar in bars.items():
+            if name == "defaults":
+                continue
+            newBar = dict(bar)
+            resolvedBars[name] = newBar
             for defaultKey, defaultValue in defaults.items():
-                if defaultKey not in bar:
-                    bar[defaultKey] = defaultValue
-            resolvedBars[name] = bar
+                if defaultKey not in newBar:
+                    newBar[defaultKey] = defaultValue
         return resolvedBars
 
     def _freeze(self):

@@ -40,11 +40,21 @@ class Builder:
         tmpPath = container / (targetName + self.STAGING_SUFFIX)
         tmpPath.write_text(resolvedContent)
         self.results[tmpPath] = self.cnf.mainTargetPath
-        if ipc.I3.config_is_ok(tmpPath):
-            # TODO can I check generated status configs also?
-            for src, dst in self.results.items():
-                log.info(f"{src} -> {dst}")
-                os.rename(src, dst)
+        self.freeze_if_ok(self.results)
+
+    @staticmethod
+    def freeze_if_ok(results):
+        for tmpPath in results.values():
+            # TODO generated status configs seem always ok?
+            if not ipc.I3.config_is_ok(tmpPath):
+                raise exc.BuildError(f"{tmpPath} is broken")
+            for line in tmpPath.read_text().splitlines():
+                if base.VAR_MARK in line:
+                    raise exc.BuildError(f"not all vars resolved in {tmpPath}")
+        # all or nothing
+        for src, dst in results.items():
+            log.info(f"{src} -> {dst}")
+            os.rename(src, dst)
 
     def make_bars(self, prts, ctx):
         bars = []

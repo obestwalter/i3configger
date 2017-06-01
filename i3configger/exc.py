@@ -9,7 +9,7 @@ class I3configgerException(Exception):
             super().__init__(*args, **kwargs)
 
 
-class MessageError(I3configgerException):
+class BuildError(I3configgerException):
     pass
 
 
@@ -22,6 +22,10 @@ class DuplicateKey(I3configgerException):
 
 
 class MalformedAssignment(I3configgerException):
+    pass
+
+
+class MessageError(I3configgerException):
     pass
 
 
