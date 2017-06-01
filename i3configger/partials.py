@@ -96,10 +96,7 @@ def find(prts: t.List[Partial], key: str, value: str= None) \
     return findings
 
 
-def select(partials: t.List[Partial],
-           selection: t.Optional[dict],
-           excludes: t.Union[None, t.List[str], t.Set[str]]=None) \
-        -> t.Union[None, Partial, t.List[Partial]]:
+def select(partials, selection, excludes=None) -> t.List[Partial]:
     def _select():
         selected.append(partial)
         if partial.needsSelection:
@@ -120,10 +117,10 @@ def select(partials: t.List[Partial],
         else:
             _select()
     log.debug("selected:\n%s", pprint.pformat(selected))
-    if selection:
+    if selection and not all(k in SPECIAL_SELECTORS for k in selection):
         raise exc.ConfigError(
             "selection processed incompletely: %s", selection)
-    return selected[0] if len(selected) == 1 else selected
+    return selected
 
 
 def create(partialsPath: Path) -> t.List[Partial]:

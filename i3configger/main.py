@@ -12,7 +12,8 @@ def main():
         daemonize.exorcise()
         return 0
     ipc.I3.set_msg_type(args.i3_refresh_msg)
-    cnf = config.I3configgerConfig(args.config or config.get_my_config_path())
+    configPath = config.get_my_config_path(args.config)
+    cnf = config.I3configgerConfig(configPath, args.message)
     if args.daemon:
         daemonize.daemonize(args.v, args.log, cnf)
         return 0
@@ -30,5 +31,5 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.argv = ['dev', '-vvv']
+    sys.argv = ['dev', '-vvv', 'select-next', 'scheme']
     sys.exit(main())

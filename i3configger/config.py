@@ -8,23 +8,28 @@ from i3configger import exc, partials
 
 log = logging.getLogger(__name__)
 MY_CONFIG_NAME = 'i3configger.json'
+STATE_FILE_NAME = '.state.json'
 MY_CONFIG_FOLDER = 'config.d'
 MY_REL_CONFIG_PATH = MY_CONFIG_FOLDER + '/' + MY_CONFIG_NAME
+STATE_CONFIG_PATH = MY_CONFIG_FOLDER + '/' + STATE_FILE_NAME
 
 
-def get_my_config_path():
-    i3ConfigPath = get_i3_config_path()
-    myConfigContainer = i3ConfigPath / MY_CONFIG_FOLDER
-    if not myConfigContainer.exists():
-        log.info("create new config folder at %s", myConfigContainer)
-        myConfigContainer.mkdir()
-    myConfigPath = myConfigContainer / MY_CONFIG_NAME
-    if not myConfigPath.exists():
-        log.info("create default configuration at %s", myConfigPath)
+def get_my_config_path(configPath=None):
+    if not configPath:
+        i3configPath = get_i3_config_path()
+        configContainer = i3configPath / MY_CONFIG_FOLDER
+        if not configContainer.exists():
+            log.info("create new config folder at %s", configContainer)
+            configContainer.mkdir()
+        configPath = configContainer / MY_CONFIG_NAME
+    elif configPath.is_dir():
+            configPath /= MY_CONFIG_NAME
+    if not configPath.exists():
+        log.info("create default configuration at %s", configPath)
         myConfigBlueprint = Path(__file__).parent / MY_CONFIG_NAME
         with open(myConfigBlueprint) as f:
-            I3configgerConfig.freeze(myConfigPath, json.load(f))
-    return myConfigPath
+            I3configgerConfig.freeze(configPath, json.load(f))
+    return configPath
 
 
 def get_i3_config_path():
@@ -39,10 +44,7 @@ def get_i3_config_path():
         if candidate.exists():
             return candidate
     raise exc.ConfigError(
-        "Is i3 installed? I Can't find at standard locations (%s)"
-        "Please create a config directory there like described in"
-        "i3 user manual.",
-        candidates)
+        f"can't find i3 config at the standard locations: {candidates}")
 
 
 class I3configgerConfig:
@@ -59,13 +61,14 @@ class I3configgerConfig:
             self.mainTargetPath = targetPath.resolve()
         else:
             self.mainTargetPath = (self.partialsPath / targetPath).resolve()
-        msgMap = self.payload.get("message", {})
-        self.set = msgMap.get(Message.SET[0], {})
-        self.select = msgMap.get(Message.SELECT[0], {})
         bars = self.payload.get("bars", {})
         self.bars = self.resolve(bars)
         log.debug("initialized config  %s", self)
+        state = self.payload.get("state", {})
+        self.select = state.get(Message.SELECT[0], {})
+        self.set = state.get(Message.SET[0], {})
         if message:
+            # TODO send message to .state.json instead
             Message.process(message, self)
             if freeze:
                 log.info("freezing config to %s", self.configPath)
@@ -75,13 +78,11 @@ class I3configgerConfig:
         return "%s:\n%s" % (self.__class__.__name__,
                             pprint.pformat(vars(self)))
 
-    def resolve(self, incoming):
-        defaults = incoming.get("defaults", {})
-        bars = incoming.get("bars")
-        if not bars:
-            return {}
+    def resolve(self, bars):
+        defaults = bars.get("defaults", {})
+        del bars["defaults"]
         resolvedBars = {}
-        for name, bar in self.bars.items():
+        for name, bar in bars.items():
             for defaultKey, defaultValue in defaults.items():
                 if defaultKey not in bar:
                     bar[defaultKey] = defaultValue
@@ -98,7 +99,7 @@ class I3configgerConfig:
         with path.open() as f:
             log.info("read config from %s", path)
             payload = json.load(f)
-            log.debug("use:\n", pprint.pformat(payload))
+            log.debug("use:\n%s", pprint.pformat(payload))
             return payload
 
     @staticmethod
@@ -145,6 +146,7 @@ class Message:
 
     @classmethod
     def process(cls, message: list, cnf: I3configgerConfig):
+        # todo manipulate a .state.json and override values from conf instead
         command, key, *rest = message
         value = rest[0] if rest else None
         log.debug(f"sending message {message} to {cnf}")

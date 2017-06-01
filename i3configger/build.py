@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 from string import Template
 
-from i3configger import base, config, context, exc, partials, ipc
+from i3configger import base, config, context, exc, ipc, partials
 
 log = logging.getLogger(__name__)
 
@@ -24,20 +24,20 @@ class Builder:
 
     def build(self):
         prts = partials.create(self.cnf.partialsPath)
-        selected = partials.select(
-            prts, self.cnf.select, excludes={b.marker for b in self.cnf.bars})
+        excludes = {b["select-key"] for b in self.cnf.bars.values()}
+        selected = partials.select(prts, self.cnf.select, excludes=excludes)
         if not selected:
             raise exc.I3configgerException(
                 "no content for %s, %s, %s", prts, self.cnf)
         ctx = context.create(selected)
         rawContent = self.make_header()
-        rawContent += '\n'.join(prt.display for prt in prts)
+        rawContent += '\n'.join(prt.display for prt in selected)
         if self.cnf.bars:
             rawContent += self.make_bars(prts, ctx)
         resolvedContent = self.substitute(rawContent, ctx)
         container = self.cnf.mainTargetPath.parent
         targetName = self.cnf.mainTargetPath.name
-        tmpPath = container / (targetName + base.SUFFIX)
+        tmpPath = container / (targetName + self.STAGING_SUFFIX)
         tmpPath.write_text(resolvedContent)
         self.results[tmpPath] = self.cnf.mainTargetPath
         if ipc.I3.config_is_ok(tmpPath):
@@ -59,14 +59,14 @@ class Builder:
             localCtx = dict(ctx)
             localCtx.update(barCnf)
             localCtx.update(context.create([prt]))
-            bars.append(self.substitute(tpl, localCtx))
+            bars.append(self.substitute(tpl.display, localCtx))
             if prt.name not in self.results:
                 content = self.substitute(prt.payload, localCtx)
                 container = Path(barCnf["target"])
                 if not container.is_absolute():
                     container = (self.cnf.partialsPath / container).resolve()
-                tmpPath = container / f"{prt.name}.{self.STAGING_SUFFIX}"
-                self.results[tmpPath] = container / prt.name
+                tmpPath = container / f"{prt.name}{self.STAGING_SUFFIX}"
+                self.results[tmpPath] = container / f"{prt.name}{base.SUFFIX}"
                 tmpPath.write_text(content)
         return '\n'.join(bars)
 

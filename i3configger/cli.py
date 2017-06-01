@@ -11,19 +11,18 @@ def process_command_line():
     parser = argparse.ArgumentParser(
         'i3configger',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    args, message = _parse_known(parser)
+    args = _parse_args(parser)
     base.configure_logging(verbosity=args.v, logPath=args.log)
-    check_sanity(message)
+    check_sanity(args.message)
     args.config = Path(args.config).expanduser() if args.config else None
-    args.message = message
-    if message and any([args.daemon, args.kill, args.watch, args.init]):
+    if args.message and any([args.daemon, args.kill, args.watch]):
         parser.error(
-            "'commands and daemon/watch/init can't be used together: %s;%s" %
-            (args, message))
+            "message and daemon/watch can't be used together: %s;%s" %
+            (args, args.message))
     return args
 
 
-def _parse_known(p):
+def _parse_args(p):
     """Command line commands - all optional with [reasonable] defaults"""
     p.add_argument('--version', action='version',
                    version="%s %s" % (p.prog, __version__))
@@ -43,7 +42,7 @@ def _parse_known(p):
     p.add_argument('-c', '--config', action="store",
                    default=None, help="i3configgerPath to config file")
     p.add_argument("message", help="message to send to i3configger", nargs="*")
-    return p.parse_known_args()
+    return p.parse_args()
 
 
 def check_sanity(message):
