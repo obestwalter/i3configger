@@ -20,7 +20,6 @@ class Partial:
     CONTINUATION_RE = re.compile(r'\\\s*?\\s*?\n')
     COMMENT_MARK = '#'
     END_OF_LINE_COMMENT_MARK = ' # '
-    DEFAULT_NAME = 'default'
 
     def __init__(self, path: Path):
         self.path = path
