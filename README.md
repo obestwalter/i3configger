@@ -28,9 +28,9 @@ Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `<i3 c
 * reload or restart i3 when a change has been done (using `i3-msg`)
 * notify when new config has been created and activated (using `notify-send`)
 * simple way to render partials based on key value pairs in file name
-* simple way to communicate settings to renderer
+* simple way to change the configuration by sending messages
 * build config as one shot script or watch for changes
-* Send messaged to watching i3configger process
+* Send messages to watching i3configger process
 * If `i3 -C fails` with the newly rendered config, the old config will be kept, no harm done
 
 ## Getting started
