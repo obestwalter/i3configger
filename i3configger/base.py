@@ -13,7 +13,6 @@ DEBUG = os.getenv('DEBUG', 1)  # FIXME deactivate before next release
 VAR_MARK = '$'
 SET_MARK = 'set'
 SUFFIX = '.conf'
-I3STATUS = "i3status"
 SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
 
 

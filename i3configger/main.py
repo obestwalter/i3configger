@@ -31,5 +31,6 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.argv = ['dev', '-vvv', 'select-next', 'scheme']
+    sys.argv = ['dev', '-vvv']
+    # sys.argv = ['dev', '-vvv', 'select-next', 'scheme']
     sys.exit(main())

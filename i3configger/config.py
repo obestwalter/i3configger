@@ -11,6 +11,7 @@ log = logging.getLogger(__name__)
 class I3configgerConfig:
     def __init__(self, configPath: Path, message: list=None):
         # TODO checks with helpful errors for screwed up configurations
+        self.message = message
         p = paths.Paths(configPath)
         self.configPath = p.config
         self.partialsPath = p.root
@@ -23,7 +24,6 @@ class I3configgerConfig:
         else:
             self.mainTargetPath = (self.partialsPath / targetPath).resolve()
         self.bars = self.populate_bar_defaults(self.payload.get("bars", {}))
-        self.state = State.process(self.statePath, message)
         log.debug("initialized config  %s", self)
 
     def __str__(self):
@@ -50,6 +50,8 @@ class State:
 
     Tuple contains name and number of expected additional arguments
     """
+    I3STATUS = "i3status"
+    """reserved select-key for status bar settings"""
     SELECT_NEXT = ("select-next", 1)
     SELECT_PREVIOUS = ("select-previous", 1)
     SELECT = ("select", 2)
@@ -59,7 +61,9 @@ class State:
 
     @classmethod
     def process(cls, statePath, prts, message):
-        state = fetch(statePath)
+        state = cls.fetch_state(statePath, prts)
+        if not message:
+            return state
         command, key, *rest = message
         value = rest[0] if rest else None
         log.debug(f"sending message {message} to {statePath}")
@@ -86,6 +90,23 @@ class State:
                 else:
                     state["select"][key] = candidate.value
         freeze(statePath, state)
+
+    @classmethod
+    def fetch_state(cls, statePath, prts):
+        if not statePath.exists():
+            return cls.populate_initial_state(statePath, prts)
+        return fetch(statePath)
+
+    @classmethod
+    def populate_initial_state(cls, statePath, prts):
+        """fetch one of each selectable partials to have a sane state"""
+        selects = {}
+        for prt in prts:
+            if prt.needsSelection and not prt.key == cls.I3STATUS:
+                selects[prt.key] = prt.value
+        state = dict(select=selects, set={})
+        freeze(statePath, state)
+        return state
 
     @staticmethod
     def _next(current, items: list):

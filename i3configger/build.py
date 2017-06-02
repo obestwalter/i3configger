@@ -24,8 +24,10 @@ class Builder:
 
     def build(self):
         prts = partials.create(self.cnf.partialsPath)
+        state = config.State.process(
+            self.cnf.statePath, prts, self.cnf.message)
         excludes = {b["select-key"] for b in self.cnf.bars.values()}
-        selected = partials.select(prts, self.cnf.select, excludes=excludes)
+        selected = partials.select(prts, state["select"], excludes=excludes)
         if not selected:
             raise exc.I3configgerException(
                 "no content for %s, %s, %s", prts, self.cnf)
@@ -33,7 +35,7 @@ class Builder:
         rawContent = self.make_header()
         rawContent += '\n'.join(prt.display for prt in selected)
         if self.cnf.bars:
-            rawContent += self.make_bars(prts, ctx)
+            rawContent += self.make_bars(prts, ctx, state)
         resolvedContent = self.substitute(rawContent, ctx)
         container = self.cnf.mainTargetPath.parent
         targetName = self.cnf.mainTargetPath.name
@@ -56,7 +58,7 @@ class Builder:
             log.info(f"{src} -> {dst}")
             os.rename(src, dst)
 
-    def make_bars(self, prts, ctx):
+    def make_bars(self, prts, ctx, state):
         bars = []
         for barName, barCnf in self.cnf.bars.items():
             barCnf["id"] = barName
@@ -66,7 +68,7 @@ class Builder:
             assert isinstance(prt, partials.Partial), prt
             tpl = partials.find(prts, selectKey, barCnf["template"])
             assert isinstance(tpl, partials.Partial), tpl
-            eCtx = context.enhance(ctx, [barCnf, prt, self.cnf.set])
+            eCtx = context.enhance(ctx, [barCnf, prt, state["set"]])
             bars.append(self.substitute(tpl.display, eCtx))
             if prt.name not in self.results:
                 content = self.substitute(prt.payload, eCtx)

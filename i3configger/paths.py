@@ -2,8 +2,11 @@ import json
 import os
 from pathlib import Path
 
-from i3configger import base, exc, partials
-from i3configger.config import log, freeze
+import logging
+
+from i3configger import base, config, exc, partials
+
+log = logging.getLogger(__name__)
 
 MY_CONFIG_NAME = 'i3configger.json'
 STATE_FILE_NAME = '.state.json'
@@ -35,7 +38,7 @@ def get_my_config_path(configPath=None):
         log.info("create default configuration at %s", configPath)
         myConfigBlueprint = Path(__file__).parent / MY_CONFIG_NAME
         with open(myConfigBlueprint) as f:
-            freeze(configPath, json.load(f))
+            config.freeze(configPath, json.load(f))
     return configPath
 
 
@@ -52,14 +55,3 @@ def get_i3_config_path():
             return candidate
     raise exc.ConfigError(
         f"can't find i3 config at the standard locations: {candidates}")
-
-
-def populate_initial_state(configPath):
-    """fetch one of each selectable partials to have a sane state"""
-    p = Paths(configPath)
-    prts = partials.create(p.root)
-    selects = {}
-    for prt in prts:
-        if prt.needsSelection and not prt.key == base.I3STATUS:
-            selects[prt.key] = prt.value
-    freeze(p.state, dict(select=selects, set={}))
