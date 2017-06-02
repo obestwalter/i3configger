@@ -12,25 +12,24 @@ Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `~/.i3
 
 ## Getting started
 
-
-    $ i3configger --init [/path/to/your/i3/config/dir]
-
-If you use the standard location for saving your config (`~/.i3`)
-* Creates a backup copy of your config (config.bak)
-
 ### Simple
 
 1. Cut your config file into chewable chunks with the extension `.conf` and put them in the directory `~/.i3/config.d`.
 2. Run `i3configger`.
-3. A new config file - `~/.i3/config` - is generated.
+3. `i3configger.json` and `.state.json` are created in `config.d`
+4. A new config file is generated instead of your old config.
+5. A backup of tha last config is kept with suffix `.bak`
 
-Nothing exiting. Quite nice though, if you don't like long files.
-
-**This is already working with the current release (plus variable resolution, and i3status variable resolution).**
+* `i3configger.json` can be used to do configuration of the status bars.
+* `.state.json` remembers the state of your current settings
 
 ### Watch files in the background
 
 If you are experimenting with the config and want it automatically updated on change:
+
+run it in the foreground:
+
+    $ i3configger --watch
 
 run it as a daemon:
 
@@ -40,33 +39,32 @@ stop the daemon:
 
     $ i3configger --kill
 
-Run it in the foreground:
+## Diving a bit deeper
 
-    $ i3configger --watch
+I use this to generate [my own i3 config](https://github.com/obestwalter/i3config). Here are the config partials and settings: [.i3/config.d](https://github.com/obestwalter/i3config/tree/master/config.d), from which [config](https://github.com/obestwalter/i3config/tree/master/config) and all `i3status.*conf` files are built.
 
-## How?
+With my config, the call:
 
-This can best be understood by how I use this to generate [my own i3 config](https://github.com/obestwalter/i3config) - here are the config partials: [.i3/config.d](https://github.com/obestwalter/i3config/tree/master/config.d)
+    $ i3configger select scheme solarized-dark
 
-The call
+will integrate `scheme.solarized-dark.conf` in the build and exclude all other `scheme.*.conf` files.
 
-    $ i3configger --select-host=$(hostname) --select-theme=solarized-dark
+    $ i3configger select-next scheme will switch to the next theme
 
-creates [config](https://github.com/obestwalter/i3config/tree/master/config) and [i3status.main.conf](https://github.com/obestwalter/i3config/tree/master/i3status.main.conf) from the sources.
+This is persisted in `.state.json`
 
-The idea is simple:
+If I want to get my dock out of the way:
 
-Config partials that follow the naming scheme \<selector\>.\<name\>.conf are only rendered into the config if explicitly requested.
+    $ i3configger set mode hide
 
-* The partial `host.ob1.conf` will be rendered if the option `--select-host=ob1` is passed to `i3configger`.
-* The partial `theme.solaris-dark.conf` will only be rendered if `--select-theme=solaris-dark` is passed.
+So in short: `select` helps switching between partial files and `set` is assigning new values to arbitrary variables that I have set in the configuration.
 
-`host` and `theme` are selector names I chose for my use case, but they can be freely chosen as long as the naming scheme is adhered to.
+Config partials that follow the naming scheme \<key\>.\<value\>.conf are only rendered into the config if explicitly set via configuration or a message from the command line (which then will be persisted).
 
 ##  Features
 
 * build main config and one or several i3status configs from the same sources
-* variables are handled slightly more intelligently than i3 does it (variables assignmed to other variabels are resolved)
+* variables are handled slightly more intelligently than i3 does it (variables assigned to other variables are resolved)
 * end of line comments are possible (removed at build time)
 * variables in i3status configs are also resolved (set anywhere in the sources)
 * reload or restart i3 when a change has been done (using `i3-msg`)
@@ -74,12 +72,11 @@ Config partials that follow the naming scheme \<selector\>.\<name\>.conf are onl
 * simple way to render partials based on selectors (see example above)
 * simple way to communicate settings to renderer (`$i3configger_key value`)
 * build config as one shot script or watch for changes (foreground and daemon)
-
-Some things are still in the air - see [notes](https://github.com/obestwalter/i3configger/blob/master/notes.md).
+* If `i3 -C fails` with the newly rendered config, the old config will be kept, no harm done
 
 ## Installation
 
-You should install this into a Python 3.6 interpreter.
+**Note** the code is Python 3.6 only. I want to play with the new toys :)
 
 `i3configger` is released on [the Python Package Index](https://pypi.org/project/i3configger/). The standard installation method is:
 
