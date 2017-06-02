@@ -1,7 +1,46 @@
-# TODO
+## Some inspiration from i3 project
 
-try the defaults again for a change: http://i3wm.org/docs/refcard.html
+> * Never break configuration files or existing workflows. Breaking changes require a major version bump (v4 → v5).
+* Keep mental complexity low: once you know i3’s key features, other features should be easy to understand.
+* Only add features which benefit many people, instead of going to great lengths to support rarely used workflows.
+* Only documented behavior is supported. Clear documentation is a requirement for contributions.
 
+
+**TODO** try the defaults again for a change: http://i3wm.org/docs/refcard.html
+
+
+## TODO/TO CHECK
+
+* should just work with a simple bar config without any special settings or variable assignments
+* Show different ways of organizing (topics, bindings|settings|modes)
+* DEMO Turn default config into config.d (maybe with test)
+
+## Use cases
+
+### Slightly less simple use case
+
+Say you have a dark color scheme for your window decorations. Now you want to add a light scheme for when you hack at the beach in the glaring sun. You want to be able to switch that easily with a keyboard shortcut or a simple command line call.
+
+1. Put all relevant settings regarding color in an extra configuration file
+3. Name that file `scheme.dark.conf`
+4. Copy that file to `scheme.light.conf`
+5. Change the color values or variables in the new file to your liking
+
+To switch to the next scheme, call:
+
+    $ `i3configger next scheme`
+
+`scheme` is an arbitrary name here and can be used with anything depending how you call the config partials. If you called your files `colors.dark.conf` and colors `colors.light.conf` `i3configger --next-colors` would do the job.
+
+    $ `i3configger select scheme dark`
+
+or :
+
+    $ `i3configger select scheme light`
+
+### Defaults
+
+Can be saved in `.state.json`
 
 # Build process
 
@@ -22,42 +61,11 @@ some things in the i3 config are  static but it would be convenient to be able t
 * keybindings
 * bars
 
-## Examples
-
-### Changing display configurations
-
-I have workspaces assigned to concrete displays. If my display configuration changes I want that assignment to adapt also. (e.g. laptop only vs. docked)
-
-    # Displays
-    set $DISP0 DP-0
-    set $DISP1 DP-3
-    set $DISP2 DP-0
-
-    bindcode Mod4+40 focus output $DISP0
-    bindcode Mod4+Shift+40 move container to output $DISP0
-    workspace $ws1 output $DISP0
-    ...
-
-Switching from docked to laptop only would need this readjustment:
-
-        # Displays
-        set $DISP0 DP-3
-        set $DISP1 DP-3
-        set $DISP2 DP-3
-        
-        ... rest stays the same as vars are used
-
-I also might want application windows to go somewhere else by default (e.g. my IDE windows on multi monitor setups should be in different workspaces on different monitors and on laptop they should all be on the same workspace).
-
 ### Display specific bars on specific displays
 
 Those bars should only be integrated if the display is present
 
 Use http://python-xlib.sourceforge.net/doc/html/python-xlib_16.html to read display infos?
-
-### Changing appearance
-
-To change the appearance you want to ue variables for all colors and switch them e.g. by switching out a theme file.
 
 ### different needs on different hosts
 
@@ -73,22 +81,10 @@ Everything that is set with `set $<whatever> <value>` can be replaced using stri
 
 It is then possible to switch sets of settings by simply replacing the source of variables.
 
-This overcomes the restriction of the i3config that I can't assig variables to other variables (e.g. you can't say `set $someVar $someOtherVar`).
+This overcomes the restriction of the i3config that I can't assign variables to other variables (e.g. you can't say `set $someVar $someOtherVar`).
 
 ## Build on startup
 
 It i3configger is started/run once before i3 is started the config can be build depending on settings and environments. e.g in xinitrc before i3wm is started.
 
 e.g. which displays are connected and how should the workspaces and bars be configured according to that.
-
-## Backup of last config
-
-Don't clobber by default to protect users who don't have their config under SCM.
-
-## Dynamic settings
-
-Have settings.py instead of (or addtionally to) settings.i3conf that can then automatically adjust to environment changes.
-
-Environment changes that are interesting need to be polled then (e.g. number of connected monitors, processes being spawned, whatever)
-
-... or turn this into a py3status module after all ...
