@@ -25,8 +25,7 @@ class Builder:
     def _build(self):
         prts = partials.create(self.cnf.partialsPath)
         excludes = {b["key"] for b in self.cnf.bars.values()}
-        selected = partials.select(
-            prts, self.cnf.state["select"], excludes=excludes)
+        selected = partials.select(prts, self.cnf.state["select"], excludes)
         if not selected:
             raise exc.I3configgerException(
                 "no content for %s, %s, %s", prts, self.cnf)
