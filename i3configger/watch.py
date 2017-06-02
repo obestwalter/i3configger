@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 
 class Watchman:
-    BUILD_DELAY = 1
+    BUILD_DELAY = 0.1
     """If an IDE does monkey business (e.g. Jetbrains "safe write")
     more than one change might be triggered for each change.
 
