@@ -11,22 +11,18 @@ log = logging.getLogger(__name__)
 
 
 class Builder:
-    STAGING_SUFFIX = '.staged'
-
     def __init__(self, configPath):
         self.cnf = config.I3configgerConfig(configPath)
-        self.results = {}
-        """name -> (tmp path, target path)"""
         log.info("initialized %s", self)
 
     def __str__(self):
         return "%s\n%s" % (self.__class__.__name__, pprint.pformat(vars(self)))
 
     def build(self):
-        content = self.render()
-        self.persist(content, self.cnf.mainTargetPath)
+        content = self._build()
+        self.persist_main(content, self.cnf.mainTargetPath)
 
-    def render(self):
+    def _build(self):
         prts = partials.create(self.cnf.partialsPath)
         excludes = {b["key"] for b in self.cnf.bars.values()}
         selected = partials.select(
@@ -43,37 +39,25 @@ class Builder:
         barContent = self.get_bar_content(prts, ctx, self.cnf.state)
         return "%s\n%s" % (resolvedContent, barContent)
 
-    def persist(self, content, path):
+    def persist_main(self, content, path):
         container = path.parent
         targetName = path.name
-        tmpPath = container / (targetName + self.STAGING_SUFFIX)
-        tmpPath.write_text(content)
-        self.results[tmpPath] = self.cnf.mainTargetPath
-        self.freeze_if_ok(self.results)
-
-    @classmethod
-    def freeze_if_ok(cls, results):
-        for tmpPath in results.values():
-            # TODO generated status configs seem always ok?
-            if not ipc.I3.config_is_ok(tmpPath):
-                raise exc.BuildError(f"{tmpPath} is broken")
-        # cls.ensure_all_vars_are_resolved(results)
-        for src, dst in results.items():  # all or nothing
-            log.info(f"{src} -> {dst}")
-            os.rename(src, dst)
-
-    def ensure_all_vars_are_resolved(self, results):
-        # FIXME would only work, if marker was unique-ish (not just $)
-        # TODO mask all $ **not** in set statements with a tmp marker
-        # not found anywhere in the content
-        # check all vars are resolved and then put the masked $ back in
-        for tmpPath in results.values():
-            for line in tmpPath.read_text().splitlines():
-                if base.VAR_MARK in line:
-                    raise exc.BuildError(f"not all vars resolved in {tmpPath}")
+        backupPath = container / (targetName + '.orig')
+        os.rename(self.cnf.mainTargetPath, backupPath)
+        try:
+            self.cnf.mainTargetPath.write_text(content)
+            if not ipc.I3.config_is_ok(self.cnf.mainTargetPath):
+                brokenPath = container / (targetName + '.broken')
+                os.rename(self.cnf.mainTargetPath, brokenPath)
+                raise exc.BuildError(f"{brokenPath} is broken")
+            os.unlink(backupPath)
+        except:
+            os.rename(backupPath, self.cnf.mainTargetPath)
+            raise
 
     def get_bar_content(self, prts, ctx, state):
         bars = []
+        alreadyWritten = []
         for barName, barCnf in self.cnf.bars.items():
             barCnf["id"] = barName
             selectKey = barCnf["key"]
@@ -88,11 +72,11 @@ class Builder:
                 barCnf["target"] = str(container)
             eCtx = context.enhance(ctx, [barCnf, prt, state["set"]])
             bars.append(self.substitute(tpl.display, eCtx))
-            if prt.name not in self.results:
+            if prt.name not in alreadyWritten:
                 content = self.substitute(prt.payload, eCtx)
-                tmpPath = container / f"{prt.name}{self.STAGING_SUFFIX}"
-                self.results[tmpPath] = container / f"{prt.name}{base.SUFFIX}"
-                tmpPath.write_text(content)
+                path = container / f"{prt.name}{base.SUFFIX}"
+                path.write_text(content)
+                alreadyWritten.append(path)
         return '\n'.join(bars)
 
     @classmethod
