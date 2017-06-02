@@ -16,15 +16,11 @@ class I3:
 
     @classmethod
     def reload_i3(cls):
-        if cls._send_i3_msg('reload'):
-            Notify.send("reloaded i3")
+        cls._send_i3_msg('reload')
 
     @classmethod
     def restart_i3(cls):
-        cmd = ['i3-msg', 'restart']
-        subprocess.call(cmd)
-        time.sleep(0.5)
-        Notify.send("restarted i3")
+        subprocess.call(['i3-msg', 'restart'])
 
     @classmethod
     def nop(cls):
@@ -39,7 +35,6 @@ class I3:
             output = subprocess.check_output(cmd).decode()
             if '"success":true' in output:
                 return True
-            Notify.send("%s: %s" % (cmd, output), urgency='critical')
             return False
         except subprocess.CalledProcessError as e:
             if msg == 'restart' and e.returncode == 1:
@@ -59,9 +54,19 @@ class I3:
 
 class Notify:
     @classmethod
+    def set_notify_command(cls, offSwitch):
+        if offSwitch:
+            log.info("deactivate notification")
+            cls.send = cls.nop
+
+    @classmethod
     def send(cls, msg, urgency='low'):
         subprocess.check_call([
             'notify-send', '-a', 'i3configger', '-t', '1', '-u', urgency, msg])
+
+    @staticmethod
+    def nop(*args, **kwargs):
+        pass
 
 
 class StatusBar:

@@ -86,7 +86,7 @@ class Watchman:
         if self.lastBuild and time.time() - self.lastBuild < self.BUILD_DELAY:
             log.debug("ignore %s changed too quick", filePath)
             return False
-        if filePath.suffix != base.SUFFIX:
+        if filePath.suffix not in [base.SUFFIX, '.json']:
             return False
         if filePath != self.lastFilePath:
             log.debug("%s != %s", filePath, self.lastFilePath)

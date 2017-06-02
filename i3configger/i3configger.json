@@ -1,11 +1,12 @@
 {
   "main": {
-    "target": "../config"
+    "target": "../config",
+    "notify": false
   },
   "bars": {
     "defaults": {
-      "select-key": "i3status",
-      "select-value": "full",
+      "key": "i3status",
+      "value": "full",
       "target": "..",
       "template": "tpl"
     },

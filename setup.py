@@ -16,7 +16,7 @@ kwargs = dict(
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     entry_points={'console_scripts': ['i3configger = i3configger.main:main']},
-    install_requires=['inotify', 'psutil', 'python-daemon', 'cached_property'],
+    install_requires=['inotify', 'psutil', 'python-daemon'],
     packages=find_packages(),
     classifiers=[
         'Development Status :: 4 - Beta',

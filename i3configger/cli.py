@@ -17,8 +17,9 @@ def process_command_line():
     args.config = Path(args.config).expanduser() if args.config else None
     if args.message and any([args.daemon, args.kill, args.watch]):
         parser.error(
-            "message and daemon/watch can't be used together: %s;%s" %
-            (args, args.message))
+            "message and daemon/watch can't be used together. "
+            "Start the watcher process first and then you can send messages"
+            "in following calls.")
     return args
 
 
@@ -34,11 +35,15 @@ def _parse_args(p):
                    help="watch and build as daemon", default=False)
     g.add_argument('--kill', action="store_true", default=False,
                    help="exorcise daemon if running")
-    p.add_argument('--i3-refresh-msg', action="store", default='restart',
+    p.add_argument('--i3-refresh-msg', action="store", default='reload',
                    choices=['restart', 'reload', 'nop'],
                    help="i3-msg to send after build")
+    p.add_argument('--no-notify', action="store_true", default=False,
+                   help="deactivate notification via notify-send")
     p.add_argument('--log', action="store", default=None,
                    help="i3configgerPath to where log should be stored")
+    p.add_argument('--load', action="store", default=None,
+                   help="load a state or config and build new")
     p.add_argument('-c', '--config', action="store",
                    default=None, help="i3configgerPath to config file")
     p.add_argument("message", help="message to send to i3configger", nargs="*")

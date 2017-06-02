@@ -23,58 +23,73 @@ class Builder:
         return "%s\n%s" % (self.__class__.__name__, pprint.pformat(vars(self)))
 
     def build(self):
+        content = self.render()
+        self.persist(content, self.cnf.mainTargetPath)
+
+    def render(self):
         prts = partials.create(self.cnf.partialsPath)
-        state = config.State.process(
-            self.cnf.statePath, prts, self.cnf.message)
-        excludes = {b["select-key"] for b in self.cnf.bars.values()}
-        selected = partials.select(prts, state["select"], excludes=excludes)
+        excludes = {b["key"] for b in self.cnf.bars.values()}
+        selected = partials.select(
+            prts, self.cnf.state["select"], excludes=excludes)
         if not selected:
             raise exc.I3configgerException(
                 "no content for %s, %s, %s", prts, self.cnf)
         ctx = context.create(selected)
         rawContent = self.make_header()
         rawContent += '\n'.join(prt.display for prt in selected)
-        if self.cnf.bars:
-            rawContent += self.make_bars(prts, ctx, state)
         resolvedContent = self.substitute(rawContent, ctx)
-        container = self.cnf.mainTargetPath.parent
-        targetName = self.cnf.mainTargetPath.name
+        if not self.cnf.bars:
+            return resolvedContent
+        barContent = self.get_bar_content(prts, ctx, self.cnf.state)
+        return "%s\n%s" % (resolvedContent, barContent)
+
+    def persist(self, content, path):
+        container = path.parent
+        targetName = path.name
         tmpPath = container / (targetName + self.STAGING_SUFFIX)
-        tmpPath.write_text(resolvedContent)
+        tmpPath.write_text(content)
         self.results[tmpPath] = self.cnf.mainTargetPath
         self.freeze_if_ok(self.results)
 
-    @staticmethod
-    def freeze_if_ok(results):
+    @classmethod
+    def freeze_if_ok(cls, results):
         for tmpPath in results.values():
             # TODO generated status configs seem always ok?
             if not ipc.I3.config_is_ok(tmpPath):
                 raise exc.BuildError(f"{tmpPath} is broken")
-            for line in tmpPath.read_text().splitlines():
-                if base.VAR_MARK in line:
-                    raise exc.BuildError(f"not all vars resolved in {tmpPath}")
-        # all or nothing
-        for src, dst in results.items():
+        # cls.ensure_all_vars_are_resolved(results)
+        for src, dst in results.items():  # all or nothing
             log.info(f"{src} -> {dst}")
             os.rename(src, dst)
 
-    def make_bars(self, prts, ctx, state):
+    def ensure_all_vars_are_resolved(self, results):
+        # FIXME would only work, if marker was unique-ish (not just $)
+        # TODO mask all $ **not** in set statements with a tmp marker
+        # not found anywhere in the content
+        # check all vars are resolved and then put the masked $ back in
+        for tmpPath in results.values():
+            for line in tmpPath.read_text().splitlines():
+                if base.VAR_MARK in line:
+                    raise exc.BuildError(f"not all vars resolved in {tmpPath}")
+
+    def get_bar_content(self, prts, ctx, state):
         bars = []
         for barName, barCnf in self.cnf.bars.items():
             barCnf["id"] = barName
-            selectKey = barCnf["select-key"]
-            selectValue = barCnf["select-value"]
+            selectKey = barCnf["key"]
+            selectValue = barCnf["value"]
             prt = partials.find(prts, selectKey, selectValue)
             assert isinstance(prt, partials.Partial), prt
             tpl = partials.find(prts, selectKey, barCnf["template"])
             assert isinstance(tpl, partials.Partial), tpl
+            container = Path(barCnf["target"])
+            if not container.is_absolute():
+                container = (self.cnf.partialsPath / container).resolve()
+                barCnf["target"] = str(container)
             eCtx = context.enhance(ctx, [barCnf, prt, state["set"]])
             bars.append(self.substitute(tpl.display, eCtx))
             if prt.name not in self.results:
                 content = self.substitute(prt.payload, eCtx)
-                container = Path(barCnf["target"])
-                if not container.is_absolute():
-                    container = (self.cnf.partialsPath / container).resolve()
                 tmpPath = container / f"{prt.name}{self.STAGING_SUFFIX}"
                 self.results[tmpPath] = container / f"{prt.name}{base.SUFFIX}"
                 tmpPath.write_text(content)

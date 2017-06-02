@@ -4,8 +4,6 @@ import sys
 import tempfile
 from pathlib import Path
 
-from cached_property import cached_property_with_ttl
-
 from i3configger import exc
 
 log = logging.getLogger(__name__)
@@ -47,17 +45,3 @@ def i3configger_excepthook(type_, value, traceback):
 
 _REAL_EXCEPTHOOK = sys.excepthook
 sys.excepthook = i3configger_excepthook
-
-if not DEBUG:
-    # TODO add this when stable to speed things up?
-    def timed_cached_property():
-        return property
-else:
-    def timed_cached_property():
-        return cached_property_with_ttl(1)
-
-try:
-    from IPython import embed
-except ImportError:
-    def embed():
-        raise exc.I3configgerException("embed() needs Ipython installed")

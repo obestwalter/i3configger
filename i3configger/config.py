@@ -15,9 +15,10 @@ class I3configgerConfig:
         p = paths.Paths(configPath)
         self.configPath = p.config
         self.partialsPath = p.root
-        self.prts = partials.create(self.partialsPath)
         self.statePath = p.state
         self.payload = fetch(self.configPath)
+        self.state = State.process(
+            self.statePath, partials.create(self.partialsPath), self.message)
         targetPath = Path(self.payload["main"]["target"]).expanduser()
         if targetPath.is_absolute():
             self.mainTargetPath = targetPath.resolve()
@@ -51,7 +52,7 @@ class State:
     Tuple contains name and number of expected additional arguments
     """
     I3STATUS = "i3status"
-    """reserved select-key for status bar settings"""
+    """reserved key for status bar setting files"""
     SELECT_NEXT = ("select-next", 1)
     SELECT_PREVIOUS = ("select-previous", 1)
     SELECT = ("select", 2)
@@ -67,20 +68,29 @@ class State:
         command, key, *rest = message
         value = rest[0] if rest else None
         log.debug(f"sending message {message} to {statePath}")
-        if command == cls.SET:
+        if command == cls.SET[0]:
             if value.lower() == cls.DEL:
                 del state["set"][key]
             else:
                 state["set"][key] = value
         else:
-            if command in [cls.SELECT_NEXT, cls.SELECT_PREVIOUS]:
+            if command in [cls.SELECT_NEXT[0], cls.SELECT_PREVIOUS[0]]:
                 candidates = partials.find(prts, key)
                 if not candidates:
                     raise exc.MessageError(
                         f"No candidates for {message} in {prts}")
-                current = state["select"].get(key) or candidates[-1]
-                new = cls.FUNC_MAP[command](current, candidates)
-                state["select"][key] = new.value
+                if command == cls.SELECT_PREVIOUS:
+                    candidates = reversed(candidates)
+                current = state["select"].get(key) or candidates[0].key
+                for idx, candidate in enumerate(candidates):
+                    if candidate.value == current:
+                        try:
+                            new = candidates[idx + 1]
+                        except IndexError:
+                            new = candidates[0]
+                        log.info("select %s.%s", key, new)
+                        state["select"][key] = new.value
+                        break
             elif command == cls.SELECT:
                 candidate = partials.find(prts, key, value)
                 if not candidate:
@@ -90,6 +100,7 @@ class State:
                 else:
                     state["select"][key] = candidate.value
         freeze(statePath, state)
+        return state
 
     @classmethod
     def fetch_state(cls, statePath, prts):
@@ -107,22 +118,6 @@ class State:
         state = dict(select=selects, set={})
         freeze(statePath, state)
         return state
-
-    @staticmethod
-    def _next(current, items: list):
-        try:
-            return items[items.index(current) + 1]
-        except IndexError:
-            return items[0]
-
-    @staticmethod
-    def _previous(current, items: list):
-        try:
-            return items[items.index(current) - 1]
-        except IndexError:
-            return items[-1]
-
-    FUNC_MAP = {SELECT_NEXT: _next, SELECT_PREVIOUS: _previous}
 
     @classmethod
     def get_spec(cls, message):
