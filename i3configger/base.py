@@ -12,8 +12,9 @@ log = logging.getLogger(__name__)
 DEBUG = os.getenv('DEBUG', 1)  # FIXME deactivate before next release
 VAR_MARK = '$'
 SET_MARK = 'set'
-SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
 SUFFIX = '.conf'
+I3STATUS = "i3status"
+SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
 
 
 def configure_logging(verbosity: int, logPath: str, isDaemon=False):

@@ -51,7 +51,7 @@ def check_sanity(message):
         return
     log.debug("processing %s", message)
     command, *rest = message
-    spec = config.Message.get_spec(command)
+    spec = config.State.get_spec(command)
     if len(rest) != spec:
         raise exc.I3configgerException(
             f"message '{command}' needs {spec} args - got: {rest}")

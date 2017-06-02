@@ -66,12 +66,10 @@ class Builder:
             assert isinstance(prt, partials.Partial), prt
             tpl = partials.find(prts, selectKey, barCnf["template"])
             assert isinstance(tpl, partials.Partial), tpl
-            localCtx = dict(ctx)
-            localCtx.update(barCnf)
-            localCtx.update(context.create([prt]))
-            bars.append(self.substitute(tpl.display, localCtx))
+            eCtx = context.enhance(ctx, [barCnf, prt, self.cnf.set])
+            bars.append(self.substitute(tpl.display, eCtx))
             if prt.name not in self.results:
-                content = self.substitute(prt.payload, localCtx)
+                content = self.substitute(prt.payload, eCtx)
                 container = Path(barCnf["target"])
                 if not container.is_absolute():
                     container = (self.cnf.partialsPath / container).resolve()

@@ -29,7 +29,7 @@ class Watchman:
 
     def __init__(self, cnf):
         self.builder = build.Builder(cnf)
-        self.configPath = str(cnf.partialsPath).encode()
+        self.partialsPath = str(cnf.partialsPath).encode()
         self.lastBuild = None
         self.lastFilePath = None
         self.errors = 0
@@ -56,7 +56,7 @@ class Watchman:
 
     def _get_events(self):
         inotify_watcher = Inotify()
-        inotify_watcher.add_watch(self.configPath, mask=self.MASK)
+        inotify_watcher.add_watch(self.partialsPath, mask=self.MASK)
         for event in inotify_watcher.event_gen():
             if not event:
                 continue

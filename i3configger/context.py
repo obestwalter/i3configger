@@ -28,6 +28,15 @@ def remove_variable_markers(ctx: dict) -> dict:
     return cleaned
 
 
+def enhance(ctx, otherContexts):
+    eCtx = dict(ctx)
+    for oc in otherContexts:
+        if isinstance(oc, partials.Partial):
+            oc = create([oc])
+        eCtx.update(oc)
+    return eCtx
+
+
 def resolve(context: dict) -> dict:
     """If variables are set by a variable, replace them by their value."""
     if not any(v.startswith(base.VAR_MARK) for v in context.values()):

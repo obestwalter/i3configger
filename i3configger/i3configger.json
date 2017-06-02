@@ -2,10 +2,6 @@
   "main": {
     "target": "../config"
   },
-  "message": {
-    "set" : {},
-    "select": {}
-  },
   "bars": {
     "defaults": {
       "select-key": "i3status",

@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from i3configger import cli, build, config, daemonize, ipc, watch
+from i3configger import cli, build, config, daemonize, ipc, watch, paths
 
 log = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ def main():
         daemonize.exorcise()
         return 0
     ipc.I3.set_msg_type(args.i3_refresh_msg)
-    configPath = config.get_my_config_path(args.config)
+    configPath = paths.get_my_config_path(args.config)
     cnf = config.I3configgerConfig(configPath, args.message)
     if args.daemon:
         daemonize.daemonize(args.v, args.log, cnf)
