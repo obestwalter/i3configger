@@ -42,7 +42,7 @@ class Builder:
     def persist_main(self, content, path):
         container = path.parent
         targetName = path.name
-        backupPath = container / (targetName + '.orig')
+        backupPath = container / (targetName + '.bak')
         os.rename(self.cnf.mainTargetPath, backupPath)
         try:
             self.cnf.mainTargetPath.write_text(content)
@@ -50,7 +50,6 @@ class Builder:
                 brokenPath = container / (targetName + '.broken')
                 os.rename(self.cnf.mainTargetPath, brokenPath)
                 raise exc.BuildError(f"{brokenPath} is broken")
-            os.unlink(backupPath)
         except:
             os.rename(backupPath, self.cnf.mainTargetPath)
             raise
