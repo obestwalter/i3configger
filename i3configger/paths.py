@@ -20,7 +20,6 @@ class Paths:
         assert path.exists() and path.is_file(), path
         self.root = path.parent
         self.config = configPath
-        self.partialsPath = path.parent.resolve()
         self.state = self.root / STATE_FILE_NAME
 
 

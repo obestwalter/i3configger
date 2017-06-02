@@ -13,8 +13,8 @@ log = logging.getLogger(__name__)
 class Builder:
     STAGING_SUFFIX = '.staged'
 
-    def __init__(self, cnf: config.I3configgerConfig):
-        self.cnf = cnf
+    def __init__(self, configPath):
+        self.cnf = config.I3configgerConfig(configPath)
         self.results = {}
         """name -> (tmp path, target path)"""
         log.info("initialized %s", self)

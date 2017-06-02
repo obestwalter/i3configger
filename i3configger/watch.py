@@ -27,9 +27,9 @@ class Watchman:
         ic.IN_DELETE_SELF | ic.IN_MOVE_SELF)
     """Tell inotify to trigger on changes"""
 
-    def __init__(self, cnf):
-        self.builder = build.Builder(cnf)
-        self.partialsPath = str(cnf.partialsPath).encode()
+    def __init__(self, configPath):
+        self.partialsPath = str(configPath.parent).encode()
+        self.configPath = configPath
         self.lastBuild = None
         self.lastFilePath = None
         self.errors = 0
@@ -66,12 +66,12 @@ class Watchman:
         header, typeNames, filePath = self._get_event_data(event)
         if self.needs_build(header, typeNames, filePath):
             log.info("%s triggered build", filePath)
-            self.builder.build()
+            build.Builder(self.configPath).build()
             self.lastBuild = time.time()
             self.lastFilePath = filePath
             ipc.I3.refresh()
             ipc.StatusBar.refresh()
-            ipc.Notify.send('new config active')
+            ipc.Notify.send('Watchman: new config active')
 
     @staticmethod
     def _get_event_data(event):
@@ -88,7 +88,4 @@ class Watchman:
             return False
         if filePath.suffix not in [base.SUFFIX, '.json']:
             return False
-        if filePath != self.lastFilePath:
-            log.debug("%s != %s", filePath, self.lastFilePath)
-            return True
-        return False
+        return True
