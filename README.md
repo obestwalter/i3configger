@@ -37,7 +37,7 @@ Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `<i3 c
 
 ### Simple
 
-1. Cut your config file into chewable chunks with the extension `.conf` and put them in the directory `~/.i3/config.d`.
+1. Cut your config file into chewable chunks with the extension `.conf` and put them in the directory `<i3 config folder>/config.d`.
 2. Run `i3configger`.
 3. `i3configger.json` and `.state.json` are created in `config.d`
 4. A new config file is generated instead of your old config.
