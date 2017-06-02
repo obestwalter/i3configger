@@ -2,7 +2,7 @@
  [![Build Status](https://travis-ci.org/obestwalter/i3configger.svg?branch=master)](https://travis-ci.org/obestwalter/i3configger) [![PyPI version](https://badge.fury.io/py/i3configger.svg)](https://badge.fury.io/py/i3configger)
 
 # i3configger
-Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `~/.i3/config.d`. Does some nifty conditional integration of files on demand and variable resolution (also for i3status configs).
+Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `<i3 config folder>/config.d`. Does some nifty conditional integration of files on demand and variable resolution (also for i3status configs).
 
 ## Why?
 
