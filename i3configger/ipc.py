@@ -1,7 +1,5 @@
 import subprocess
 
-import time
-
 from i3configger.base import log
 
 

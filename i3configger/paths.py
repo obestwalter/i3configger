@@ -1,10 +1,9 @@
 import json
+import logging
 import os
 from pathlib import Path
 
-import logging
-
-from i3configger import base, config, exc, partials
+from i3configger import config, exc
 
 log = logging.getLogger(__name__)
 

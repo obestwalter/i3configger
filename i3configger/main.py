@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 from i3configger import (
-    cli, build, config, daemonize, ipc, watch, paths, exc, partials)
+    build, cli, config, daemonize, ipc, partials, paths, watch)
 
 log = logging.getLogger(__name__)
 
