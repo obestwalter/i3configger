@@ -18,7 +18,7 @@ Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `~/.i3
 2. Run `i3configger`.
 3. `i3configger.json` and `.state.json` are created in `config.d`
 4. A new config file is generated instead of your old config.
-5. A backup of tha last config is kept with suffix `.bak`
+5. A backup of the last config is kept with suffix `.bak`
 
 * `i3configger.json` can be used to do configuration of the status bars.
 * `.state.json` remembers the state of your current settings
