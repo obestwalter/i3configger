@@ -11,6 +11,27 @@ Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `~/.i3
 * To be able to also use variables in i3status configurations
 * To be able to change the config dynamically without having to manually make changes to the config file
 
+## Installation
+
+**Note** the code is Python 3.6 only. I want to play with the new toys :)
+
+`i3configger` is released on [the Python Package Index](https://pypi.org/project/i3configger/). The standard installation method is:
+
+    $ pip install i3configger
+
+##  Features
+
+* build main config and one or several i3status configs from the same sources
+* variables are handled slightly more intelligently than i3 does it (variables assigned to other variables are resolved)
+* end of line comments are possible (removed at build time)
+* variables in i3status configs are also resolved (set anywhere in the sources)
+* reload or restart i3 when a change has been done (using `i3-msg`)
+* notify when new config has been created and activated (using `notify-send`)
+* simple way to render partials based on selectors (see example above)
+* simple way to communicate settings to renderer (`$i3configger_key value`)
+* build config as one shot script or watch for changes (foreground and daemon)
+* If `i3 -C fails` with the newly rendered config, the old config will be kept, no harm done
+
 ## Getting started
 
 ### Simple
@@ -63,27 +84,6 @@ If I want to get my dock out of the way:
 So in short: `select` integrate different partial files and `set` assigns values to arbitrary variables that are set anywhere in the configuration.
 
 Config partials that follow the naming scheme \<key\>.\<value\>.conf are only rendered into the config if explicitly set via configuration or a message from the command line (which then will be persisted).
-
-##  Features
-
-* build main config and one or several i3status configs from the same sources
-* variables are handled slightly more intelligently than i3 does it (variables assigned to other variables are resolved)
-* end of line comments are possible (removed at build time)
-* variables in i3status configs are also resolved (set anywhere in the sources)
-* reload or restart i3 when a change has been done (using `i3-msg`)
-* notify when new config has been created and activated (using `notify-send`)
-* simple way to render partials based on selectors (see example above)
-* simple way to communicate settings to renderer (`$i3configger_key value`)
-* build config as one shot script or watch for changes (foreground and daemon)
-* If `i3 -C fails` with the newly rendered config, the old config will be kept, no harm done
-
-## Installation
-
-**Note** the code is Python 3.6 only. I want to play with the new toys :)
-
-`i3configger` is released on [the Python Package Index](https://pypi.org/project/i3configger/). The standard installation method is:
-
-    $ pip install i3configger
 
 ## Resources
 
