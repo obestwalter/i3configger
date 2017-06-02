@@ -20,6 +20,11 @@ def process_command_line():
             "message and daemon/watch can't be used together. "
             "Start the watcher process first and then you can send messages"
             "in following calls.")
+    if args.load_config and any([args.daemon, args.kill, args.watch]):
+        parser.error(
+            "Loading a configuration or state and daemon/watch can't be "
+            "used together. Start the watcher process first and then load"
+            "in following calls.")
     return args
 
 
@@ -42,8 +47,8 @@ def _parse_args(p):
                    help="deactivate notification via notify-send")
     p.add_argument('--log', action="store", default=None,
                    help="i3configgerPath to where log should be stored")
-    p.add_argument('--load', action="store", default=None,
-                   help="load a state or config and build new")
+    p.add_argument('--load-config', action="store", default=None,
+                   help="load a config and build new")
     p.add_argument('-c', '--config', action="store",
                    default=None, help="i3configgerPath to config file")
     p.add_argument("message", help="message to send to i3configger", nargs="*")

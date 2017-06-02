@@ -1,5 +1,6 @@
 import logging
 import sys
+from pathlib import Path
 
 from i3configger import (
     cli, build, config, daemonize, ipc, watch, paths, exc, partials)
@@ -15,8 +16,8 @@ def main():
     configPath = paths.get_my_config_path(args.config)
     if daemonize.get_other_i3configgers():
         if not args.message:
-            raise exc.I3configgerException(
-                "already running. Did you want to send a message?")
+            sys.exit("i3configger already running. "
+                     "Did you want to send a message?")
         # process and write the state and let watcher do the build
         log.info("watcher process is running - processing message")
         p = paths.Paths(configPath)
@@ -24,16 +25,21 @@ def main():
         return 0
     # TODO merge args and conf (args override conf)
     ipc.I3.set_msg_type(args.i3_refresh_msg)
+    log.info("set i3 refresh method to %s", ipc.I3.refresh)
     ipc.Notify.set_notify_command(args.no_notify)
     if args.daemon:
         daemonize.daemonize(args.v, args.log, configPath)
         return 0
-    log.info("set i3 refresh method to %s", ipc.I3.refresh)
     if args.watch:
         try:
             watch.Watchman(configPath).watch()
         except KeyboardInterrupt:
             sys.exit("bye")
+    if args.load_config:
+        p = paths.Paths(configPath)
+        state = config.State.fetch_state(
+            Path(args.load).expanduser(), partials.create(p.root))
+        config.freeze(configPath, state)
     else:
         build.Builder(configPath).build()
         ipc.I3.refresh()
@@ -42,8 +48,9 @@ def main():
 
 
 if __name__ == '__main__':
-    # sys.argv = ['dev', '-vvv']
+    # dev stuff
+    sys.argv = ['dev', '-vvv']
     # sys.argv = ['dev', '-vvv', 'select-next', 'scheme']
-    sys.argv = ['dev', '-vvv', 'set', 'mode', 'dock']
-    sys.argv = ['dev', '-vvv', '--watch']
+    # sys.argv = ['dev', '-vvv', 'set', 'mode', 'dock']
+    # sys.argv = ['dev', '-vvv', '--watch']
     sys.exit(main())
