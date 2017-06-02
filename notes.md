@@ -88,3 +88,16 @@ This overcomes the restriction of the i3config that I can't assign variables to 
 It i3configger is started/run once before i3 is started the config can be build depending on settings and environments. e.g in xinitrc before i3wm is started.
 
 e.g. which displays are connected and how should the workspaces and bars be configured according to that.
+
+
+## TODO: collect and check resources
+
+
+### Other Tools
+
+... from the i3wm ecosystem
+
+I did not try them all, but stumbled over them while checking if somebody else solved my problem already.
+
+* [i3ColourChanger](https://github.com/PMunch/i3ColourChanger)
+* [i3-manager](https://github.com/erayaydin/i3-manager)

@@ -1,5 +1,6 @@
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
- [![Build Status](https://travis-ci.org/obestwalter/i3configger.svg?branch=master)](https://travis-ci.org/obestwalter/i3configger)
+ [![Build Status](https://travis-ci.org/obestwalter/i3configger.svg?branch=master)](https://travis-ci.org/obestwalter/i3configger) [![PyPI version](https://badge.fury.io/py/i3configger.svg)](https://badge.fury.io/py/i3configger)
+
 # i3configger
 Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `~/.i3/config.d`. Does some nifty conditional integration of files on demand and variable resolution (also for i3status configs).
 
@@ -49,7 +50,9 @@ With my config, the call:
 
 will integrate `scheme.solarized-dark.conf` in the build and exclude all other `scheme.*.conf` files.
 
-    $ i3configger select-next scheme will switch to the next theme
+    $ i3configger select-next scheme
+
+will switch to the next theme (and wrap around to the first scheme)
 
 This is persisted in `.state.json`
 
@@ -57,7 +60,7 @@ If I want to get my dock out of the way:
 
     $ i3configger set mode hide
 
-So in short: `select` helps switching between partial files and `set` is assigning new values to arbitrary variables that I have set in the configuration.
+So in short: `select` integrate different partial files and `set` assigns values to arbitrary variables that are set anywhere in the configuration.
 
 Config partials that follow the naming scheme \<key\>.\<value\>.conf are only rendered into the config if explicitly set via configuration or a message from the command line (which then will be persisted).
 
@@ -89,12 +92,3 @@ Config partials that follow the naming scheme \<key\>.\<value\>.conf are only re
 * [i3wm](https://i3wm.org/)
 * [reddit group](https://www.reddit.com/r/i3wm/)
 * [Archlinux Wiki](https://wiki.archlinux.org/index.php/I3)
-
-### Other Tools
-
-... from the i3wm ecosystem
-
-I did not try them all, but stumbled over them while checking if somebody else solved my problem already.
-
-* [i3ColourChanger](https://github.com/PMunch/i3ColourChanger)
-* [i3-manager](https://github.com/erayaydin/i3-manager)
