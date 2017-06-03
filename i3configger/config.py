@@ -155,5 +155,5 @@ def fetch(path):
 
 def freeze(path, obj):
     with open(path, 'w') as f:
-        json.dump(obj, f, sort_keys=True, indent=4)
+        json.dump(obj, f, sort_keys=True, indent=2)
     log.debug("froze %s to %s", pprint.pformat(obj), path)
