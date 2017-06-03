@@ -25,7 +25,7 @@ def test_only_bars():
     I3configgerConfig.NAME = 'i3status-only-bars.json'
     i3s = I3configgerConfig(DATA)
     assert i3s
-    assert i3s.bars == {"laptop": {"output": "DP-3", "position": "top"}}
+    assert i3s.barTargets == {"laptop": {"output": "DP-3", "position": "top"}}
     assert i3s.marker == i3s.DEFAULT_SETTINGS[i3s.MARKER_KEY]
     assert i3s.template == i3s.DEFAULT_SETTINGS[i3s.TEMPLATE]
     assert i3s.target == i3s.DEFAULT_SETTINGS[i3s.TARGET]
@@ -36,7 +36,7 @@ def test_full():
     I3configgerConfig.NAME = 'i3status-full.json'
     i3s = I3configgerConfig(DATA)
     assert i3s
-    assert i3s.bars == {
+    assert i3s.barTargets == {
         'first bar': {
             'font': 'should override font default',
             'output': 'first output',

@@ -39,26 +39,26 @@ class I3configgerConfig:
             self.mainTargetPath = targetPath.resolve()
         else:
             self.mainTargetPath = (self.partialsPath / targetPath).resolve()
-        self.bars = self.populate_bar_defaults(self.payload.get("bars", {}))
+        self.barTargets = self.make_bar_targets(self.payload.get("bars", {}))
         log.debug("initialized config  %s", self)
 
     def __str__(self):
         return "%s:\n%s" % (self.__class__.__name__,
                             pprint.pformat(vars(self)))
 
-    def populate_bar_defaults(self, bars):
+    def make_bar_targets(self, bars):
         """Create a resolved copy of the bar settings."""
         defaults = bars.get("defaults", {})
-        resolvedBars = {}
+        barTargets = {}
         for name, bar in bars.items():
             if name == "defaults":
                 continue
             newBar = dict(bar)
-            resolvedBars[name] = newBar
+            barTargets[name] = newBar
             for defaultKey, defaultValue in defaults.items():
                 if defaultKey not in newBar:
                     newBar[defaultKey] = defaultValue
-        return resolvedBars
+        return barTargets
 
 
 class State:

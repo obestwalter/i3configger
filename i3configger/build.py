@@ -24,7 +24,7 @@ class Builder:
 
     def _build(self):
         prts = partials.create(self.cnf.partialsPath)
-        excludes = {b["key"] for b in self.cnf.bars.values()}
+        excludes = {b["key"] for b in self.cnf.barTargets.values()}
         selected = partials.select(prts, self.cnf.state["select"], excludes)
         if not selected:
             raise exc.I3configgerException(
@@ -33,7 +33,7 @@ class Builder:
         rawContent = self.make_header()
         rawContent += '\n'.join(prt.display for prt in selected)
         resolvedContent = self.substitute(rawContent, ctx)
-        if not self.cnf.bars:
+        if not self.cnf.barTargets:
             return resolvedContent
         barContent = self.get_bar_content(prts, ctx, self.cnf.state)
         return "%s\n%s" % (resolvedContent, barContent)
@@ -56,7 +56,7 @@ class Builder:
     def get_bar_content(self, prts, ctx, state):
         bars = []
         alreadyWritten = []
-        for barName, barCnf in self.cnf.bars.items():
+        for barName, barCnf in self.cnf.barTargets.items():
             barCnf["id"] = barName
             selectKey = barCnf["key"]
             selectValue = barCnf["value"]
