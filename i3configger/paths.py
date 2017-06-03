@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 from pathlib import Path
@@ -34,9 +33,7 @@ def get_my_config_path(configPath=None):
             configPath /= MY_CONFIG_NAME
     if not configPath.exists():
         log.info("create default configuration at %s", configPath)
-        myConfigBlueprint = Path(__file__).parent / MY_CONFIG_NAME
-        with open(myConfigBlueprint) as f:
-            config.freeze(configPath, json.load(f))
+        config.freeze(configPath, config.I3_CONFIGGER_DEFAULTS)
     return configPath
 
 

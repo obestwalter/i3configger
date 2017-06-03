@@ -7,6 +7,21 @@ from i3configger import exc, partials, paths
 
 log = logging.getLogger(__name__)
 
+I3_CONFIGGER_DEFAULTS = {
+  "main": {
+    "target": "../config",
+  },
+  "bars": {
+    "defaults": {
+      "key": "i3status",
+      "value": "full",
+      "target": "..",
+      "template": "tpl"
+    },
+    "targets": {}
+  }
+}
+
 
 class I3configgerConfig:
     def __init__(self, configPath: Path, message: list=None):
