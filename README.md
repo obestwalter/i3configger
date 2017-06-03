@@ -26,8 +26,8 @@
 * simple way to render partials based on key value pairs in file name
 * simple way to change the configuration by sending messages
 * build config as one shot script or watch for changes
-* Send messages to watching i3configger process
-* If `i3 -C fails` with the newly rendered config, the old config will be kept, no harm done
+* send messages to watching i3configger process
+* if `i3 -C fails` with the newly rendered config, the old config will be kept, no harm done
 
 ## Installation
 
