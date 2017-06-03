@@ -2,24 +2,16 @@
  [![Build Status](https://travis-ci.org/obestwalter/i3configger.svg?branch=master)](https://travis-ci.org/obestwalter/i3configger) [![PyPI version](https://badge.fury.io/py/i3configger.svg)](https://badge.fury.io/py/i3configger)
 
 # i3configger
-Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `<i3 config folder>/config.d`. Does some nifty conditional integration of files on demand and variable resolution (also for i3status configs).
 
-## Why?
+## Overview
 
-* To be able to split my long and messy config file in many short, aptly named, messy config files
-* To be able to assign variables to variables (`set $var $otherVar`)
-* To be able to also use variables in i3status configurations
-* To be able to change the config dynamically without having to manually make changes to the config file
+Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `<i3 config folder>/config.d`.
 
-## Installation
+Restarts or reloads i3 and when changes were made. This makes it possible to dynamically change settings that need changes in the configuration files (e.g. switch bar mode between hide and docked or cycle through different color schemes).
 
-**Note** the code is Python 3.6 only. I want to play with the new toys :)
+Some nifty conditional integration of files on demand and variable resolution: assign variables to variable and also be able to use variables in i3status configuration files.
 
-`i3configger` is released on [the Python Package Index](https://pypi.org/project/i3configger/). The standard installation method is:
-
-    $ pip install i3configger
-
-##  Features
+##  Detailed Features
 
 * build main config and one or several i3status configs from the same sources
 * variables are handled slightly more intelligently than i3 does it (variables assigned to other variables are resolved)
@@ -32,6 +24,14 @@ Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `<i3 c
 * build config as one shot script or watch for changes
 * Send messages to watching i3configger process
 * If `i3 -C fails` with the newly rendered config, the old config will be kept, no harm done
+
+## Installation
+
+**Note** the code is Python 3.6 only. I want to play with the new toys :)
+
+`i3configger` is released on [the Python Package Index](https://pypi.org/project/i3configger/). The standard installation method is:
+
+    $ pip install i3configger
 
 ## Getting started
 
