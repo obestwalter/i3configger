@@ -33,7 +33,7 @@ class Builder:
         rawContent = self.make_header()
         rawContent += '\n'.join(prt.display for prt in selected)
         resolvedContent = self.substitute(rawContent, ctx)
-        if not self.cnf.bars["targets"]:
+        if not self.cnf.bars:
             return resolvedContent
         barContent = self.get_bar_content(prts, ctx, self.cnf.state)
         return "%s\n%s" % (resolvedContent, barContent)
