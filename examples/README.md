@@ -10,9 +10,9 @@ Taken from `/etc/i3/config`
 
 Simplest possible way of using it and a bit pointless, but you have to start somewhere.
 
-## [chunked](1-chunked)
+## [chunked](1-chunks)
 
-Different kinds of settings have their own files now and the bar get also build. The name fo the status bar config file is set dynamically with variables populated from `i3configger.json` bars->targets section for every bar. There is only one bar here though, so this doesn't really show yet.
+Different kinds of settings have their own files now and the bar is also build from `config.d`. The name fo the status bar config file is set dynamically with variables populated from `i3configger.json->bars->targets` section for every bar. There is only one bar here though, so this doesn't really show yet.
 
 ## [bars](2-bars)
 
