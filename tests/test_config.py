@@ -15,3 +15,4 @@ def test_no_config(tmpdir, monkeypatch):
     payload = json.loads(path.read_text())
     assert 'main' in payload
     assert 'bars' in payload
+    assert 'targets' in payload['bars']
