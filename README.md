@@ -5,15 +5,15 @@
 
 ## Overview
 
-Generates an [i3](https://i3wm.org) config from a set of `.conf` files in `<i3 config folder>/config.d`.
+* generate an [i3](https://i3wm.org) config from a set of `.conf` files in `<i3 config folder>/config.d`.
 
-Restarts or reloads i3 (optional - on by default) and when changes were made. This makes it possible to dynamically change settings that need changes in the configuration files (e.g. switch bar mode between hide and docked or cycle through different color schemes).
+* automatically restart or reload i3 when changes were made (optional - on by default). This makes it possible to dynamically change settings that need changes in the configuration files (e.g. switch bar mode between hide and docked or cycle through different color schemes).
 
-Keep it DRY (optional):
+* keep it DRY (optional):
 
-* assign variables to variables
-* use variables in i3status configuration files
-* generate `bar {...}` settings from a simple template with some extra config.
+    * assign variables to variables
+    * use variables in i3status configuration files
+    * generate `bar {...}` settings from a simple template with some extra config.
 
 ##  Detailed Features
 
