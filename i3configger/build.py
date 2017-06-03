@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 from string import Template
 
-from i3configger import base, config, context, exc, ipc, partials
+from i3configger import __version__, base, config, context, exc, ipc, partials
 
 log = logging.getLogger(__name__)
 
@@ -33,16 +33,17 @@ class Builder:
         rawContent = self.make_header()
         rawContent += '\n'.join(prt.display for prt in selected)
         resolvedContent = self.substitute(rawContent, ctx)
-        if not self.cnf.barTargets:
-            return resolvedContent
         barContent = self.get_bar_content(prts, ctx, self.cnf.state)
-        return "%s\n%s" % (resolvedContent, barContent)
+        if barContent:
+            resolvedContent = "%s\n%s" % (resolvedContent, barContent)
+        return resolvedContent.rstrip('\n') + '\n'
 
     def persist_main(self, content, path):
         container = path.parent
         targetName = path.name
         backupPath = container / (targetName + '.bak')
-        os.rename(self.cnf.mainTargetPath, backupPath)
+        if self.cnf.mainTargetPath.exists():
+            os.rename(self.cnf.mainTargetPath, backupPath)
         try:
             self.cnf.mainTargetPath.write_text(content)
             if not ipc.I3.config_is_ok(self.cnf.mainTargetPath):
@@ -61,6 +62,11 @@ class Builder:
             selectKey = barCnf["key"]
             selectValue = barCnf["value"]
             prt = partials.find(prts, selectKey, selectValue)
+            if not prt:
+                log.warning(
+                    "[IGNORE ]no bar %s.%s%s found",
+                    selectKey, selectKey, base.SUFFIX)
+                continue
             assert isinstance(prt, partials.Partial), prt
             tpl = partials.find(prts, selectKey, barCnf["template"])
             assert isinstance(tpl, partials.Partial), tpl
@@ -87,6 +93,11 @@ class Builder:
         return Template(content).safe_substitute(ctx)
 
     def make_header(self):
-        msg = f'# Generated from {self.cnf.configPath} ({time.asctime()}) #'
+        strPath = str(self.cnf.partialsPath)
+        parts = strPath.split(os.getenv('HOME'))
+        if len(parts) > 1:
+            strPath = "~" + parts[-1]
+        msg = (f'# Built from {strPath} by i3configger {__version__} '
+               f'({time.asctime()}) #')
         sep = "#" * len(msg)
-        return "%s\n%s\n%s" % (sep, msg, sep)
+        return "%s\n%s\n%s\n" % (sep, msg, sep)
