@@ -82,9 +82,11 @@ If I want to get my dock out of the way:
 
     $ i3configger set mode hide
 
-So in short: `select` integrate different partial files and `set` assigns values to arbitrary variables that are set anywhere in the configuration.
+**`select`** integrates different partial files. Config partials that follow the naming scheme `<key>.<value>.conf` are only rendered into the config if explicitly set via configuration or a message from the command line (which then will be persisted).
 
-Config partials that follow the naming scheme \<key\>.\<value\>.conf are only rendered into the config if explicitly set via configuration or a message from the command line (which then will be persisted).
+**`set`** assigns values to arbitrary variables that are set anywhere in the configuration.
+
+All changes done this way are persisted in `.state.json`.
 
 ## Resources
 
