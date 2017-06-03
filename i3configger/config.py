@@ -13,10 +13,10 @@ I3_CONFIGGER_DEFAULTS = {
   },
   "bars": {
     "defaults": {
-      "key": "i3status",
-      "value": "full",
       "target": "..",
-      "template": "tpl"
+      "template": "tpl",
+      "key": "i3status",
+      "value": "default"
     },
     "targets": {}
   }
