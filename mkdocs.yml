@@ -1,0 +1,5 @@
+site_name: i3configger
+pages:
+- Home: index.md
+
+theme: material
