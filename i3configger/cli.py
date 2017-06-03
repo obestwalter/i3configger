@@ -43,6 +43,7 @@ def _parse_args(p):
     p.add_argument('--i3-refresh-msg', action="store", default='reload',
                    choices=['restart', 'reload', 'nop'],
                    help="i3-msg to send after build")
+    # TODO automatically deactivate notify if no one will pick them up
     p.add_argument('--no-notify', action="store_true", default=False,
                    help="deactivate notification via notify-send")
     p.add_argument('--log', action="store", default=None,
