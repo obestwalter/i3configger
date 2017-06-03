@@ -50,9 +50,7 @@ class I3configgerConfig:
         """Create a resolved copy of the bar settings."""
         defaults = bars.get("defaults", {})
         barTargets = {}
-        for name, bar in bars.items():
-            if name == "defaults":
-                continue
+        for name, bar in bars["targets"].items():
             newBar = dict(bar)
             barTargets[name] = newBar
             for defaultKey, defaultValue in defaults.items():

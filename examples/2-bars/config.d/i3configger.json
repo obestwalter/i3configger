@@ -4,7 +4,6 @@
       "key": "i3status",
       "target": "..",
       "template": "tpl",
-      "value": "default",
       "mode": "dock"
     },
     "targets": {
