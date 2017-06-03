@@ -74,7 +74,7 @@ will integrate `scheme.solarized-dark.conf` in the build and exclude all other `
 
     $ i3configger select-next scheme
 
-will switch to the next theme (and wrap around to the first scheme)
+will switch to the next scheme (and wrap around to the first scheme)
 
 This is persisted in `.state.json`
 
