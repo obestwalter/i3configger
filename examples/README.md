@@ -1,5 +1,7 @@
 # Examples
 
+This folder contains some `config.d` folders and what is generated from them (in the folder above, just like it would be in the i3 config directory).
+
 ## [default](0-default)
 
 The i3configger version of the i3 default configuration
