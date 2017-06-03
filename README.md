@@ -37,6 +37,8 @@
 
     $ pip install i3configger
 
+**==> [i3configger release announcements and discussion](https://www.reddit.com/r/i3wm/comments/6exzgs/meet_i3configger/) <==**
+
 ## Getting started
 
 ### Simple
@@ -97,5 +99,5 @@ All changes done this way are persisted in `.state.json`.
 ### I3 official
 
 * [i3wm](https://i3wm.org/)
-* [reddit group](https://www.reddit.com/r/i3wm/)
+* [i3wm reddit group (FAQs)](https://www.reddit.com/r/i3wm/)
 * [Archlinux Wiki](https://wiki.archlinux.org/index.php/I3)
