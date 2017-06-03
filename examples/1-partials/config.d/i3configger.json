@@ -1,0 +1,14 @@
+{
+  "bars": {
+    "defaults": {
+      "key": "i3status",
+      "target": "..",
+      "template": "tpl",
+      "value": "default"
+    },
+    "targets": {}
+  },
+  "main": {
+    "target": "../config"
+  }
+}
