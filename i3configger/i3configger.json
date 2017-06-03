@@ -1,7 +1,6 @@
 {
   "main": {
     "target": "../config",
-    "notify": false
   },
   "bars": {
     "defaults": {
