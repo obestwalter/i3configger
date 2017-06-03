@@ -48,8 +48,10 @@ class I3configgerConfig:
 
     def make_bar_targets(self, bars):
         """Create a resolved copy of the bar settings."""
-        defaults = bars.get("defaults", {})
         barTargets = {}
+        if not bars:
+            return barTargets
+        defaults = bars.get("defaults", {})
         for name, bar in bars["targets"].items():
             newBar = dict(bar)
             barTargets[name] = newBar
@@ -92,7 +94,7 @@ class State:
                 if not candidates:
                     raise exc.MessageError(
                         f"No candidates for {message} in {prts}")
-                if command == cls.SELECT_PREVIOUS:
+                if command == cls.SELECT_PREVIOUS[0]:
                     candidates = reversed(candidates)
                 current = state["select"].get(key) or candidates[0].key
                 for idx, candidate in enumerate(candidates):
@@ -104,7 +106,7 @@ class State:
                         log.info("select %s.%s", key, new)
                         state["select"][key] = new.value
                         break
-            elif command == cls.SELECT:
+            elif command == cls.SELECT[0]:
                 candidate = partials.find(prts, key, value)
                 if not candidate:
                     raise exc.MessageError(f"No candidate for {message}")
