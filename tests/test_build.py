@@ -21,6 +21,7 @@ TEST_FOLDER_NAMES = sorted(list(
 @pytest.mark.parametrize("container", TEST_FOLDER_NAMES)
 def test_build(container, monkeypatch):
     ipc.Notify.set_notify_command(True)
+    ipc.I3.config_is_ok = lambda x: True
     monkeypatch.setattr(
         paths, 'get_i3_config_path', lambda: EXAMPLES / container)
     configPath = paths.get_my_config_path()
