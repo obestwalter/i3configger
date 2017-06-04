@@ -94,6 +94,16 @@ If I want to get my dock out of the way:
 
 All changes done this way are persisted in `.state.json`.
 
+## Build process
+
+1. merge all files that fit the conditions and configuration
+2. read in all lines that fit the pattern `set $.*`
+3. parse them into a map key -> value
+4. Resolve all indirect assignments (e.g. `set $bla $blub`)
+5. Replace all variables in configs with their values (bar configs get local context merged before substitution)
+6. Write results
+7. Check if config is valid - if not switch back to saved backup
+
 ## Resources
 
 ### I3 official
@@ -101,3 +111,13 @@ All changes done this way are persisted in `.state.json`.
 * [i3wm](https://i3wm.org/)
 * [i3wm reddit group (FAQs)](https://www.reddit.com/r/i3wm/)
 * [Archlinux Wiki](https://wiki.archlinux.org/index.php/I3)
+
+### Other Tools
+
+... from the i3wm ecosystem
+
+* [online color configurator](https://thomashunter.name/i3-configurator/)
+* [j4-make-config (i3-theme)](https://github.com/okraits/j4-make-config)
+* [i3-style](https://github.com/acrisci/i3-style)
+* [i3ColourChanger](https://github.com/PMunch/i3ColourChanger)
+* [i3-manager](https://github.com/erayaydin/i3-manager)

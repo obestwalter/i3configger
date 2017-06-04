@@ -7,7 +7,7 @@ from pathlib import Path
 from i3configger import exc
 
 log = logging.getLogger(__name__)
-DEBUG = os.getenv('DEBUG', 1)  # FIXME deactivate before next release
+DEBUG = os.getenv('DEBUG', 0)
 VAR_MARK = '$'
 SET_MARK = 'set'
 SUFFIX = '.conf'
