@@ -84,7 +84,7 @@ will switch to the next scheme (and wrap around to the first scheme)
 
 This is persisted in `.state.json`
 
-If I want to get my dock out of the way:
+If I want to get my bar out of the way:
 
     $ i3configger set mode hide
 
