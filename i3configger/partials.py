@@ -16,6 +16,7 @@ SPECIAL_SELECTORS = {
 EXCLUDE_MARKER = "."
 """config files starting with a dot are always excluded"""
 
+
 @total_ordering
 class Partial:
     CONTINUATION_RE = re.compile(r'\\\s*?\\s*?\n')
