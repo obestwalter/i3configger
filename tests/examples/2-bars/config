@@ -4,7 +4,7 @@
 
 ### i3status.tpl.conf ###
 bar {
-        status_command i3status -c /home/oliver/do/i3configger/examples/2-bars/i3status.full.conf
+        status_command i3status -c ~/.i3/i3status.full.conf
         output DP-3
         mode dock
         position bottom
@@ -13,7 +13,7 @@ bar {
 
 ### i3status.tpl.conf ###
 bar {
-        status_command i3status -c /home/oliver/do/i3configger/examples/2-bars/i3status.clock.conf
+        status_command i3status -c ~/.i3/i3status.clock.conf
         output DP-4
         mode dock
         position top
