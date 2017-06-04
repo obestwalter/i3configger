@@ -1,9 +1,12 @@
+import sys
 from setuptools import find_packages, setup
 
 try:
     import pypandoc
     longDescription = pypandoc.convert('README.md', 'rst')
 except(OSError, IOError, ImportError):
+    if 'upload' in sys.argv:
+        raise
     longDescription = open('README.md').read()
 
 
