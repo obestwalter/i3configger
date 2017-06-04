@@ -31,7 +31,7 @@ class Builder:
         if selected:
             content += '\n'.join(prt.display for prt in selected)
             content = self.substitute(content, ctx)
-        barContent = self.get_bar_content(prts, ctx, self.cnf.state)
+        barContent = self.make_bar_content_and_write_configs(prts, ctx, self.cnf.state)
         if barContent:
             content = "%s\n%s" % (content, barContent)
         return content.rstrip('\n') + '\n'
@@ -52,7 +52,8 @@ class Builder:
             os.rename(backupPath, self.cnf.mainTargetPath)
             raise
 
-    def get_bar_content(self, prts, ctx, state):
+    # FIXME this method is doing too much ...
+    def make_bar_content_and_write_configs(self, prts, ctx, state):
         bars = []
         alreadyWritten = []
         for barName, barCnf in self.cnf.barTargets.items():

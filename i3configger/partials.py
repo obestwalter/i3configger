@@ -13,7 +13,8 @@ log = logging.getLogger(__name__)
 SPECIAL_SELECTORS = {
     "hostname": socket.gethostname()
 }
-
+EXCLUDE_MARKER = "."
+"""config files starting with a dot are always excluded"""
 
 @total_ordering
 class Partial:
@@ -122,9 +123,15 @@ def select(partials, selection, excludes=None) -> t.List[Partial]:
     return selected
 
 
-def create(partialsPath: Path) -> t.List[Partial]:
+def create(partialsPath) -> t.List[Partial]:
+    partialsPath = Path(partialsPath)
     assert partialsPath.is_dir(), partialsPath
-    prts = [Partial(p) for p in partialsPath.glob('*%s' % base.SUFFIX)]
+    prts = []
+    for path in partialsPath.glob('*%s' % base.SUFFIX):
+        if path.name.startswith(EXCLUDE_MARKER):
+            log.warning("exclude %s - starts with a dot", path)
+            continue
+        prts.append(Partial(path))
     if not prts:
         raise exc.PartialsError(f"no '*{base.SUFFIX}' at {partialsPath}")
     return sorted(prts)
