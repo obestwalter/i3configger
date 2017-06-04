@@ -37,7 +37,7 @@
 
     $ pip install i3configger
 
-**==> [i3configger release announcements and discussion](https://www.reddit.com/r/i3wm/comments/6exzgs/meet_i3configger/) <==**
+[i3configger release announcements and discussion](https://www.reddit.com/r/i3wm/comments/6exzgs/meet_i3configger/)
 
 ## Getting started
 
