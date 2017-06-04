@@ -27,7 +27,7 @@
 * simple way to change the configuration by sending messages
 * build config as one shot script or watch for changes
 * send messages to watching i3configger process
-* if `i3 -C fails` with the newly rendered config, the old config will be kept, no harm done
+* (**WARNING** - this does not work reliably yet) if `i3 -C fails` with the newly rendered config, the old config will be kept, no harm done
 
 ## Installation
 
