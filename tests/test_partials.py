@@ -4,13 +4,12 @@ import pytest
 
 from i3configger import exc, partials
 
-DATA = Path(__file__).parents[1] / 'examples'
+SCHEMES = Path(__file__).parents[1] / 'examples' / '4-schemes' / 'config.d'
 
 
 def test_create():
-    path = DATA / 'selectors' / 'config.d'
-    prts = partials.create(path)
-    assert len(prts) == 4
+    prts = partials.create(SCHEMES)
+    assert len(prts) == 3
 
 
 @pytest.mark.parametrize(
@@ -21,14 +20,13 @@ def test_create():
         (None, None, exc.ConfigError),
         ('non-existing-key', 'some-value', exc.ConfigError),
         ('non-existing-key', 'none-existing-value', exc.ConfigError),
-        ('some-key', 'none-existing-value', exc.ConfigError),
-        ('some-key', 'some-value', True),
-        ('other-key', 'other-value', True),
+        ('some-category', 'none-existing-value', exc.ConfigError),
+        ('some-category', 'value1', True),
+        ('some-category', 'value2', True),
     )
 )
 def test_select_non_existing(key, value, exp):
-    path = DATA / 'selectors' / 'config.d'
-    prts = partials.create(path)
+    prts = partials.create(SCHEMES)
     selector = {key: value}
     if not isinstance(exp, bool):
         with pytest.raises(exp):
@@ -36,7 +34,7 @@ def test_select_non_existing(key, value, exp):
     else:
         selected = partials.select(prts, selector)
         found = partials.find(prts, key, value)
-        assert selected[1].name == 'unconditional'
+        assert selected[1].name == 'some-settings'
         assert isinstance(selected[0], partials.Partial)
         assert isinstance(found, partials.Partial)
         assert selected[0] == found
