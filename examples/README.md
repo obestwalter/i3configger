@@ -18,10 +18,10 @@ Different kinds of settings have their own files now and the bar is also build f
 
 Let's generate more bars now. If you have an external monitor where you want to have a different bar, you can add another section to i3configger.json->bars->targets, add another status bar configuration file. Two bar settings will be generated in the config and the two configuration files are rendered and referenced from the variables in the bar template.
 
-## Variables
+## [variables](3-variables)
 
-**TODO**
+Variables can be set and used anywhere (independent of order. Variables can also be assigned the value of other variables.
 
-## Schemes
+## [schemes](4-schemes)
 
-**TODO**
+Files following `<key>.<value>.conf` signal that only one of them should be integrated and you can switch between them. One of them will always be included (alphabetically first one on initialization).

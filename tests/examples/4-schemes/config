@@ -1,0 +1,6 @@
+###############################################################################
+# Built by i3configger /from/some/directory/who/cares  (some time after 1972) #
+###############################################################################
+### some-category.value1.conf ###
+default_orientation vertical
+workspace_layout default

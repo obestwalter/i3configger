@@ -125,10 +125,12 @@ class State:
 
     @classmethod
     def populate_initial_state(cls, statePath, prts):
-        """fetch one of each selectable partials to have a sane state"""
+        """fetch first of each selectable partials to have a sane state"""
         selects = {}
         for prt in prts:
-            if prt.needsSelection and not prt.key == cls.I3STATUS:
+            if not prt.needsSelection:
+                continue
+            if prt.key not in selects and prt.key != cls.I3STATUS:
                 selects[prt.key] = prt.value
         state = dict(select=selects, set={})
         freeze(statePath, state)

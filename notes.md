@@ -100,5 +100,6 @@ e.g. which displays are connected and how should the workspaces and bars be conf
 I did not try them all, but stumbled over them while checking if somebody else solved my problem already.
 
 * [j4-make-config (i3-theme)](https://github.com/okraits/j4-make-config)
+* [i3-style](https://github.com/acrisci/i3-style)
 * [i3ColourChanger](https://github.com/PMunch/i3ColourChanger)
 * [i3-manager](https://github.com/erayaydin/i3-manager)

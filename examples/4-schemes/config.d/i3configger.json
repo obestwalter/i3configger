@@ -1,0 +1,12 @@
+{
+  "bars": {
+    "defaults": {},
+    "targets": {}
+  },
+  "main": {
+    "target": "../config"
+  },
+  "select": {
+    "some-category": "value1"
+  }
+}

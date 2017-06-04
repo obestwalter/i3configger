@@ -6,7 +6,9 @@
       "template": "tpl"
     },
     "targets": {
-      "single-bar": {
+      "laptop": {
+        "output": "DP-3",
+        "position": "bottom",
         "value": "default"
       }
     }

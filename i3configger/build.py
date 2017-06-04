@@ -26,17 +26,15 @@ class Builder:
         prts = partials.create(self.cnf.partialsPath)
         excludes = {b["key"] for b in self.cnf.barTargets.values()}
         selected = partials.select(prts, self.cnf.state["select"], excludes)
-        if not selected:
-            raise exc.I3configgerException(
-                "no content for %s, %s, %s", prts, self.cnf)
+        content = self.make_header()
         ctx = context.create(selected)
-        rawContent = self.make_header()
-        rawContent += '\n'.join(prt.display for prt in selected)
-        resolvedContent = self.substitute(rawContent, ctx)
+        if selected:
+            content += '\n'.join(prt.display for prt in selected)
+            content = self.substitute(content, ctx)
         barContent = self.get_bar_content(prts, ctx, self.cnf.state)
         if barContent:
-            resolvedContent = "%s\n%s" % (resolvedContent, barContent)
-        return resolvedContent.rstrip('\n') + '\n'
+            content = "%s\n%s" % (content, barContent)
+        return content.rstrip('\n') + '\n'
 
     def persist_main(self, content, path):
         container = path.parent
@@ -79,7 +77,7 @@ class Builder:
             if prt.name not in alreadyWritten:
                 content = self.substitute(prt.payload, eCtx)
                 path = container / f"{prt.name}{base.SUFFIX}"
-                path.write_text(content)
+                path.write_text(content + '\n')
                 alreadyWritten.append(path)
         return '\n'.join(bars)
 

@@ -1,20 +1,14 @@
 ###############################################################################
 # Built by i3configger /from/some/directory/who/cares  (some time after 1972) #
 ###############################################################################
+### some-variables.conf ###
+floating_modifier Mod1
+
 
 ### i3status.tpl.conf ###
 bar {
-        status_command i3status -c /home/oliver/do/i3configger/examples/2-bars/i3status.full.conf
+        status_command i3status -c /home/oliver/do/i3configger/examples/3-variables/i3status.default.conf
         output DP-3
-        mode dock
+        mode $mode
         position bottom
-}
-
-
-### i3status.tpl.conf ###
-bar {
-        status_command i3status -c /home/oliver/do/i3configger/examples/2-bars/i3status.clock.conf
-        output DP-4
-        mode dock
-        position top
 }
