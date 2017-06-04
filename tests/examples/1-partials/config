@@ -80,5 +80,5 @@ bindsym Mod1+r mode "resize"
 
 ### i3status.tpl.conf ###
 bar {
-        status_command i3status -c /home/oliver/do/i3configger/examples/1-partials/i3status.default.conf
+        status_command i3status -c ~/.i3/i3status.default.conf
 }
