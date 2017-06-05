@@ -19,40 +19,32 @@ class Builder:
         return "%s\n%s" % (self.__class__.__name__, pprint.pformat(vars(self)))
 
     def build(self):
-        content = self._build()
-        self.persist_main(content, self.cnf.mainTargetPath)
-
-    def _build(self):
         prts = partials.create(self.cnf.partialsPath)
         excludes = {b["key"] for b in self.cnf.barTargets.values()}
         selected = partials.select(prts, self.cnf.state["select"], excludes)
-        content = self.make_header()
+        if not selected:
+            raise exc.BuildError(
+                f"Nothing found to build at {self.cnf.partialsPath}")
         ctx = context.create(selected)
-        if selected:
-            content += '\n'.join(prt.display for prt in selected)
-            content = self.substitute(content, ctx)
-        barContent = self.make_bar_content_and_write_configs(prts, ctx, self.cnf.state)
+        content = self.make_header()
+        content += '\n'.join(prt.display for prt in selected)
+        content = self.substitute(content, ctx)
+
+
+        results = {
+            "main": (self.cnf.mainTargetPath, self._gen_main_content(prts)),
+            "bars": self._build_bars(prts)}
+        self.persist(results)
+
+
+    def _build_bars(self, prts):
+        ctx = context.create(prts)
+        barContent = self.make_bar_content_and_write_configs(
+            prts, ctx, self.cnf.state)
         if barContent:
             content = "%s\n%s" % (content, barContent)
         return content.rstrip('\n') + '\n'
 
-    def persist_main(self, content, path):
-        container = path.parent
-        targetName = path.name
-        backupPath = container / (targetName + '.bak')
-        if self.cnf.mainTargetPath.exists():
-            os.rename(self.cnf.mainTargetPath, backupPath)
-        try:
-            self.cnf.mainTargetPath.write_text(content)
-            if not ipc.I3.config_is_ok(self.cnf.mainTargetPath):
-                brokenPath = container / (targetName + '.broken')
-                os.rename(self.cnf.mainTargetPath, brokenPath)
-                raise exc.BuildError(f"{brokenPath} is broken")
-        except:
-            os.rename(backupPath, self.cnf.mainTargetPath)
-            raise
-
-    # FIXME this method is doing too much ...
     def make_bar_content_and_write_configs(self, prts, ctx, state):
         bars = []
         alreadyWritten = []
@@ -81,6 +73,22 @@ class Builder:
                 path.write_text(content + '\n')
                 alreadyWritten.append(path)
         return '\n'.join(bars)
+
+    def persist(self, results):
+        container = path.parent
+        targetName = path.name
+        backupPath = container / (targetName + '.bak')
+        if self.cnf.mainTargetPath.exists():
+            os.rename(self.cnf.mainTargetPath, backupPath)
+        try:
+            self.cnf.mainTargetPath.write_text(content)
+            if not ipc.I3.config_is_ok(self.cnf.mainTargetPath):
+                brokenPath = container / (targetName + '.broken')
+                os.rename(self.cnf.mainTargetPath, brokenPath)
+                raise exc.BuildError(f"{brokenPath} is broken")
+        except:
+            os.rename(backupPath, self.cnf.mainTargetPath)
+            raise
 
     @classmethod
     def substitute(cls, content, ctx):
