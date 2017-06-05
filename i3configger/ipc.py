@@ -70,5 +70,8 @@ class Notify:
 class StatusBar:
     @classmethod
     def refresh(cls):
-        # TODO Hopefully this reloads the config?
-        subprocess.check_call(['killall', '-SIGUSR1', 'i3status'])
+        try:
+            subprocess.check_call(['killall', '-SIGUSR1', 'i3status'])
+        except subprocess.CalledProcessError as e:
+            # TODO make this work for other status bars
+            log.debug("ignored failed status refresh: %s", e)
