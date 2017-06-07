@@ -3,30 +3,82 @@
 
 # i3configger
 
-## Overview
+**Note:** In case you have no idea what this is about. This is a tool mainly aimed at users who already have some experience with [i3](https://i3wm.org). If you don't know it yet: I3 is a really great tiling window manager and if you have some time: try it out. But be careful - you might never be able to switch back to traditional Desktop Environments.
 
-* generate an [i3](https://i3wm.org) config from a set of `.conf` files in `<i3 config folder>/config.d`.
+**What does it do?** In short: i3configger makes i3 a bit more malleable by adding a way to simply change variable values and switch between different parts of the configuration.
 
-* automatically restart or reload i3 when changes were made (optional - on by default). This makes it possible to dynamically change settings that need changes in the configuration files (e.g. switch bar mode between hide and docked or cycle through different color schemes).
+## Main concepts
 
-* keep it DRY (optional):
+**`set`** assigns values to arbitrary variables that are set anywhere in the configuration.
 
-    * assign variables to variables
-    * use variables in i3status configuration files
-    * generate `bar {...}` settings from a simple template with some extra config.
+**`select`** integrates different partial files. Config partials that follow the naming scheme `<key>.<value>.conf` are only rendered into the config if explicitly set via configuration or a message from the command line.
 
-##  Detailed Features
+### Overriding variables with `set`
 
-* build main config and one or several i3status configs from the same sources
-* variables are handled slightly more intelligently than i3 does it (variables assigned to other variables are resolved)
-* variables in i3status configs are also resolved (set anywhere in the sources)
-* reload or restart i3 when a change has been done (using `i3-msg`)
-* notify when new config has been created and activated (using `notify-send`)
-* simple way to render partials based on key value pairs in file name
-* simple way to change the configuration by sending messages
-* build config as one shot script or watch for changes
-* send messages to watching i3configger process
-* if `i3 -C` fails with the newly rendered config, the old config will be kept, no harm done
+A lot in the i3 configuration can be changed the value of variables. i3configger adds an interface to change them with a (very, very) simple command language.
+
+One example would be to switch aspects of the status bar(s) mode and position:
+
+A configuration containing:
+
+```text
+set $bar_mode hidden
+set $bar_position top
+...
+bar {
+    ...
+    mode $bar_mode
+    position $bar_position
+}
+```
+
+can be manipulated by invoking:
+
+```text
+$ i3configger set bar_mode dock
+$ i3configger set bar_position bottom
+```
+
+... and the dock appears and the bar is at the bottom now.
+
+### Switching between alternatives with `select`
+
+Bigger changes can be done by switching between `partials`. To realize this there is a simple naming convention for `partials` to mark them as alternatives of which only ever one is integrated into the final configuration.
+
+The following `partials` form a group of alternatives:
+
+    ~/.i3/config.d/scheme.blue.conf
+    ~/.i3/config.d/scheme.red.conf
+    ~/.i3/config.d/scheme.black.conf
+
+The first part of the file (`scheme`) serves as the key of that group of alternatives and the second part (`blue`, `red`, `black`) is the value that can be chosen.
+
+To choose a concrete alternative:
+
+```text
+$ i3configger select scheme red
+```
+
+To cycle through these different alternatives:
+
+```text
+$ i3configger select-next scheme
+$ i3configger select-previous scheme
+```
+
+How you call your groups and their values is completely up to you, as long as you stick with the naming convention.
+
+### Bonus track: keep it DRY
+
+Using i3configger you can also:
+
+* assign variables to variables (`set $someVar $someOtherVar`)
+* Use variables set anywhere in config `partials` in i3status configuration files
+* generate `bar {...}` settings from templates with some extra config.
+
+### Diving a bit deeper
+
+I use this to generate [my own i3 config](https://github.com/obestwalter/i3config). Here are the config partials and settings: [.i3/config.d](https://github.com/obestwalter/i3config/tree/master/config.d), from which [config](https://github.com/obestwalter/i3config/tree/master/config) and all `i3status.*conf` files are built.
 
 ## Installation
 
@@ -67,41 +119,36 @@ stop the daemon:
 
     $ i3configger --kill
 
-## Diving a bit deeper
+## How does it work?
 
-I use this to generate [my own i3 config](https://github.com/obestwalter/i3config). Here are the config partials and settings: [.i3/config.d](https://github.com/obestwalter/i3config/tree/master/config.d), from which [config](https://github.com/obestwalter/i3config/tree/master/config) and all `i3status.*conf` files are built.
+The configuration is built from so called `partials` in `<i3 config folder>/config.d`. For very simple usages (just changing some variable for examples) it is not even necessary to spread the configuration over several files though. Have a look at the [examples](examples/README.md) to get an idea about how it can be used.
 
-With my config, the call:
+Changes that are made to the configuration via i3configger messages are not written back to the `partials` but are persisted in a `.state.json` in the source folder. This file is used to override variables and choose alternative files during build. Deleting that file puts everything back to normal.
 
-    $ i3configger select scheme solarized-dark
+### Build process
 
-will integrate `scheme.solarized-dark.conf` in the build and exclude all other `scheme.*.conf` files.
-
-    $ i3configger select-next scheme
-
-will switch to the next scheme (and wrap around to the first scheme)
-
-This is persisted in `.state.json`
-
-If I want to get my bar out of the way:
-
-    $ i3configger set mode hide
-
-**`select`** integrates different partial files. Config partials that follow the naming scheme `<key>.<value>.conf` are only rendered into the config if explicitly set via configuration or a message from the command line.
-
-**`set`** assigns values to arbitrary variables that are set anywhere in the configuration.
-
-All changes done this way are persisted in `.state.json`.
-
-## Build process
-
-1. merge all files that fit the conditions and configuration
+1. merge all files that fit the conditions of the current configuration
 2. read in all lines that fit the pattern `set $.*`
-3. parse them into a map key -> value
+3. convert them into a map key -> value
 4. Resolve all indirect assignments (e.g. `set $bla $blub`)
 5. Replace all variables in configs with their values (bar configs get local context merged before substitution)
-6. Write results
-7. Check if config is valid - if not switch back to saved backup
+6. Write results to temporary location
+7. Check if config is valid
+8. backup current configuration
+9. move configuration to the final target
+
+##  Detailed Features
+
+* build main config and one or several i3status configs from the same sources
+* variables are handled slightly more intelligently than i3 does it (variables assigned to other variables are resolved)
+* variables in i3status configs are also resolved (set anywhere in the sources)
+* reload or restart i3 when a change has been done (using `i3-msg`)
+* notify when new config has been created and activated (using `notify-send`)
+* simple way to render partials based on key value pairs in file name
+* simple way to change the configuration by sending messages
+* build config as one shot script or watch for changes
+* send messages to watching i3configger process
+* if `i3 -C` fails with the newly rendered config, the old config will be kept, no harm done
 
 ## Resources
 
