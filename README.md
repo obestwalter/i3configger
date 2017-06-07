@@ -19,8 +19,6 @@
 
 * build main config and one or several i3status configs from the same sources
 * variables are handled slightly more intelligently than i3 does it (variables assigned to other variables are resolved)
-* (**THIS WILL GO - to much bug potential - would need some form of parsing already)end of line comments are possible (removed at build time)
-
 * variables in i3status configs are also resolved (set anywhere in the sources)
 * reload or restart i3 when a change has been done (using `i3-msg`)
 * notify when new config has been created and activated (using `notify-send`)
@@ -28,7 +26,7 @@
 * simple way to change the configuration by sending messages
 * build config as one shot script or watch for changes
 * send messages to watching i3configger process
-* (**WARNING** - this does not work reliably yet) if `i3 -C` fails with the newly rendered config, the old config will be kept, no harm done
+* if `i3 -C` fails with the newly rendered config, the old config will be kept, no harm done
 
 ## Installation
 
