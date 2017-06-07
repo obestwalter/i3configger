@@ -15,7 +15,7 @@
 
 ### Overriding variables with `set`
 
-A lot in the i3 configuration can be changed the value of variables. i3configger adds an interface to change them with a (very, very) simple command language.
+A lot in the i3 configuration can be changed by changing the value of variables. i3configger adds an interface to change them with a (very, very) simple command language.
 
 One example would be to switch aspects of the status bar(s) - for example mode and position:
 
