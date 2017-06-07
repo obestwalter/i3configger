@@ -1,6 +1,5 @@
 import logging
 import pprint
-import re
 import socket
 import typing as t
 from functools import total_ordering
@@ -10,19 +9,17 @@ from i3configger import base, exc
 
 log = logging.getLogger(__name__)
 
+# TODO document this
 SPECIAL_SELECTORS = {
     "hostname": socket.gethostname()
 }
+# TODO document this
 EXCLUDE_MARKER = "."
 """config files starting with a dot are always excluded"""
 
 
 @total_ordering
 class Partial:
-    CONTINUATION_RE = re.compile(r'\\\s*?\\s*?\n')
-    COMMENT_MARK = '#'
-    END_OF_LINE_COMMENT_MARK = ' # '
-
     def __init__(self, path: Path):
         self.path = path
         self.name = self.path.stem
@@ -30,6 +27,7 @@ class Partial:
         self.needsSelection = len(self.selectors) > 1
         self.key = self.selectors[0] if self.needsSelection else None
         self.value = self.selectors[1] if self.needsSelection else None
+        self.lines = self.path.read_text().splitlines()
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, self.path.name)
@@ -40,48 +38,22 @@ class Partial:
         return self.name < other.name
 
     @property
-    def display(self) -> str:
-        if not self.filtered:
-            return ""
-        return "### %s ###\n%s\n\n" % (self.path.name, self.filtered)
+    def display(self) -> t.Optional[str]:
+        lines = [l for l in self.lines
+                 if not l.strip().startswith(base.SET_MARK)]
+        if not lines:
+            return
+        return "### %s ###\n%s\n\n" % (self.path.name, "\n".join(lines))
 
     @property
-    def filtered(self) -> str:
-        filtered = []
-        for line in self._joined.splitlines():
-            l = line.strip()
-            if not l:
-                continue
-            if (not l.startswith(base.SET_MARK)
-                    and not l.startswith(self.COMMENT_MARK)):
-                filtered.append(line)
-        return '\n'.join(filtered)
-
-    @property
-    def payload(self) -> str:
-        """Strip empty lines, comment lines, and end of line comments."""
-        prunes = []
-        for line in self._joined.splitlines():
-            l = line.strip()
-            if not l:
-                continue
-            if l.startswith(self.COMMENT_MARK):
-                continue
-            line = line.rsplit(self.END_OF_LINE_COMMENT_MARK, maxsplit=1)[0]
-            prunes.append(line)
-        return '\n'.join(prunes)
-
-    # FIXME I think this does not do anything
-    @property
-    def _joined(self) -> str:
-        """Join line continuations.
-
-        https://i3wm.org/docs/userguide.html#line_continuation"""
-        return re.sub(self.CONTINUATION_RE, ' ', self._raw)
-
-    @property
-    def _raw(self) -> str:
-        return self.path.read_text()
+    def context(self):
+        ctx = {}
+        for line in [l.strip() for l in self.lines
+                if l.strip().startswith(base.SET_MARK)]:
+            payload = line.split(maxsplit=1)[1]
+            key, value = payload.split(maxsplit=1)
+            ctx[key] = value
+        return ctx
 
 
 def find(prts: t.List[Partial], key: str, value: str= None) \

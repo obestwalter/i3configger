@@ -8,6 +8,7 @@ from i3configger import exc
 
 log = logging.getLogger(__name__)
 DEBUG = os.getenv('DEBUG', 0)
+COMMENT_MARK = '#'
 VAR_MARK = '$'
 SET_MARK = 'set'
 SUFFIX = '.conf'

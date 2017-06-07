@@ -8,7 +8,8 @@
 
 ### Changes
 
-- Notification is off by default: cli arg changed from `--no-notify-` to `--notify`
+- comments are not stripped from the build anymore
+- notification is off by default: cli arg changed from `--no-notify-` to `--notify`
 
 ### Fixed
 

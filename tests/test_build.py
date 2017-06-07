@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from i3configger import build, ipc, paths, config, partials
+from i3configger import build, paths, config, partials
 
 HERE = Path(__file__).parent
 EXAMPLES = HERE.parent / 'examples'
@@ -20,19 +20,16 @@ TEST_FOLDER_NAMES = sorted(list(
 
 @pytest.mark.parametrize("container", TEST_FOLDER_NAMES)
 def test_build(container, monkeypatch):
-    ipc.Notify.set_notify_command(True)
-    ipc.I3.config_is_ok = lambda x: True
     monkeypatch.setattr(
         paths, 'get_i3_config_path', lambda: EXAMPLES / container)
+    monkeypatch.setattr(build, 'make_header', lambda _: FAKE_HEADER)
     configPath = paths.get_my_config_path()
     assert configPath.exists() and configPath.is_file()
     p = paths.Paths(configPath)
     if p.state.exists():
         os.unlink(p.state)
     config.State.fetch_state(p.state, partials.create(p.root))
-    builder = build.Builder(configPath)
-    monkeypatch.setattr(builder, 'make_header', lambda: FAKE_HEADER)
-    builder.build()
+    build.build_all(configPath)
     buildPath = configPath.parents[1]
     referencePath = REFERENCE / container
     names = [p.name for p in referencePath.iterdir()]

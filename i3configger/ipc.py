@@ -28,9 +28,8 @@ class I3:
 
     @classmethod
     def _send_i3_msg(cls, msg):
-        cmd = ['i3-msg', msg]
         try:
-            output = subprocess.check_output(cmd).decode()
+            output = subprocess.check_output(['i3-msg', msg]).decode()
             if '"success":true' in output:
                 return True
             return False
@@ -40,21 +39,19 @@ class I3:
                 return True
 
     @classmethod
-    def config_is_ok(cls, path):
-        cmd = ['i3', '-C', str(path)]
+    def get_config_errors(cls, path):
         try:
-            subprocess.check_output(cmd)
-            return True
+            subprocess.check_output(['i3', '-C', '-c', str(path)])
+            return None
         except subprocess.CalledProcessError as e:
-            Notify.send(f"error in {path}:\n{e.output}")
-            return False
+            return e.output
 
 
 class Notify:
     @classmethod
-    def set_notify_command(cls, offSwitch):
-        if offSwitch:
-            log.info("deactivate notification")
+    def set_notify_command(cls, notify):
+        if not notify:
+            log.debug("do not send notifications")
             cls.send = cls.nop
 
     @classmethod
@@ -71,7 +68,7 @@ class StatusBar:
     @classmethod
     def refresh(cls):
         try:
-            subprocess.check_call(['killall', '-SIGUSR1', 'i3status'])
+            subprocess.check_output(['killall', '-SIGUSR1', 'i3status'])
         except subprocess.CalledProcessError as e:
             # TODO make this work for other status bars
-            log.debug("ignored failed status refresh: %s", e)
+            log.debug("[IGNORE] failed status refresh: %s", e)

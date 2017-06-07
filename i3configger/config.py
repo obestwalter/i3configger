@@ -58,6 +58,10 @@ class I3configgerConfig:
             for defaultKey, defaultValue in defaults.items():
                 if defaultKey not in newBar:
                     newBar[defaultKey] = defaultValue
+            container = Path(newBar["target"])
+            if not container.is_absolute():
+                container = (self.partialsPath / container).resolve()
+            newBar["target"] = str(container)
         return barTargets
 
 

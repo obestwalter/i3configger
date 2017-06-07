@@ -26,7 +26,7 @@ def main():
         return 0
     ipc.I3.set_msg_type(args.i3_refresh_msg)
     log.info("set i3 refresh method to %s", ipc.I3.refresh)
-    ipc.Notify.set_notify_command(args.no_notify)
+    ipc.Notify.set_notify_command(args.notify)
     if args.daemon:
         daemonize.daemonize(args.v, args.log, configPath)
         return 0
@@ -41,7 +41,7 @@ def main():
             Path(args.load).expanduser(), partials.create(p.root))
         config.freeze(configPath, state)
     else:
-        build.Builder(configPath).build()
+        build.build_all(configPath)
         ipc.I3.refresh()
         ipc.StatusBar.refresh()
         ipc.Notify.send('new config active')

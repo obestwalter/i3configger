@@ -2,41 +2,100 @@
 # Built by i3configger /from/some/directory/who/cares  (some time after 1972) #
 ###############################################################################
 ### basic-settings.conf ###
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
 font pango:monospace 8
+
+# This font is widely installed, provides lots of unicode glyphs, right-to-left
+# text rendering and scalability on retina/hidpi displays (thanks to pango).
+#font pango:DejaVu Sans Mono 8
+
+# Before i3 v4.8, we used to recommend this one as the default:
+# font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
+# The font above is very space-efficient, that is, it looks good, sharp and
+# clear in small sizes. However, its unicode glyph coverage is limited, the old
+# X core fonts rendering does not support right-to-left and this being a bitmap
+# font, it doesn’t scale on retina/hidpi displays.
+
+# use these keys for focus, movement, and resize directions when reaching for
+# the arrows is not convenient
+
+# use Mouse+Mod1 to drag floating windows to their wanted position
 floating_modifier Mod1
 
 
 ### key-bindings.conf ###
+# start a terminal
 bindsym Mod1+Return exec i3-sensible-terminal
+
+# kill focused window
 bindsym Mod1+Shift+q kill
+
+# start dmenu (a program launcher)
 bindsym Mod1+d exec dmenu_run
+# There also is the (new) i3-dmenu-desktop which only displays applications
+# shipping a .desktop file. It is a wrapper around dmenu, so you need that
+# installed.
+# bindsym Mod1+d exec --no-startup-id i3-dmenu-desktop
+
+# change focus
 bindsym Mod1+j focus left
 bindsym Mod1+k focus down
 bindsym Mod1+l focus up
 bindsym Mod1+semicolon focus right
+
+# alternatively, you can use the cursor keys:
 bindsym Mod1+Left focus left
 bindsym Mod1+Down focus down
 bindsym Mod1+Up focus up
 bindsym Mod1+Right focus right
+
+# move focused window
 bindsym Mod1+Shift+j move left
 bindsym Mod1+Shift+k move down
 bindsym Mod1+Shift+l move up
 bindsym Mod1+Shift+semicolon move right
+
+# alternatively, you can use the cursor keys:
 bindsym Mod1+Shift+Left move left
 bindsym Mod1+Shift+Down move down
 bindsym Mod1+Shift+Up move up
 bindsym Mod1+Shift+Right move right
+
+# split in horizontal orientation
 bindsym Mod1+h split h
+
+# split in vertical orientation
 bindsym Mod1+v split v
+
+# enter fullscreen mode for the focused container
 bindsym Mod1+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
 bindsym Mod1+s layout stacking
 bindsym Mod1+w layout tabbed
 bindsym Mod1+e layout toggle split
+
+# toggle tiling / floating
 bindsym Mod1+Shift+space floating toggle
+
+# change focus between tiling / floating windows
 bindsym Mod1+space focus mode_toggle
+
+# focus the parent container
 bindsym Mod1+a focus parent
+
+# focus the child container
+#bindsym Mod1+d focus child
+
+# move the currently focused window to the scratchpad
 bindsym Mod1+Shift+minus move scratchpad
+
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
 bindsym Mod1+minus scratchpad show
+
+# switch to workspace
 bindsym Mod1+1 workspace 1
 bindsym Mod1+2 workspace 2
 bindsym Mod1+3 workspace 3
@@ -47,6 +106,8 @@ bindsym Mod1+7 workspace 7
 bindsym Mod1+8 workspace 8
 bindsym Mod1+9 workspace 9
 bindsym Mod1+0 workspace 10
+
+# move focused container to workspace
 bindsym Mod1+Shift+1 move container to workspace 1
 bindsym Mod1+Shift+2 move container to workspace 2
 bindsym Mod1+Shift+3 move container to workspace 3
@@ -57,28 +118,54 @@ bindsym Mod1+Shift+7 move container to workspace 7
 bindsym Mod1+Shift+8 move container to workspace 8
 bindsym Mod1+Shift+9 move container to workspace 9
 bindsym Mod1+Shift+0 move container to workspace 10
+
+# reload the configuration file
 bindsym Mod1+Shift+c reload
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym Mod1+Shift+r restart
+# exit i3 (logs you out of your X session)
 bindsym Mod1+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 
 ### mode-resize.conf ###
+# resize window (you can also use the mouse for that)
 mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
         bindsym j       resize shrink width 10 px or 10 ppt
         bindsym k       resize grow height 10 px or 10 ppt
         bindsym l         resize shrink height 10 px or 10 ppt
         bindsym semicolon      resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
         bindsym Left        resize shrink width 10 px or 10 ppt
         bindsym Down        resize grow height 10 px or 10 ppt
         bindsym Up          resize shrink height 10 px or 10 ppt
         bindsym Right       resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape
         bindsym Return mode "default"
         bindsym Escape mode "default"
 }
+
 bindsym Mod1+r mode "resize"
 
 
 ### i3status.tpl.conf ###
+# Start i3bar to display a workspace bar (plus the system information i3status
+# finds out, if available)
 bar {
+        # i3configger note:
+        # additionally to all variables set in the configuration files
+        # you can access the settings from i3configger.json here
+        # They will be added to the context from bars->targets
+        # they are pre populated by the bars->defaults
         status_command i3status -c ~/.i3/i3status.default.conf
+
+        # NOTE instead of ~/.i3 you could use /home/oliver/do/i3configger/examples/1-partials and it would be resolved
+        # to an absolute path
 }
