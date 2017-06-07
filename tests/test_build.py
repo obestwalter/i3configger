@@ -1,4 +1,5 @@
 import os
+import shutil
 from pathlib import Path
 
 import pytest
@@ -23,6 +24,9 @@ def test_build(container, monkeypatch):
     monkeypatch.setattr(
         paths, 'get_i3_config_path', lambda: EXAMPLES / container)
     monkeypatch.setattr(build, 'make_header', lambda _: FAKE_HEADER)
+    if not shutil.which('i3'):
+        # we're on CI
+        monkeypatch.setattr(build, 'check_config', lambda _: True)
     configPath = paths.get_my_config_path()
     assert configPath.exists() and configPath.is_file()
     p = paths.Paths(configPath)
