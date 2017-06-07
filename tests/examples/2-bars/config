@@ -1,18 +1,35 @@
 ###############################################################################
 # Built by i3configger /from/some/directory/who/cares  (some time after 1972) #
 ###############################################################################
+### filler.conf ###
+# Theoretically the config could be empty, but i3 -C crashes if it is only
+# passed bar settings and not at least one othe config value
+workspace_layout tabbed
+
 
 ### i3status.tpl.conf ###
+# Start i3bar to display a workspace bar (plus the system information i3status
+# finds out, if available)
 bar {
+        # i3configger note:
+        # additionally to all variables set in the configuration files
+        # you can access the settings from i3configger.json here
+        # They will be added to the context from bars->targets
+        # they are pre populated by the bars->defaults
         status_command i3status -c ~/.i3/i3status.full.conf
         output DP-3
         mode dock
         position bottom
 }
-
-
 ### i3status.tpl.conf ###
+# Start i3bar to display a workspace bar (plus the system information i3status
+# finds out, if available)
 bar {
+        # i3configger note:
+        # additionally to all variables set in the configuration files
+        # you can access the settings from i3configger.json here
+        # They will be added to the context from bars->targets
+        # they are pre populated by the bars->defaults
         status_command i3status -c ~/.i3/i3status.clock.conf
         output DP-4
         mode dock
