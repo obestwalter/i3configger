@@ -3,7 +3,7 @@
 
 # i3configger
 
-**Note In case you have no idea what this is about:** This is a tool mainly aimed at users who already have some experience with [i3](https://i3wm.org). i3 is a great tiling window manager - try it out if you have some time, but be careful - you might never be able to switch back to traditional desktop environments.
+**Note In case you have no idea what this is about:** This is a tool mainly aimed at users who already have some experience with [i3](https://i3wm.org). i3 is a great tiling window manager - try it out if you have some time, but be careful: you might never be able to switch back to traditional desktop environments.
 
 **What does it do?** In short: i3configger makes i3 a bit more malleable by adding a way to simply change variable values and switch between different parts of the configuration.
 
