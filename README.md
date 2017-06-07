@@ -11,7 +11,7 @@
 
 **`set`** assigns values to arbitrary variables that are set anywhere in the configuration.
 
-**`select`** integrates different partial files. Config partials that follow the naming scheme `<key>.<value>.conf` are only rendered into the config if explicitly set via configuration or a message from the command line.
+**`select`** switches between `partials` marked as alternatives by following the naming scheme `<key>.<value>.conf`.
 
 ### Overriding variables with `set`
 
