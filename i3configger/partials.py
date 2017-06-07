@@ -49,7 +49,7 @@ class Partial:
     def context(self):
         ctx = {}
         for line in [l.strip() for l in self.lines
-                if l.strip().startswith(base.SET_MARK)]:
+                     if l.strip().startswith(base.SET_MARK)]:
             payload = line.split(maxsplit=1)[1]
             key, value = payload.split(maxsplit=1)
             ctx[key] = value
