@@ -17,7 +17,7 @@
 
 A lot in the i3 configuration can be changed the value of variables. i3configger adds an interface to change them with a (very, very) simple command language.
 
-One example would be to switch aspects of the status bar(s) mode and position:
+One example would be to switch aspects of the status bar(s) - for example mode and position:
 
 A configuration containing:
 
