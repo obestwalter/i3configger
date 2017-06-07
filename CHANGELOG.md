@@ -18,7 +18,7 @@
 
 ### Fixed
 
-- #2 - fails if not using i3status. Fixed by making the refresh call ignore any errors - not nice, just a quick fix.
+-[#2](https://github.com/obestwalter/i3configger/issues/2) - fails if not using i3status. Fixed by making the refresh call ignore any errors - not nice, just a quick fix.
 
 # 0.0 - 0.4.3
 

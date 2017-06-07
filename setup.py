@@ -1,21 +1,17 @@
-import sys
 from setuptools import find_packages, setup
 
-try:
-    import pypandoc
-    longDescription = pypandoc.convert('README.md', 'rst')
-except(OSError, IOError, ImportError):
-    if 'upload' in sys.argv:
-        raise
-    longDescription = open('README.md').read()
 
+def get_long_description():
+    readme = open('docs/_pypi/README.md').read()
+    changelog = open('docs/_pypi/CHANGELOG.md').read()
+    return "%s\n\n%s" % (readme, changelog)
 
 kwargs = dict(
     name='i3configger',
     author='Oliver Bestwalter',
     url='https://github.com/obestwalter/i3configger',
     description="i3 config generation tool",
-    long_description=longDescription,
+    long_description=get_long_description(),
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     entry_points={'console_scripts': ['i3configger = i3configger.main:main']},
