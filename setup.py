@@ -2,9 +2,20 @@ from setuptools import find_packages, setup
 
 
 def get_long_description():
-    readme = open('docs/_pypi/README.md').read()
-    changelog = open('docs/_pypi/CHANGELOG.md').read()
+    from pathlib import Path
+    pypiFilesPath = Path(__file__).parent / 'docs' / '_pypi'
+    rPath = pypiFilesPath / 'README.rst'
+    cPath = pypiFilesPath / 'CHANGELOG.rst'
+    if not all(p.exists() for p in [rPath, cPath]):
+        try:
+            from i3configger.util import update_pypi_files
+            update_pypi_files()
+        except:
+            return open("README.md").read()
+    readme = open(str(rPath)).read()
+    changelog = open(str(cPath)).read()
     return "%s\n\n%s" % (readme, changelog)
+
 
 kwargs = dict(
     name='i3configger',
