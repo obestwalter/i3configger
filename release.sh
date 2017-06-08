@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 if [[ "$(git diff --shortstat 2> /dev/null | tail -n1)" != "" ]]; then
     echo "$(git diff)"
     echo "REPO IS DIRTY!"
