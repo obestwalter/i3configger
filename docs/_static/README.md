@@ -1,0 +1,1 @@
+* logo downloaded from https://www.iconfinder.com/icons/43650/curtain_window_icon (free for personal use, which this is I guess? If you don't like me using this icon in this context, let me know and I will remove it).

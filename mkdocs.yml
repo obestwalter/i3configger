@@ -1,5 +1,25 @@
 site_name: i3configger
 pages:
-- Home: index.md
+  - Home: index.md
+  - Installation: installation.md
+  - Getting started: getting-started.md
+  - Concept: concept.md
+  - Build process: build-process.md
+  - Resources: resources.md
 
+extra:
+  logo: _static/logo.png
+  author:
+    github: obestwalter
+    twitter: obestwalter
+extra_css:
+  - _static/extra.css
+#include_404: True
+markdown_extensions:
+    - admonition
+    - toc:
+        permalink: True #¶
+repo_url: https://github.com/obestwalter/i3configger
+site_name: i3configger
+strict: True
 theme: material
