@@ -48,6 +48,7 @@ yields something like:
 .
  ├── README.md
  ├── config
+ ├── config.bak
  └── config.d
      ├── .state.json
      ├── config.conf
