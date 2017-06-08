@@ -15,7 +15,7 @@
 
 - end of line comments are not supported anymore (too much bug potential - would need some form of parsing already to make it work -> not worth the fuzz)
 
-### Changes
+### Changed
 
 - comments are not stripped from the build anymore
 - notification is off by default: cli arg changed from `--no-notify-` to `--notify`
