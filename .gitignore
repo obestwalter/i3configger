@@ -4,4 +4,5 @@ build/*
 dist/*
 archive/*
 
+site/*
 .state.json

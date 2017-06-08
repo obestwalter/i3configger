@@ -63,7 +63,13 @@ yields something like:
 * `i3configger.json` can be used to do configuration of the status bars.
 * `.state.json` remembers the state of your current settings
 
-## Watch files in the background
+## What now?
+
+Have a look at the [examples](https://github.com/obestwalter/i3configger/tree/master/examples) to get an idea about how you can move towards a more dynamic configuration.
+
+For a real world example look at [my own i3 config](https://github.com/obestwalter/i3config). Here are the config partials and settings: [.i3/config.d](https://github.com/obestwalter/i3config/tree/master/config.d), from which [config](https://github.com/obestwalter/i3config/tree/master/config) and all `i3status.*conf` files are built.
+
+## Dev mode - watch config folder
 
 If you are experimenting with the config and want it automatically updated on change:
 
