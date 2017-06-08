@@ -15,15 +15,9 @@ def process_command_line():
     base.configure_logging(verbosity=args.v, logPath=args.log)
     args.config = Path(args.config).expanduser() if args.config else None
     if args.message and any([args.daemon, args.kill, args.watch]):
-        parser.error(
-            "message and daemon/watch can't be used together. "
-            "Start the watcher process first and then you can send messages"
-            "in following calls.")
-    if args.load_config and any([args.daemon, args.kill, args.watch]):
-        parser.error(
-            "Loading a configuration or state and daemon/watch can't be "
-            "used together. Start the watcher process first and then load"
-            "in following calls.")
+        parser.error("message and daemon/watch can't be used together. "
+                     "Start the watcher process first and then you can send "
+                     "messages in following calls.")
     return args
 
 
