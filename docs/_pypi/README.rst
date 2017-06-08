@@ -4,185 +4,68 @@ and is being actively developed.| |Build Status| |PyPI version|
 i3configger
 ===========
 
-Overview
---------
+**Disclaimer:** this is a tool aimed at users who already know how the
+configuration of `i3 <https://i3wm.org>`__ works (as described in the
+`excellent docs <https://i3wm.org/docs/userguide.html>`__). i3configger
+is an independent add-on, not directly affiliated with the project and
+in no way necessary to use i3 productively. It is strictly command line
+oriented and a file based using a very slight enhancement of the
+existing i3 configuration format with some json sprinkled on top. If you
+are looking for a graphical tool to help you create a configuration,
+check out the `resources in the
+docs <http://oliver.bestwalter.de/i3configger/resources>`__.
 
--  generate an `i3 <https://i3wm.org>`__ config from a set of ``.conf``
-   files in ``<i3 config folder>/config.d``.
+**WARNING** using i3configger will overwrite your existing config file,
+so make sure your config is under source control and/or you have a
+backup before you try this. i3configger will create a backup of your old
+config but only one, so running i3configger twice will leave no trace of
+your original configuration file.
 
--  automatically restart or reload i3 when changes were made (optional -
-   on by default). This makes it possible to dynamically change settings
-   that need changes in the configuration files (e.g. switch bar mode
-   between hide and docked or cycle through different color schemes).
+Why?
+----
 
--  keep it DRY (optional):
+I3 already has a very nice and simple configuration system. i3configger
+makes it a bit more malleable by making it possible to send "messages"
+to your configuration.
 
-   -  assign variables to variables
-   -  use variables in i3status configuration files
-   -  generate ``bar {...}`` settings from a simple template with some
-      extra config.
+How?
+----
 
-Detailed Features
------------------
+You can change any variable you have defined in the configuration by
+invoking ``i3configger set <variable name> <new value>``.
 
--  build main config and one or several i3status configs from the same
-   sources
--  variables are handled slightly more intelligently than i3 does it
-   (variables assigned to other variables are resolved)
--  (\*\*THIS WILL GO - to much bug potential - would need some form of
-   parsing already)end of line comments are possible (removed at build
-   time)
+You can switch between alternative sub configurations (e.g. different
+color schemes) that conform with a simple naming convention
+(``config.d/<key>.<value1>.conf``, ``config.d/<key>.<value2>.conf``,
+etc.) by invoking e.g. ``i3configger select-next <key>`` or
+``i3configger select <value2>``.
 
--  variables in i3status configs are also resolved (set anywhere in the
-   sources)
--  reload or restart i3 when a change has been done (using ``i3-msg``)
--  notify when new config has been created and activated (using
-   ``notify-send``)
--  simple way to render partials based on key value pairs in file name
--  simple way to change the configuration by sending messages
--  build config as one shot script or watch for changes
--  send messages to watching i3configger process
--  (**WARNING** - this does not work reliably yet) if ``i3 -C`` fails
-   with the newly rendered config, the old config will be kept, no harm
-   done
+This is realized by adding a build step that can be triggered by calling
+i3configger directly or by running it as a watcher process that
+automatically rebuilds and reloads when source files change or messages
+are sent.
+
+To get an idea how this works, have a look at the
+`examples <https://github.com/obestwalter/i3configger/tree/master/examples>`__
+and `read the docs <http://oliver.bestwalter.de/i3configger>`__.
 
 Installation
 ------------
-
-**Note** the code is Python 3.6 only. I want to play with the new toys
-:)
-
-``i3configger`` is released on `the Python Package
-Index <https://pypi.org/project/i3configger/>`__. The standard
-installation method is:
 
 ::
 
     $ pip install i3configger
 
-`i3configger release announcements and
-discussion <https://www.reddit.com/r/i3wm/comments/6exzgs/meet_i3configger/>`__
+See `docs <http://oliver.bestwalter.de/i3configger/installation>`__ For
+more details and different ways of installation.
 
-Getting started
----------------
-
-Simple
-~~~~~~
-
-1. Cut your config file into chewable chunks with the extension
-   ``.conf`` and put them in the directory
-   ``<i3 config folder>/config.d``.
-2. Run ``i3configger``.
-3. ``i3configger.json`` and ``.state.json`` are created in ``config.d``
-4. A new config file is generated instead of your old config.
-5. A backup of the last config is kept with suffix ``.bak``
-
--  ``i3configger.json`` can be used to do configuration of the status
-   bars.
--  ``.state.json`` remembers the state of your current settings
-
-Watch files in the background
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you are experimenting with the config and want it automatically
-updated on change:
-
-run it in the foreground:
-
-::
-
-    $ i3configger --watch
-
-run it as a daemon:
-
-::
-
-    $ i3configger --daemon
-
-stop the daemon:
-
-::
-
-    $ i3configger --kill
-
-Diving a bit deeper
--------------------
-
-I use this to generate `my own i3
-config <https://github.com/obestwalter/i3config>`__. Here are the config
-partials and settings:
-`.i3/config.d <https://github.com/obestwalter/i3config/tree/master/config.d>`__,
-from which
-`config <https://github.com/obestwalter/i3config/tree/master/config>`__
-and all ``i3status.*conf`` files are built.
-
-With my config, the call:
-
-::
-
-    $ i3configger select scheme solarized-dark
-
-will integrate ``scheme.solarized-dark.conf`` in the build and exclude
-all other ``scheme.*.conf`` files.
-
-::
-
-    $ i3configger select-next scheme
-
-will switch to the next scheme (and wrap around to the first scheme)
-
-This is persisted in ``.state.json``
-
-If I want to get my bar out of the way:
-
-::
-
-    $ i3configger set mode hide
-
-**``select``** integrates different partial files. Config partials that
-follow the naming scheme ``<key>.<value>.conf`` are only rendered into
-the config if explicitly set via configuration or a message from the
-command line.
-
-**``set``** assigns values to arbitrary variables that are set anywhere
-in the configuration.
-
-All changes done this way are persisted in ``.state.json``.
-
-Build process
+Documentation
 -------------
 
-1. merge all files that fit the conditions and configuration
-2. read in all lines that fit the pattern ``set $.*``
-3. parse them into a map key -> value
-4. Resolve all indirect assignments (e.g. ``set $bla $blub``)
-5. Replace all variables in configs with their values (bar configs get
-   local context merged before substitution)
-6. Write results
-7. Check if config is valid - if not switch back to saved backup
+Read it here: http://oliver.bestwalter.de/i3configger
 
-Resources
----------
-
-I3 official
-~~~~~~~~~~~
-
--  `i3wm <https://i3wm.org/>`__
--  `i3wm reddit group (FAQs) <https://www.reddit.com/r/i3wm/>`__
--  `Archlinux Wiki <https://wiki.archlinux.org/index.php/I3>`__
-
-Other Tools
-~~~~~~~~~~~
-
-... from the i3wm ecosystem
-
--  `online color
-   configurator <https://thomashunter.name/i3-configurator/>`__
--  `j4-make-config
-   (i3-theme) <https://github.com/okraits/j4-make-config>`__
--  `i3-style <https://github.com/acrisci/i3-style>`__
--  `i3ColourChanger <https://github.com/PMunch/i3ColourChanger>`__
--  `i3-manager <https://github.com/erayaydin/i3-manager>`__
+`Release announcements and
+discussion. <https://www.reddit.com/r/i3wm/comments/6exzgs/meet_i3configger/>`__
 
 .. |Project Status: Active – The project has reached a stable, usable state and is being actively developed.| image:: http://www.repostatus.org/badges/latest/active.svg
    :target: http://www.repostatus.org/#active

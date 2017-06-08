@@ -1,20 +1,32 @@
 CHANGELOG
 =========
 
-[Unreleased]
-------------
+Unreleased
+----------
+
+-  nothing yet
+
+0.5.0 (Half way there) - 2017-06-08
+-----------------------------------
+
+Added
+~~~~~
+
+-  proper documentation at http://oliver.bestwalter.de/i3configger/
+-  copy user or default config into ``config.d`` on initialization
 
 Removed
 ~~~~~~~
 
--  end of line comments are not allowed anymore (too much bug potential
-   - would need some form of parsing already to make it work -> not
-   worth the fuzz)
+-  end of line comments are not supported anymore (too much bug
+   potential - would need some form of parsing already to make it work
+   -> not worth the fuzz)
 
 Changes
 ~~~~~~~
 
--  Notification is off by default: cli arg changed from ``--no-notify-``
+-  comments are not stripped from the build anymore
+-  notification is off by default: cli arg changed from ``--no-notify-``
    to ``--notify``
 
 Fixed
@@ -24,8 +36,8 @@ Fixed
    c) was not passed and the passed path to the new config was silently
    ignored and the active config was checked instead
 
-0.4.4
------
+0.4.4 (I am not alone) - 2017-06-05
+-----------------------------------
 
 Fixed
 ~~~~~
@@ -34,8 +46,21 @@ Fixed
 not using i3status. Fixed by making the refresh call ignore any errors -
 not nice, just a quick fix.
 
-0.0 - 0.4.3
-===========
+0.4.3 - (The Curious Incident of the Dog in the Night-Time) - 2017-06-04
+------------------------------------------------------------------------
+
+Added
+~~~~~
+
+-  examples that are used as test cases
+
+Fixed
+~~~~~
+
+-  some small fixes regarding selection
+
+0.4.2 (The answer) - 2017-06-03
+-------------------------------
 
 **Basic implementation**
 
