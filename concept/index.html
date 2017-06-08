@@ -470,7 +470,6 @@
                 
                 <h1 id="concept">Concept<a class="headerlink" href="#concept" title="Permanent link">&para;</a></h1>
 <p>The configuration is built from so called <code>partials</code> in <code>&lt;i3 config folder&gt;/config.d</code>. For very simple usages (just changing some variable for examples) it is not even necessary to spread the configuration over several files though. Have a look at the <a href="https://github.com/obestwalter/i3configger/tree/master/examples">examples</a> to get an idea about how it can be used.</p>
-<p>I use this to generate <a href="https://github.com/obestwalter/i3config">my own i3 config</a>. Here are the config partials and settings: <a href="https://github.com/obestwalter/i3config/tree/master/config.d">.i3/config.d</a>, from which <a href="https://github.com/obestwalter/i3config/tree/master/config">config</a> and all <code>i3status.*conf</code> files are built.</p>
 <p>Changes that are made to the configuration via i3configger messages are not written back to the <code>partials</code> but are persisted in a <code>.state.json</code> in the source folder. This file is used to override variables and choose alternative files during build. Deleting that file puts everything back to normal.</p>
 <h2 id="terms">Terms<a class="headerlink" href="#terms" title="Permanent link">&para;</a></h2>
 <ul>
