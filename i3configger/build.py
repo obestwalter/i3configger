@@ -79,7 +79,8 @@ def check_config(content):
     errorReport = ipc.I3.get_config_errors(tmpPath)
     if errorReport:
         raise exc.ConfigError(
-            f"errors in:\n{content}\n\n{errorReport.decode()}")
+            f"config:\n{content}\n\nerrors:\n{errorReport.decode()}"
+            f"FATAL: config not changed due to errors.")
 
 
 def persist_results(pathContentsMap):

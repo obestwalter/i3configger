@@ -51,9 +51,14 @@ def process(statePath, prts, message):
                     state["select"][key] = new.value
                     break
         elif command == SELECT:
+            candidates = partials.find(prts, key)
+            if not candidates:
+                raise exc.MessageError(
+                    f"No candidates for {message} in {prts}")
             candidate = partials.find(prts, key, value)
             if not candidate:
-                raise exc.MessageError(f"No candidate for {message}")
+                raise exc.MessageError(
+                    f"No candidates for {message} in {candidates}")
             if value.lower == DEL:
                 del state["select"][key]
             else:
