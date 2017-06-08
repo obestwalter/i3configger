@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
-pip install pypandoc
-python i3configger/util.py
-git add docs/_pypi/*
-git commit -m "release $1"
-git push
-
 if [[ "$(git diff --shortstat 2> /dev/null | tail -n1)" != "" ]]; then
     echo "$(git diff)"
     echo "REPO IS DIRTY!"
