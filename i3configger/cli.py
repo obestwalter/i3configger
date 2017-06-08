@@ -2,7 +2,7 @@ import argparse
 import logging
 from pathlib import Path
 
-from i3configger import __version__, base, exc, config
+from i3configger import __version__, base
 
 log = logging.getLogger(__name__)
 
@@ -13,7 +13,6 @@ def process_command_line():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     args = _parse_args(parser)
     base.configure_logging(verbosity=args.v, logPath=args.log)
-    check_sanity(args.message)
     args.config = Path(args.config).expanduser() if args.config else None
     if args.message and any([args.daemon, args.kill, args.watch]):
         parser.error(
@@ -47,22 +46,7 @@ def _parse_args(p):
                    help="show build notification via notify-send")
     p.add_argument('--log', action="store", default=None,
                    help="i3configgerPath to where log should be stored")
-    p.add_argument('--load-config', action="store", default=None,
-                   help="load a config and build new")
     p.add_argument('-c', '--config', action="store",
                    default=None, help="i3configgerPath to config file")
     p.add_argument("message", help="message to send to i3configger", nargs="*")
     return p.parse_args()
-
-
-def check_sanity(message):
-    """Extract i3configger commands."""
-    if not message:
-        return
-    log.debug("processing %s", message)
-    command, *rest = message
-    spec = config.State.get_spec(command)
-    if len(rest) != spec:
-        raise exc.I3configgerException(
-            f"message '{command}' needs {spec} args - got: {rest}")
-    log.debug(f"{message} seem to be a legit message")

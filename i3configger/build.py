@@ -4,7 +4,8 @@ import tempfile
 import time
 from pathlib import Path
 
-from i3configger import __version__, base, config, context, exc, ipc, partials
+from i3configger import (
+    __version__, base, config, context, exc, ipc, partials, state)
 
 log = logging.getLogger(__name__)
 
@@ -17,16 +18,17 @@ def build_all(configPath):
 
 
 def generate_contents(cnf):
+    prts = partials.create(cnf.partialsPath)
+    st = state.process(cnf.statePath, prts, cnf.message)
     pathContentsMap = {}
     excludes = {b["key"] for b in cnf.barTargets.values()}
-    selectorMap = cnf.state["select"]
-    prts = partials.create(cnf.partialsPath)
+    selectorMap = st["select"]
     selected = partials.select(prts, selectorMap, excludes)
     ctx = context.merge(selected)
     mainContent = generate_main_content(cnf.partialsPath, selected, ctx)
     for barName, barCnf in cnf.barTargets.items():
         barCnf["id"] = barName
-        eCtx = context.merge([ctx, barCnf, cnf.state["set"]])
+        eCtx = context.merge([ctx, barCnf, st["set"]])
         mainContent += "\n%s" % generate_bar_setting(barCnf, prts, eCtx)
         statusFileContent = generate_status_file_content(
             prts, barCnf["key"], barCnf["value"], eCtx)

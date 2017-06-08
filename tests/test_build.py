@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from i3configger import build, paths, config, partials
+from i3configger import build, paths
 
 HERE = Path(__file__).parent
 EXAMPLES = HERE.parent / 'examples'
@@ -32,7 +32,6 @@ def test_build(container, monkeypatch):
     p = paths.Paths(configPath)
     if p.state.exists():
         os.unlink(p.state)
-    config.State.fetch_state(p.state, partials.create(p.root))
     build.build_all(configPath)
     buildPath = configPath.parents[1]
     referencePath = REFERENCE / container
