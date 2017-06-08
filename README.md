@@ -13,7 +13,7 @@ I3 already has a very nice and simple configuration system. i3configger makes it
 
 You can change any variable you have defined in the configuration by invoking `i3configger set <variable name> <new value>`.
 
-You can switch between alternative sub configurations (e.g. different color schemes) that conform with a simple naming convention (`config.d/<key>.<value1>.conf`, `config.d/<key>.<value2>.conf`, etc.) by invoking `i3configger select-next <key>`.
+You can switch between alternative sub configurations (e.g. different color schemes) that conform with a simple naming convention (`config.d/<key>.<value1>.conf`, `config.d/<key>.<value2>.conf`, etc.) by invoking e.g. `i3configger select-next <key>` or `i3configger select <value2>`.
 
 This is realized by adding a build step that can be triggered by calling i3configger directly or by running it as a watcher process that automatically rebuilds and reloads when source files change or messages are sent.
 
