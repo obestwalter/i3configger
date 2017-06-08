@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="shortcut icon" href="../assets/images/favicon.png">
+      
+      <meta name="generator" content="mkdocs-0.16.3, mkdocs-material-1.7.3">
+    
+    
+      
+        <title>Concept - i3configger</title>
+      
+    
+    
+      <script src="../assets/javascripts/modernizr-1df76c4e58.js"></script>
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application-acc56dad49.css">
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+    
+      <link rel="stylesheet" href="../_static/extra.css">
+    
+    
+  </head>
+  
+  
+  
+  
+    <body>
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="drawer">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search">
+    <label class="md-overlay" data-md-component="overlay" for="drawer"></label>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <a href=".." title="i3configger" class="md-logo md-header-nav__button">
+            <img src="../_static/logo.png" width="24" height="24">
+          </a>
+        
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <span class="md-flex__ellipsis md-header-nav__title">
+          
+            
+              
+            
+            Concept
+          
+        </span>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="search"></label>
+          
+<div class="md-search" data-md-component="search">
+  <label class="md-search__overlay" for="search"></label>
+  <div class="md-search__inner">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" required placeholder="Search" accesskey="s" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query">
+      <label class="md-icon md-search__icon" for="search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset">close</button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result" data-md-lang-search="">
+          <div class="md-search-result__meta" data-md-lang-result-none="No matching documents" data-md-lang-result-one="1 matching document" data-md-lang-result-other="# matching documents">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+
+  <a href="https://github.com/obestwalter/i3configger" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      GitHub
+    </div>
+  </a>
+
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="drawer">
+    
+      <i class="md-logo md-nav__button">
+        <img src="../_static/logo.png">
+      </i>
+    
+    i3configger
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+
+  <a href="https://github.com/obestwalter/i3configger" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      GitHub
+    </div>
+  </a>
+
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../installation/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../getting-started/" title="Getting started" class="md-nav__link">
+      Getting started
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="toc">
+        Concept
+      </label>
+    
+    <a href="./" title="Concept" class="md-nav__link md-nav__link--active">
+      Concept
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#terms" title="Terms" class="md-nav__link">
+    Terms
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#message-mini-language" title="Message "mini language"" class="md-nav__link">
+    Message "mini language"
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#change-variables-with-set" title="Change variables with set" class="md-nav__link">
+    Change variables with set
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warning-about-variables" title="Warning about variables" class="md-nav__link">
+    Warning about variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switching-between-alternatives-with-select" title="Switching between alternatives with select" class="md-nav__link">
+    Switching between alternatives with select
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#special-conventions" title="Special conventions" class="md-nav__link">
+    Special conventions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automatic-selection-for-hostname" title="Automatic selection for hostname" class="md-nav__link">
+    Automatic selection for hostname
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deactivate-partials-in-configd" title="deactivate partials in config.d" class="md-nav__link">
+    deactivate partials in config.d
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bonus-track-keep-it-dry" title="Bonus track: keep it DRY" class="md-nav__link">
+    Bonus track: keep it DRY
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../build-process/" title="Build process" class="md-nav__link">
+      Build process
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../resources/" title="Resources" class="md-nav__link">
+      Resources
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#terms" title="Terms" class="md-nav__link">
+    Terms
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#message-mini-language" title="Message "mini language"" class="md-nav__link">
+    Message "mini language"
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#change-variables-with-set" title="Change variables with set" class="md-nav__link">
+    Change variables with set
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warning-about-variables" title="Warning about variables" class="md-nav__link">
+    Warning about variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switching-between-alternatives-with-select" title="Switching between alternatives with select" class="md-nav__link">
+    Switching between alternatives with select
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#special-conventions" title="Special conventions" class="md-nav__link">
+    Special conventions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automatic-selection-for-hostname" title="Automatic selection for hostname" class="md-nav__link">
+    Automatic selection for hostname
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deactivate-partials-in-configd" title="deactivate partials in config.d" class="md-nav__link">
+    deactivate partials in config.d
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bonus-track-keep-it-dry" title="Bonus track: keep it DRY" class="md-nav__link">
+    Bonus track: keep it DRY
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/obestwalter/i3configger/edit/master/docs/concept.md" title="Edit this page" class="md-icon md-content__icon">edit</a>
+                
+                
+                <h1 id="concept">Concept<a class="headerlink" href="#concept" title="Permanent link">&para;</a></h1>
+<p>The configuration is built from so called <code>partials</code> in <code>&lt;i3 config folder&gt;/config.d</code>. For very simple usages (just changing some variable for examples) it is not even necessary to spread the configuration over several files though. Have a look at the <a href="https://github.com/obestwalter/i3configger/tree/master/examples">examples</a> to get an idea about how it can be used.</p>
+<p>I use this to generate <a href="https://github.com/obestwalter/i3config">my own i3 config</a>. Here are the config partials and settings: <a href="https://github.com/obestwalter/i3config/tree/master/config.d">.i3/config.d</a>, from which <a href="https://github.com/obestwalter/i3config/tree/master/config">config</a> and all <code>i3status.*conf</code> files are built.</p>
+<p>Changes that are made to the configuration via i3configger messages are not written back to the <code>partials</code> but are persisted in a <code>.state.json</code> in the source folder. This file is used to override variables and choose alternative files during build. Deleting that file puts everything back to normal.</p>
+<h2 id="terms">Terms<a class="headerlink" href="#terms" title="Permanent link">&para;</a></h2>
+<ul>
+<li>
+<p><strong><code>partials</code></strong>: the i3 configuration (including status bars and theirs configuration files - if configured) is built from files in <code>config.d</code> that make up the parts of the configuration to be built. They contain exactly what a normal configuration for i3 would contain only spread over several files (including status bar config files) - with somme added functionality mainly variable solution, alternatives and bar configurations from templates.</p>
+</li>
+<li>
+<p><strong><code>message</code></strong>: when invoking i3configger with positional arguments they constitute a simple message to the configuration, effectively triggering a build with the changes requested in the message.</p>
+</li>
+</ul>
+<h2 id="message-mini-language">Message "mini language"<a class="headerlink" href="#message-mini-language" title="Permanent link">&para;</a></h2>
+<p><strong><code>set &lt;vraiable&gt; &lt;value&gt;</code></strong> assigns a new value to any variable that is set anywhere in the configuration (note: variable name is passed without leading <code>$</code> sign).</p>
+<p><strong><code>select</code></strong> chooses a <code>partial</code> from a group of alternatives following the naming scheme <code>&lt;key&gt;.&lt;value&gt;.conf</code>.</p>
+<ul>
+<li><strong><code>select-next</code></strong>, <strong><code>select-previous</code></strong> chooses the next/previous <code>partial</code> from a group of alternatives (in lexical order).</li>
+</ul>
+<h3 id="change-variables-with-set">Change variables with <code>set</code><a class="headerlink" href="#change-variables-with-set" title="Permanent link">&para;</a></h3>
+<p>A lot in the i3 configuration can be changed by changing the value of variables. i3configger adds an interface to change them with a (very, very, very) simple messaging language.</p>
+<p>One example would be to switch aspects of the status bar(s) - for example mode and position:</p>
+<p>A configuration containing:</p>
+<pre><code class="text">set $bar_mode hidden
+set $bar_position top
+...
+bar {
+    ...
+    mode $bar_mode
+    position $bar_position
+}
+</code></pre>
+
+<p>can be manipulated by invoking:</p>
+<pre><code class="text">$ i3configger set bar_mode dock
+$ i3configger set bar_position bottom
+</code></pre>
+
+<p>... and the bar is docked after the first command and jumps to the bottom after the second message has been sent.</p>
+<p>This is completely generic. All variables you set anywhere in the configuration can be changed by this.</p>
+<h3 id="warning-about-variables">Warning about variables<a class="headerlink" href="#warning-about-variables" title="Permanent link">&para;</a></h3>
+<p>The implementation of this is very simple (it just parses all variables and an optional message into a single dictionary and uses <a href="https://docs.python.org/2/library/string.html#template-strings">Python Template String</a> to do the substitutions. To i3configger all <code>$varName</code> are the same and will be replaced with their value wherever they are.</p>
+<p>This could bite you if you are not aware of that and use regular expressions containing <code>$</code> e.g. in <a href="https://i3wm.org/docs/userguide.html#for_window">for_window</a>. So make sure that you do not use an expression where a part containing <code>$whatever</code> also matches an existing variable that was assigned with <code>set $whatever</code>.</p>
+<h3 id="switching-between-alternatives-with-select">Switching between alternatives with <code>select</code><a class="headerlink" href="#switching-between-alternatives-with-select" title="Permanent link">&para;</a></h3>
+<p>Bigger changes can be done by switching between <code>partials</code>. To realize this there is a simple naming convention for <code>partials</code> to mark them as alternatives of which only ever one is integrated into the final configuration.</p>
+<p>The following <code>partials</code> form a group of alternatives:</p>
+<pre><code>~/.i3/config.d/scheme.blue.conf
+~/.i3/config.d/scheme.red.conf
+~/.i3/config.d/scheme.black.conf
+</code></pre>
+<p>The first part of the file (<code>scheme</code>) serves as the key of that group of alternatives and the second part (<code>blue</code>, <code>red</code>, <code>black</code>) is the value that can be chosen.</p>
+<p>To choose a concrete alternative:</p>
+<pre><code class="text">$ i3configger select scheme red
+</code></pre>
+
+<p>To cycle through these different alternatives:</p>
+<pre><code class="text">$ i3configger select-next scheme
+$ i3configger select-previous scheme
+</code></pre>
+
+<p>How you call your groups and their values is completely up to you, as long as you stick with the naming convention.</p>
+<h3 id="special-conventions">Special conventions<a class="headerlink" href="#special-conventions" title="Permanent link">&para;</a></h3>
+<h4 id="automatic-selection-for-hostname">Automatic selection for hostname<a class="headerlink" href="#automatic-selection-for-hostname" title="Permanent link">&para;</a></h4>
+<p>At the moment there is one special name that I deem useful to be populated differently, which is <code>hostname</code>. If you have <code>partials</code> in you <code>config.d</code> that follow the scheme <code>hostname.&lt;whatever&gt;.conf</code> they will automatically be chosen if your hostname matches <code>whatever</code>.</p>
+<h4 id="deactivate-partials-in-configd">deactivate partials in <code>config.d</code><a class="headerlink" href="#deactivate-partials-in-configd" title="Permanent link">&para;</a></h4>
+<p>If you want to deactivate a partial, you can do that by prepending a <code>.</code> to the file name, e.g. <code>.whatever.conf</code> or <code>.whatever.else.conf</code> are not included in the build even if they reside in your <code>config.d</code>.</p>
+<h3 id="bonus-track-keep-it-dry">Bonus track: keep it DRY<a class="headerlink" href="#bonus-track-keep-it-dry" title="Permanent link">&para;</a></h3>
+<p>Using i3configger you can also:</p>
+<ul>
+<li>assign variables to variables (<code>set $someVar $someOtherVar</code>)</li>
+<li>Use variables set anywhere in config <code>partials</code> in i3status configuration files</li>
+<li>generate <code>bar {...}</code> settings from templates with some extra config.</li>
+</ul>
+                
+                  
+                
+              
+              
+                
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../getting-started/" title="Getting started" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Getting started
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../build-process/" title="Build process" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Build process
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="http://www.mkdocs.org" title="MkDocs">MkDocs</a>
+        and
+        <a href="http://squidfunk.github.io/mkdocs-material/" title="Material for MkDocs">
+          Material for MkDocs</a>
+      </div>
+      
+        
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application-b30566c560.js"></script>
+      
+      
+      <script>app.initialize({url:{base:".."}})</script>
+      
+    
+    
+      
+    
+  </body>
+</html>
