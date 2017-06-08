@@ -1,10 +1,19 @@
 # CHANGELOG
 
-## [Unreleased]
+## Unreleased
+
+- nothing yet
+
+## 0.5.0 (Half way there) - 2017-06-08
+
+### Added
+
+- proper documentation at http://oliver.bestwalter.de/i3configger/
+- copy user or default config into `config.d` on initialization
 
 ### Removed
 
-- end of line comments are not allowed anymore (too much bug potential - would need some form of parsing already to make it work -> not worth the fuzz)
+- end of line comments are not supported anymore (too much bug potential - would need some form of parsing already to make it work -> not worth the fuzz)
 
 ### Changes
 
