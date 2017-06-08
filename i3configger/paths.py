@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 from pathlib import Path
 
 from i3configger import config, exc
@@ -22,8 +23,8 @@ class Paths:
 
 
 def get_my_config_path(configPath=None):
+    i3configPath = get_i3_config_path()
     if not configPath:
-        i3configPath = get_i3_config_path()
         configContainer = i3configPath / MY_CONFIG_FOLDER
         if not configContainer.exists():
             log.info("create new config folder at %s", configContainer)
@@ -34,6 +35,10 @@ def get_my_config_path(configPath=None):
     if not configPath.exists():
         log.info("create default configuration at %s", configPath)
         config.freeze(configPath, config.I3_CONFIGGER_DEFAULTS)
+        for candidate in [i3configPath / 'config', Path('etc/i3/config')]:
+            if candidate.exists():
+                log.info("populate config with %s", candidate)
+                shutil.copy2(candidate, configPath.parent / 'config.conf')
     return configPath
 
 
