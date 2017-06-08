@@ -45,8 +45,7 @@ yields something like:
 * a structure like this has been created in your `i3` folder:
 
 ```text
-.
- ├── README.md
+<your i3 folder>
  ├── config
  ├── config.bak
  └── config.d
