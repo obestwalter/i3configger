@@ -15,13 +15,23 @@
 
 - checking the config with `i3 -C` did not work because `-c` (small c) was not passed and the passed path to the new config was silently ignored and the active config was checked instead
 
-## 0.4.4
+## 0.4.4 (I am not alone) - 2017-06-05
 
 ### Fixed
 
 -[#2](https://github.com/obestwalter/i3configger/issues/2) - fails if not using i3status. Fixed by making the refresh call ignore any errors - not nice, just a quick fix.
 
-# 0.0 - 0.4.3
+## 0.4.3 - (The Curious Incident of the Dog in the Night-Time) - 2017-06-04
+
+### Added
+
+* examples that are used as test cases
+
+### Fixed
+
+* some small fixes regarding selection
+
+## 0.4.2 (The answer) - 2017-06-03
 
 **Basic implementation**
 
