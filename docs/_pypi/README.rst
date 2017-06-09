@@ -9,10 +9,10 @@ configuration of `i3 <https://i3wm.org>`__ works (as described in the
 `excellent docs <https://i3wm.org/docs/userguide.html>`__). i3configger
 is an independent add-on, not directly affiliated with the project and
 in no way necessary to use i3 productively. It is strictly command line
-oriented and a file based using a very slight enhancement of the
-existing i3 configuration format with some json sprinkled on top. If you
-are looking for a graphical tool to help you create a configuration,
-check out the `resources in the
+oriented and file based using a very slight enhancement of the existing
+i3 configuration format with some json sprinkled on top. If you are
+looking for a graphical tool to help you create a configuration, check
+out the `resources in the
 docs <http://oliver.bestwalter.de/i3configger/resources>`__.
 
 **WARNING** using i3configger will overwrite your existing config file,

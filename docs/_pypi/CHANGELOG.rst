@@ -22,7 +22,7 @@ Removed
    potential - would need some form of parsing already to make it work
    -> not worth the fuzz)
 
-Changes
+Changed
 ~~~~~~~
 
 -  comments are not stripped from the build anymore
