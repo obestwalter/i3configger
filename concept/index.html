@@ -264,6 +264,20 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#commands" title="Commands" class="md-nav__link">
+    Commands
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#special-values" title="Special values" class="md-nav__link">
+    Special values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#change-variables-with-set" title="Change variables with set" class="md-nav__link">
     Change variables with set
   </a>
@@ -392,6 +406,20 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#commands" title="Commands" class="md-nav__link">
+    Commands
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#special-values" title="Special values" class="md-nav__link">
+    Special values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#change-variables-with-set" title="Change variables with set" class="md-nav__link">
     Change variables with set
   </a>
@@ -470,7 +498,7 @@
                 
                 <h1 id="concept">Concept<a class="headerlink" href="#concept" title="Permanent link">&para;</a></h1>
 <p>The configuration is built from so called <code>partials</code> in <code>&lt;i3 config folder&gt;/config.d</code>. For very simple usages (just changing some variable for examples) it is not even necessary to spread the configuration over several files though. Have a look at the <a href="https://github.com/obestwalter/i3configger/tree/master/examples">examples</a> to get an idea about how it can be used.</p>
-<p>Changes that are made to the configuration via i3configger messages are not written back to the <code>partials</code> but are persisted in a <code>.state.json</code> in the source folder. This file is used to override variables and choose alternative files during build. Deleting that file puts everything back to normal.</p>
+<p>Changes that are made to the configuration via i3configger messages are not written back to the <code>partials</code> but are persisted in a <code>.messages.json</code> in the source folder. This file is used to override variables and choose alternative files during build. Deleting that file puts everything back to normal.</p>
 <h2 id="terms">Terms<a class="headerlink" href="#terms" title="Permanent link">&para;</a></h2>
 <ul>
 <li>
@@ -481,10 +509,32 @@
 </li>
 </ul>
 <h2 id="message-mini-language">Message "mini language"<a class="headerlink" href="#message-mini-language" title="Permanent link">&para;</a></h2>
-<p><strong><code>set &lt;vraiable&gt; &lt;value&gt;</code></strong> assigns a new value to any variable that is set anywhere in the configuration (note: variable name is passed without leading <code>$</code> sign).</p>
-<p><strong><code>select</code></strong> chooses a <code>partial</code> from a group of alternatives following the naming scheme <code>&lt;key&gt;.&lt;value&gt;.conf</code>.</p>
+<h3 id="commands">Commands<a class="headerlink" href="#commands" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong><code>select-next</code></strong>, <strong><code>select-previous</code></strong> chooses the next/previous <code>partial</code> from a group of alternatives (in lexical order).</li>
+<li>
+<p><strong><code>set &lt;variable&gt; &lt;value&gt;</code></strong> assigns a new value to any variable that is set anywhere in the configuration (note: variable name is passed without leading <code>$</code> sign).</p>
+</li>
+<li>
+<p><strong><code>select</code></strong> chooses a <code>partial</code> from a group of alternatives following the naming scheme <code>&lt;key&gt;.&lt;value&gt;.conf</code>.</p>
+</li>
+<li>
+<p><strong><code>select-next</code></strong>, <strong><code>select-previous</code></strong> chooses the next/previous <code>partial</code> from a group of alternatives (in lexical order).</p>
+</li>
+<li>
+<p><strong><code>shadow</code></strong> shadows any entry in <code>i3configger.json</code> - to address nested dictionaries chain the keys with <code>:</code> as separator - e.g. <code>i3configger shadow bars:targets:laptop:mode dock</code> will translate into:
+    <code>python
+    {"bars": {"targets": {"laptop": {"mode": "dock"}}}}</code></p>
+</li>
+<li>
+<p><strong><code>merge</code></strong> merges the data from a given path into <code>.messages.json</code> to make larger changes in one step. If a relative path is given it is relative to <code>config.d</code>. An absolute path is used unchanged.</p>
+</li>
+<li>
+<p><strong><code>prune</code></strong> the opposite of merge: remove all keys in given file from <code>.messages.json</code>. If a relative path is given it is relative to <code>config.d</code>. An absolute path is used unchanged.</p>
+</li>
+</ul>
+<h3 id="special-values">Special values<a class="headerlink" href="#special-values" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>del</code> if passed as value to <code>set</code> or <code>shadow</code> the key is deleted. E.g. <code>i3configger set someVar del</code>, will remove the key <code>someVar</code> in <code>.messages.json-&gt;set</code></li>
 </ul>
 <h3 id="change-variables-with-set">Change variables with <code>set</code><a class="headerlink" href="#change-variables-with-set" title="Permanent link">&para;</a></h3>
 <p>A lot in the i3 configuration can be changed by changing the value of variables. i3configger adds an interface to change them with a (very, very, very) simple messaging language.</p>
