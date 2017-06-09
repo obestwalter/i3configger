@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.5.2 (Releasing correctly is hard) - 2017-06-09
+
+### Fixed
+
+- wrong CHANGELOG :)
+
 ## 0.5.1 (Maybe I should test more) - 2017-06-09
 
 ### Fixed
