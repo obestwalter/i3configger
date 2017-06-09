@@ -8,6 +8,7 @@ if [[ "$(git diff --shortstat 2> /dev/null | tail -n1)" != "" ]]; then
     exit 1
 fi
 
+python -c "import pypandoc"  # crash early if this is not installed
 git tag "$1"
 python setup.py sdist upload
 git push --tags

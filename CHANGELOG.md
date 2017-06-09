@@ -10,7 +10,7 @@
 
 ### Fixed
 
--[#4](https://github.com/obestwalter/i3configger/issues/4) repair watch and daemon mode
+- #4 repair watch and daemon mode
 
 ## 0.5.0 (Half way there) - 2017-06-08
 
@@ -36,7 +36,7 @@
 
 ### Fixed
 
--[#2](https://github.com/obestwalter/i3configger/issues/2) - fails if not using i3status. Fixed by making the refresh call ignore any errors - not nice, just a quick fix.
+- #2 - fails if not using i3status. Fixed by making the refresh call ignore any errors - not nice, just a quick fix.
 
 ## 0.4.3 - (The Curious Incident of the Dog in the Night-Time) - 2017-06-04
 
