@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.5.3 (KISS) - 2017-06-09
+
+### Changed
+
+- de-rocket-science release process
+- change description of tool
+
 ## 0.5.2 (Releasing correctly is hard) - 2017-06-09
 
 ### Fixed
