@@ -1,6 +1,6 @@
 import logging
 
-from i3configger import config, exc, partials
+from i3configger import base, config, exc, partials
 
 log = logging.getLogger(__name__)
 
@@ -48,10 +48,10 @@ class Messenger:
         }[self.command]()
 
     def _process_set(self):
-        if self.value.lower() == DEL:
-            del self.msg[CMD.SET][self.key]
+        if self.value and self.value.lower() == DEL:
+            del self.msg[CMD.SET][base.VAR_MARK + self.key]
         else:
-            self.msg[CMD.SET][self.key] = self.value
+            self.msg[CMD.SET][base.VAR_MARK + self.key] = self.value
 
     def _process_select(self):
         candidates = partials.find(self.prts, self.key)
@@ -62,13 +62,11 @@ class Messenger:
         if not candidate:
             raise exc.MessageError(
                 f"No candidates for {self.message} in {candidates}")
-        if self.value.lower() == DEL:
+        if self.value and self.value.lower() == DEL:
             del self.msg[CMD.SELECT][self.key]
         else:
             self.msg[CMD.SELECT][self.key] = candidate.value
 
-    # TODO document
-    # TODO document nesting behaviour
     def _process_shadow(self):
         """Shadow arbitrary settings made in i3configger.json.
 

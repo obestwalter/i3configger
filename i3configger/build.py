@@ -27,13 +27,13 @@ def generate_contents(cnf, prts, selectorMap, setMap):
     barTargets = cnf.get_bar_targets()
     excludes = {b["key"] for b in barTargets.values()}
     selected = partials.select(prts, selectorMap, excludes)
-    ctx = context.process(selected)
+    ctx = context.process(selected + [setMap])
     ctx = context.resolve_variables(ctx)
     ctx = context.remove_variable_markers(ctx)
     mainContent = generate_main_content(cnf.partialsPath, selected, ctx)
     for barName, barCnf in barTargets.items():
         barCnf["id"] = barName
-        eCtx = context.process([ctx, barCnf, setMap])
+        eCtx = context.process([ctx, barCnf])
         mainContent += "\n%s" % generate_bar_setting(barCnf, prts, eCtx)
         statusFileContent = generate_status_file_content(
             prts, barCnf["key"], barCnf["value"], eCtx)
