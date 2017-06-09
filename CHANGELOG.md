@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 0.6.0 (Command & Conquer) - 2017-06-10
 
 ### Fixed
 
