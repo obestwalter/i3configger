@@ -1,8 +1,10 @@
 # CHANGELOG
 
-## Unreleased
+## 0.5.1 (Maybe I should test more) - 2017-06-09
 
-- nothing yet
+### Fixed
+
+- #4 repair watch and daemon mode
 
 ## 0.5.0 (Half way there) - 2017-06-08
 
