@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from i3configger import build, paths
+from i3configger import build, paths, message, partials
 
 HERE = Path(__file__).parent
 EXAMPLES = HERE.parent / 'examples'
@@ -30,17 +30,21 @@ def test_build(container, monkeypatch):
     configPath = paths.get_my_config_path()
     assert configPath.exists() and configPath.is_file()
     p = paths.Paths(configPath)
-    if p.state.exists():
-        os.unlink(p.state)
-    build.build_all(configPath)
-    buildPath = configPath.parents[1]
-    referencePath = REFERENCE / container
-    names = [p.name for p in referencePath.iterdir()]
-    assert names
-    for name in names:
-        resultFilePath = buildPath / name
-        referenceFilePath = (referencePath / name)
-        assert resultFilePath != referenceFilePath
-        result = resultFilePath.read_text()
-        reference = referenceFilePath.read_text()
-        assert result == reference
+    prts = partials.create(p.root)
+    message.Messenger(p.messages, prts)
+    try:
+        build.build_all(configPath)
+        buildPath = configPath.parents[1]
+        referencePath = REFERENCE / container
+        names = [p.name for p in referencePath.iterdir()]
+        assert names
+        for name in names:
+            resultFilePath = buildPath / name
+            referenceFilePath = (referencePath / name)
+            assert resultFilePath != referenceFilePath
+            result = resultFilePath.read_text()
+            reference = referenceFilePath.read_text()
+            assert result == reference
+    finally:
+        if p.messages.exists():
+            os.unlink(p.messages)

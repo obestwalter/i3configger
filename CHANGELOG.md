@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## Unreleased
+
+### Added
+
+- new command: shadow - shadow arbitrary entries in `i3configger.json`
+
+### Changed
+
+- renamed file containing frozen messages from `.state.json` to `.messages.json`
+
 ## 0.5.3 (KISS) - 2017-06-09
 
 ### Changed

@@ -2,7 +2,7 @@
 
 The configuration is built from so called `partials` in `<i3 config folder>/config.d`. For very simple usages (just changing some variable for examples) it is not even necessary to spread the configuration over several files though. Have a look at the [examples](https://github.com/obestwalter/i3configger/tree/master/examples) to get an idea about how it can be used.
 
-Changes that are made to the configuration via i3configger messages are not written back to the `partials` but are persisted in a `.state.json` in the source folder. This file is used to override variables and choose alternative files during build. Deleting that file puts everything back to normal.
+Changes that are made to the configuration via i3configger messages are not written back to the `partials` but are persisted in a `.messages.json` in the source folder. This file is used to override variables and choose alternative files during build. Deleting that file puts everything back to normal.
 
 ## Terms
 
@@ -12,11 +12,16 @@ Changes that are made to the configuration via i3configger messages are not writ
 
 ## Message "mini language"
 
-**`set <vraiable> <value>`** assigns a new value to any variable that is set anywhere in the configuration (note: variable name is passed without leading `$` sign).
+* **`set <variable> <value>`** assigns a new value to any variable that is set anywhere in the configuration (note: variable name is passed without leading `$` sign).
 
-**`select`** chooses a `partial` from a group of alternatives following the naming scheme `<key>.<value>.conf`.
+* **`select`** chooses a `partial` from a group of alternatives following the naming scheme `<key>.<value>.conf`.
 
 * **`select-next`**, **`select-previous`** chooses the next/previous `partial` from a group of alternatives (in lexical order).
+
+* **`shadow`** shadows any entry in `i3configger.json` - to address nested dictionaries chain the keys with `:` as separator - e.g. `i3configger shadow bars:targets:laptop:mode dock` will translate into:
+    ```python
+    {"bars": {"targets": {"laptop": {"mode": "dock"}}}}
+    ```
 
 ### Change variables with `set`
 

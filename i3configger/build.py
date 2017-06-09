@@ -5,30 +5,35 @@ import time
 from pathlib import Path
 
 from i3configger import (
-    __version__, base, config, context, exc, ipc, partials, state)
+    __version__, base, config, context, exc, ipc, partials, message, paths)
 
 log = logging.getLogger(__name__)
 
 
 def build_all(configPath):
+    p = paths.Paths(configPath)
+    prts = partials.create(p.root)
     cnf = config.I3configgerConfig(configPath)
-    pathContentsMap = generate_contents(cnf)
+    msg = config.fetch(p.messages)
+    cnf.payload = context.merge(cnf.payload, msg[message.CMD.SHADOW])
+    pathContentsMap = generate_contents(
+        cnf, prts, msg[message.CMD.SELECT], msg[message.CMD.SET])
     check_config(pathContentsMap[cnf.mainTargetPath])
     persist_results(pathContentsMap)
 
 
-def generate_contents(cnf):
-    prts = partials.create(cnf.partialsPath)
-    st = state.process(cnf.statePath, prts, cnf.message)
+def generate_contents(cnf, prts, selectorMap, setMap):
     pathContentsMap = {}
-    excludes = {b["key"] for b in cnf.barTargets.values()}
-    selectorMap = st["select"]
+    barTargets = cnf.get_bar_targets()
+    excludes = {b["key"] for b in barTargets.values()}
     selected = partials.select(prts, selectorMap, excludes)
-    ctx = context.merge(selected)
+    ctx = context.process(selected)
+    ctx = context.resolve_variables(ctx)
+    ctx = context.remove_variable_markers(ctx)
     mainContent = generate_main_content(cnf.partialsPath, selected, ctx)
-    for barName, barCnf in cnf.barTargets.items():
+    for barName, barCnf in barTargets.items():
         barCnf["id"] = barName
-        eCtx = context.merge([ctx, barCnf, st["set"]])
+        eCtx = context.process([ctx, barCnf, setMap])
         mainContent += "\n%s" % generate_bar_setting(barCnf, prts, eCtx)
         statusFileContent = generate_status_file_content(
             prts, barCnf["key"], barCnf["value"], eCtx)

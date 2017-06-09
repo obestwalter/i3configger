@@ -1,5 +1,6 @@
 import logging
 import typing as t
+from functools import reduce
 from string import Template
 
 from i3configger import base, exc, partials
@@ -7,25 +8,25 @@ from i3configger import base, exc, partials
 log = logging.getLogger(__name__)
 
 
-def merge(item: t.Iterable[t.Union[dict, partials.Partial]]) -> dict:
-    """Take items, merge contexts, resolve and clean them variables"""
-    ctx = {}
+def process(item: t.Iterable[t.Union[dict, partials.Partial]]) -> dict:
+    """merge contexts of an arbitrary number of items"""
+    dicts = []
     for elem in item:
-        if not isinstance(elem, dict):
-            elem = elem.context
-        ctx.update(elem)
-    ctx = resolve_variables(ctx)
-    ctx = remove_variable_markers(ctx)
-    return ctx
+        dicts.append(elem if isinstance(elem, dict) else elem.context)
+    return reduce(merge, dicts)
 
 
-def remove_variable_markers(ctx: dict) -> dict:
-    cleaned = {}
-    lvm = len(base.VAR_MARK)
-    for key, value in ctx.items():
-        key = key[lvm:] if key.startswith(base.VAR_MARK) else key
-        cleaned[key] = value
-    return cleaned
+def merge(dst, src):
+    """merge source into destination mapping (overwrite existing keys)"""
+    for key in src:
+        if key in dst:
+            if isinstance(dst[key], dict) and isinstance(src[key], dict):
+                merge(dst[key], src[key])
+            else:
+                dst[key] = src[key]
+        else:
+            dst[key] = src[key]
+    return dst
 
 
 def resolve_variables(context: dict) -> dict:
@@ -47,6 +48,15 @@ def resolve_variables(context: dict) -> dict:
         else:
             resolvedContext[key] = value
     return resolvedContext
+
+
+def remove_variable_markers(ctx: dict) -> dict:
+    cleaned = {}
+    lvm = len(base.VAR_MARK)
+    for key, value in ctx.items():
+        key = key[lvm:] if key.startswith(base.VAR_MARK) else key
+        cleaned[key] = value
+    return cleaned
 
 
 def substitute(content, ctx):

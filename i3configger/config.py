@@ -24,33 +24,29 @@ I3_CONFIGGER_DEFAULTS = {
 
 
 class I3configgerConfig:
-    def __init__(self, configPath: Path, message: list=None):
-        self.message = message
+    def __init__(self, configPath: Path):
         p = paths.Paths(configPath)
-        self.configPath = p.config
+        self.configPath = configPath
         self.partialsPath = p.root
-        self.message = message
-        self.statePath = p.state
         self.payload = fetch(self.configPath)
         targetPath = Path(self.payload["main"]["target"]).expanduser()
         if targetPath.is_absolute():
             self.mainTargetPath = targetPath.resolve()
         else:
             self.mainTargetPath = (self.partialsPath / targetPath).resolve()
-        self.barTargets = self.make_bar_targets(self.payload.get("bars", {}))
-        log.debug("initialized config  %s", self)
 
     def __str__(self):
         return "%s:\n%s" % (self.__class__.__name__,
                             pprint.pformat(vars(self)))
 
-    def make_bar_targets(self, bars):
+    def get_bar_targets(self):
         """Create a resolved copy of the bar settings."""
         barTargets = {}
-        if not bars:
+        barSettings = self.payload.get("bars", {})
+        if not barSettings:
             return barTargets
-        defaults = bars.get("defaults", {})
-        for name, bar in bars["targets"].items():
+        defaults = barSettings.get("defaults", {})
+        for name, bar in barSettings["targets"].items():
             newBar = dict(bar)
             barTargets[name] = newBar
             for defaultKey, defaultValue in defaults.items():

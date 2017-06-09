@@ -8,7 +8,7 @@ from i3configger import config, exc
 log = logging.getLogger(__name__)
 
 MY_CONFIG_NAME = 'i3configger.json'
-STATE_FILE_NAME = '.state.json'
+MESSAGES_FILE_NAME = '.messages.json'
 MY_CONFIG_FOLDER = 'config.d'
 MY_REL_CONFIG_PATH = MY_CONFIG_FOLDER + '/' + MY_CONFIG_NAME
 
@@ -19,7 +19,7 @@ class Paths:
         assert path.exists() and path.is_file(), path
         self.root = path.parent
         self.config = configPath
-        self.state = self.root / STATE_FILE_NAME
+        self.messages = self.root / MESSAGES_FILE_NAME
 
 
 def get_my_config_path(configPath=None):

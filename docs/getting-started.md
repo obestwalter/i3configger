@@ -19,7 +19,7 @@ yields something like:
                        'value': 'default'},
           'targets': {}},
  'main': {'target': '../config'}}
-2017-06-08 19:25:49,132 i3configger.config:fetch:159 INFO: read config from /home/oliver/.i3/config.d/.state.json
+2017-06-08 19:25:49,132 i3configger.config:fetch:159 INFO: read config from /home/oliver/.i3/config.d/.messages.json
 2017-06-08 19:25:49,132 i3configger.config:fetch:161 DEBUG: use:
 {'select': {}, 'set': {}}
 2017-06-08 19:25:49,133 i3configger.config:__init__:43 DEBUG: initialized config  I3configgerConfig:
@@ -35,7 +35,7 @@ yields something like:
                       'targets': {}},
              'main': {'target': '../config'}},
  'state': {'select': {}, 'set': {}},
- 'statePath': PosixPath('/home/oliver/.i3/config.d/.state.json')}
+ 'statePath': PosixPath('/home/oliver/.i3/config.d/.messages.json')}
 2017-06-08 19:25:49,134 i3configger.partials:select:92 DEBUG: selected:
 [Partial(config.conf)]
 ```
@@ -49,7 +49,7 @@ yields something like:
  ├── config
  ├── config.bak
  └── config.d
-     ├── .state.json
+     ├── .messages.json
      ├── config.conf
      └── i3configger.json
 ```
@@ -61,7 +61,7 @@ yields something like:
 * a backup of the last config was created with `.bak`
 
 * `i3configger.json` can be used to do configuration of the status bars.
-* `.state.json` remembers the state of your current settings
+* `.messages.json` remembers all the messages you have already sent to the configuration
 
 ## What now?
 
