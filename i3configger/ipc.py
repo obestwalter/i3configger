@@ -3,7 +3,6 @@ import subprocess
 from i3configger.base import log
 
 
-# todo use Adaephons i3 library
 class I3:
     @classmethod
     def set_msg_type(cls, which):
@@ -70,5 +69,4 @@ class StatusBar:
         try:
             subprocess.check_output(['killall', '-SIGUSR1', 'i3status'])
         except subprocess.CalledProcessError as e:
-            # TODO make this work for other status bars
             log.debug("[IGNORE] failed status refresh: %s", e)

@@ -25,7 +25,6 @@ I3_CONFIGGER_DEFAULTS = {
 
 class I3configgerConfig:
     def __init__(self, configPath: Path, message: list=None):
-        # TODO checks with helpful errors for screwed up configurations
         self.message = message
         p = paths.Paths(configPath)
         self.configPath = p.config
