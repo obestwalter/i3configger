@@ -17,8 +17,11 @@ SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
 
 def configure_logging(verbosity: int, logPath: str, isDaemon=False):
     rootLogger = logging.getLogger()
-    _log = str(Path(tempfile.gettempdir()) / 'i3configger.log')
-    logPath = Path(logPath).expanduser() if logPath else _log
+    if logPath:
+        logPath = Path(logPath).expanduser()
+    else:
+        name = 'i3configger-daemon.log' if isDaemon else 'i3configger.log'
+        logPath = Path(tempfile.gettempdir()) / name
     if DEBUG:
         print('logging to %s' % logPath)
         level = 'DEBUG'
@@ -27,14 +30,13 @@ def configure_logging(verbosity: int, logPath: str, isDaemon=False):
             {0: 'ERROR', 1: 'WARNING', 2: 'INFO'}.get(verbosity, 'DEBUG'))
     fmt = ('%(asctime)s %(name)s:%(funcName)s:%(lineno)s '
            '%(levelname)s: %(message)s')
-    if isDaemon:
-        logging.basicConfig(filename=logPath, format=fmt, level=level)
-    else:
+    if not rootLogger.handlers:
         logging.basicConfig(format=fmt, level=level)
-        fileHandler = logging.FileHandler(logPath)
-        fileHandler.setFormatter(logging.Formatter(fmt))
-        fileHandler.setLevel(level)
-        rootLogger.addHandler(fileHandler)
+        log.debug("logging initialized: %s", rootLogger.handlers)
+    fileHandler = logging.FileHandler(logPath)
+    fileHandler.setFormatter(logging.Formatter(fmt))
+    fileHandler.setLevel(level)
+    rootLogger.addHandler(fileHandler)
 
 
 def i3configger_excepthook(type_, value, traceback):

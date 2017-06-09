@@ -43,17 +43,6 @@ class Watchman:
         for event in self._get_events():
             self._process_event(event)
 
-    def watch_guarded(self):
-        for event in self._get_events():
-            try:
-                self._process_event(event)
-            except:
-                log.exception("I see dead calls ...")
-                self.errors += 1
-                if self.errors == 13:
-                    log.critical("%s errors occurred, crashing", self.errors)
-                    raise RuntimeError("%s: giving up" % self)
-
     def _get_events(self):
         inotify_watcher = Inotify()
         inotify_watcher.add_watch(self.partialsPath, mask=self.MASK)
@@ -66,7 +55,7 @@ class Watchman:
         header, typeNames, filePath = self._get_event_data(event)
         if self.needs_build(header, typeNames, filePath):
             log.info("%s triggered build", filePath)
-            build.build_all(self.configPath).build()
+            build.build_all(self.configPath)
             self.lastBuild = time.time()
             self.lastFilePath = filePath
             ipc.I3.refresh()
