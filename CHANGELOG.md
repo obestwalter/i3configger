@@ -10,7 +10,7 @@
 
 ### Fixed
 
-- #4 repair watch and daemon mode
+-[#4](https://github.com/obestwalter/i3configger/issues/4) repair watch and daemon mode
 
 ## 0.5.0 (Half way there) - 2017-06-08
 
