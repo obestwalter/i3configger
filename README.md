@@ -1,5 +1,7 @@
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
- [![Build Status](https://travis-ci.org/obestwalter/i3configger.svg?branch=master)](https://travis-ci.org/obestwalter/i3configger) [![PyPI version](https://badge.fury.io/py/i3configger.svg)](https://badge.fury.io/py/i3configger)
+[![Build Status](https://travis-ci.org/obestwalter/i3configger.svg?branch=master)](https://travis-ci.org/obestwalter/i3configger)
+[![PyPI version](https://badge.fury.io/py/i3configger.svg)](https://pypi.org/project/i3configger/)
+[![Documentation](https://img.shields.io/badge/docs-sure!-brightgreen.svg)](http://oliver.bestwalter.de/i3configger)
 
 # i3configger
 
@@ -22,14 +24,10 @@ This is realized by adding a build step that can be triggered by calling i3confi
 
 To get an idea how this works, have a look at the [examples](https://github.com/obestwalter/i3configger/tree/master/examples) and [read the docs](http://oliver.bestwalter.de/i3configger).
 
+[**Full Documentation is here**](http://oliver.bestwalter.de/i3configger)
+
 ## Installation
 
     $ pip install i3configger
 
 See [docs](http://oliver.bestwalter.de/i3configger/installation) For more details and different ways of installation.
-
-## Documentation
-
-Read it here: http://oliver.bestwalter.de/i3configger
-
-[Release announcements and discussion.](https://www.reddit.com/r/i3wm/comments/6exzgs/meet_i3configger/)
