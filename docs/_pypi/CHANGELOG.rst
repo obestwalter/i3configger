@@ -1,10 +1,22 @@
 CHANGELOG
 =========
 
-Unreleased
-----------
+0.5.2 (Releasing correctly is hard) - 2017-06-09
+------------------------------------------------
 
--  nothing yet
+Fixed
+~~~~~
+
+-  wrong CHANGELOG :)
+
+0.5.1 (Maybe I should test more) - 2017-06-09
+---------------------------------------------
+
+Fixed
+~~~~~
+
+-[#4](https://github.com/obestwalter/i3configger/issues/4) <https://github.com/obestwalter/i3configger/issues/4>`__ repair
+watch and daemon mode
 
 0.5.0 (Half way there) - 2017-06-08
 -----------------------------------
