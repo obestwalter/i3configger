@@ -29,6 +29,15 @@ def merge(dst, src):
     return dst
 
 
+def prune(dst, src):
+    for key, value in src.items():
+        if isinstance(value, dict):
+            prune(dst.get(key, {}), value)
+        elif key in dst:
+            del dst[key]
+    return dst
+
+
 def resolve_variables(context: dict) -> dict:
     """If variables are set by a variable, replace them by their value."""
     if not any(v.startswith(base.VAR_MARK) for v in context.values()):

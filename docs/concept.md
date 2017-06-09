@@ -12,6 +12,8 @@ Changes that are made to the configuration via i3configger messages are not writ
 
 ## Message "mini language"
 
+### Commands
+
 * **`set <variable> <value>`** assigns a new value to any variable that is set anywhere in the configuration (note: variable name is passed without leading `$` sign).
 
 * **`select`** chooses a `partial` from a group of alternatives following the naming scheme `<key>.<value>.conf`.
@@ -22,6 +24,15 @@ Changes that are made to the configuration via i3configger messages are not writ
     ```python
     {"bars": {"targets": {"laptop": {"mode": "dock"}}}}
     ```
+
+* **`merge`** merges the data from a given path into `.messages.json` to make larger changes in one step. If a relative path is given it is relative to `config.d`. An absolute path is used unchanged.
+
+* **`prune`** the opposite of merge: remove all keys in given file from `.messages.json`. If a relative path is given it is relative to `config.d`. An absolute path is used unchanged.
+
+
+### Special values
+
+* `del` if passed as value to `set` or `shadow` the key is deleted. E.g. `i3configger set someVar del`, will remove the key `someVar` in `.messages.json->set`
 
 ### Change variables with `set`
 

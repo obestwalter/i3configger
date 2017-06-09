@@ -61,11 +61,11 @@ class I3configgerConfig:
 
 def fetch(path):
     if not path.exists():
-        raise exc.ConfigError(f"No config found at {path}")
+        raise exc.ConfigError(f"file not found: {path}")
     with path.open() as f:
-        log.info("read config from %s", path)
+        log.info("fetch from %s", )
         payload = json.load(f)
-        log.debug("use:\n%s", pprint.pformat(payload))
+        log.debug(f"{path}: {pprint.pformat(payload)}")
         return payload
 
 

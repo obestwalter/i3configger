@@ -1,6 +1,7 @@
 import logging
+from pathlib import Path
 
-from i3configger import base, config, exc, partials
+from i3configger import base, config, exc, partials, context
 
 log = logging.getLogger(__name__)
 
@@ -17,13 +18,15 @@ class CMD:
     SELECT_PREVIOUS = "select-previous"
     SELECT = "select"
     SET = "set"
+    MERGE = "merge"
+    PRUNE = "prune"
     SHADOW = "shadow"
 
 
 def process(statePath, prts, message):
     mp = Messenger(statePath, prts, message)
-    mp.transform()
-    config.freeze(statePath, mp.msg)
+    mp.execute()
+    config.freeze(statePath, mp.payload)
 
 
 class Messenger:
@@ -31,15 +34,16 @@ class Messenger:
         self.messagesPath = messagesPath
         self.prts = prts
         self.message = message
-        self.msg = self.fetch_frozen_messages()
+        self.payload = self.fetch_frozen_messages()
         if self.message:
             self.command, self.key, *rest = message
             self.value = rest[0] if rest else None
         log.debug(f"sending message {message} to {messagesPath}")
 
-    def transform(self):
-        """transform affected mapping"""
+    def execute(self):
         {
+            CMD.MERGE: self._process_merge,
+            CMD.PRUNE: self._process_prune,
             CMD.SET: self._process_set,
             CMD.SELECT: self._process_select,
             CMD.SHADOW: self._process_shadow,
@@ -47,11 +51,24 @@ class Messenger:
             CMD.SELECT_PREVIOUS: self._process_select_shift,
         }[self.command]()
 
+    def _process_merge(self):
+        self._transform(context.merge)
+
+    def _process_prune(self):
+        self._transform(context.prune)
+
+    def _transform(self, func):
+        path = Path(self.key).expanduser()
+        if not path.is_absolute():
+            path = self.messagesPath.parent / path
+        self.payload = func(self.payload, config.fetch(path))
+        config.freeze(self.messagesPath, self.payload)
+
     def _process_set(self):
         if self.value and self.value.lower() == DEL:
-            del self.msg[CMD.SET][base.VAR_MARK + self.key]
+            del self.payload[CMD.SET][base.VAR_MARK + self.key]
         else:
-            self.msg[CMD.SET][base.VAR_MARK + self.key] = self.value
+            self.payload[CMD.SET][base.VAR_MARK + self.key] = self.value
 
     def _process_select(self):
         candidates = partials.find(self.prts, self.key)
@@ -63,9 +80,9 @@ class Messenger:
             raise exc.MessageError(
                 f"No candidates for {self.message} in {candidates}")
         if self.value and self.value.lower() == DEL:
-            del self.msg[CMD.SELECT][self.key]
+            del self.payload[CMD.SELECT][self.key]
         else:
-            self.msg[CMD.SELECT][self.key] = candidate.value
+            self.payload[CMD.SELECT][self.key] = candidate.value
 
     def _process_shadow(self):
         """Shadow arbitrary settings made in i3configger.json.
@@ -73,7 +90,7 @@ class Messenger:
         key:deeper:deepest[...] -> [key][deeper][deepest][...]
         """
         parts = self.key.split(':')
-        current = self.msg[CMD.SHADOW]
+        current = self.payload[CMD.SHADOW]
         while True:
             part = parts.pop(0)
             if parts:
@@ -93,7 +110,7 @@ class Messenger:
                 f"No candidates for {self.message} in {self.prts}")
         if self.command == CMD.SELECT_PREVIOUS:
             candidates = reversed(candidates)
-        current = self.msg["select"].get(self.key) or candidates[0].key
+        current = self.payload["select"].get(self.key) or candidates[0].key
         for idx, candidate in enumerate(candidates):
             if candidate.value == current:
                 try:
@@ -101,7 +118,7 @@ class Messenger:
                 except IndexError:
                     new = candidates[0]
                 log.info("select %s.%s", self.key, new)
-                self.msg[CMD.SELECT][self.key] = new.value
+                self.payload[CMD.SELECT][self.key] = new.value
                 break
 
     def fetch_frozen_messages(self):

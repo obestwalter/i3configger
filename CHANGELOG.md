@@ -2,9 +2,17 @@
 
 ## Unreleased
 
+### Fixed
+
+- wrong ordering of context merges (set was not working in all cases)
+
 ### Added
 
 - new command: shadow - shadow arbitrary entries in `i3configger.json`
+
+- new command: merge - merge a `.json` file into `.messages.json`
+
+- new command: prune - opposite of merge: remove all keys from a given `.json` file in `.messages.json`
 
 ### Changed
 
