@@ -8,18 +8,18 @@ from i3configger import exc, paths
 log = logging.getLogger(__name__)
 
 I3_CONFIGGER_DEFAULTS = {
-  "main": {
-    "target": "../config",
-  },
-  "bars": {
-    "defaults": {
-      "target": "..",
-      "template": "tpl",
-      "key": "i3status",
-      "value": "default"
+    "main": {
+        "target": "../config",
     },
-    "targets": {}
-  }
+    "bars": {
+        "defaults": {
+            "target": "..",
+            "template": "tpl",
+            "key": "i3status",
+            "value": "default"
+        },
+        "targets": {}
+    }
 }
 
 
