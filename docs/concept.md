@@ -1,6 +1,6 @@
 # Concept
 
-The configuration is built from so called `partials` in `<i3 config folder>/config.d`. For very simple usages (just changing some variable for examples) it is not even necessary to spread the configuration over several files though. Have a look at the [examples](https://github.com/obestwalter/i3configger/tree/master/examples) to get an idea about how it can be used.
+The configuration is built from so called `partials` in `<i3 config folder>/config.d`. For very simple usages (just changing some variable for example) it is not even necessary to spread the configuration over several files though. Have a look at the [examples](https://github.com/obestwalter/i3configger/tree/master/examples) to get an idea about how it can be used.
 
 Changes that are made to the configuration via i3configger messages are not written back to the `partials` but are persisted in a `.messages.json` in the source folder. This file is used to override variables and choose alternative files during build. Deleting that file puts everything back to normal.
 
