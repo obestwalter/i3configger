@@ -2,13 +2,23 @@ import logging
 import sys
 
 from i3configger import (
-    build, cli, daemonize, ipc, partials, paths, message, watch)
+    build, cli, exc, daemonize, ipc, partials, paths, message, watch)
 
 log = logging.getLogger(__name__)
 
 
 def main():
+    """Wrap main to show own exceptions wo traceback in normal use."""
     args = cli.process_command_line()
+    try:
+        _main(args)
+    except exc.I3configgerException as e:
+        if args.v > 2:
+            raise
+        sys.exit(e)
+
+
+def _main(args):
     if args.kill:
         daemonize.exorcise()
         return 0
@@ -17,9 +27,10 @@ def main():
         p = paths.Paths(configPath)
         prts = partials.create(p.root)
         message.process(p.messages, prts, args.message)
-    if daemonize.get_other_i3configgers():
+    if daemonize.get_daemon_process():
         if not args.message:
             sys.exit("already running. Did you mean to send a message?")
+        log.info("let the daemon do the work")
         return 0
     ipc.I3.set_msg_type(args.i3_refresh_msg)
     log.info("set i3 refresh method to %s", ipc.I3.refresh)
