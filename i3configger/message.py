@@ -37,9 +37,9 @@ class Messenger:
         if self.message:
             self.command, self.key, *rest = message
             self.value = rest[0] if rest else ''
-        if self.command != CMD.SHADOW and ':' in self.key:
-            raise exc.UserError(
-                f"nesting of keys only sensible with {CMD.SHADOW}")
+            if self.command != CMD.SHADOW and ':' in self.key:
+                raise exc.UserError(
+                    f"nesting of keys only sensible with {CMD.SHADOW}")
         log.debug(f"sending message {message} to {messagesPath}")
 
     def execute(self):
