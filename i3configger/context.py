@@ -16,7 +16,7 @@ def process(item: t.Iterable[t.Union[dict, partials.Partial]]) -> dict:
     return reduce(merge, dicts)
 
 
-def merge(dst, src):
+def merge(dst: dict, src: dict) -> dict:
     """merge source into destination mapping (overwrite existing keys)"""
     for key in src:
         if key in dst:
@@ -29,7 +29,7 @@ def merge(dst, src):
     return dst
 
 
-def prune(dst, src):
+def prune(dst: dict, src: dict) -> dict:
     for key, value in src.items():
         if isinstance(value, dict):
             prune(dst.get(key, {}), value)
@@ -68,7 +68,7 @@ def remove_variable_markers(ctx: dict) -> dict:
     return cleaned
 
 
-def substitute(content, ctx):
+def substitute(content: str, ctx: dict):
     """Substitute all variables with their values.
 
     Works out of the box, because '$' is the standard substitution
