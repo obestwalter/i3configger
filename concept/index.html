@@ -277,12 +277,18 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#change-variables-with-set" title="Change variables with set" class="md-nav__link">
-    Change variables with set
-  </a>
+      </ul>
+    </nav>
   
 </li>
+      
+        <li class="md-nav__item">
+  <a href="#example-change-variables-values-with-set" title="Example: change variables values with set" class="md-nav__link">
+    Example: change variables values with set
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#warning-about-variables" title="Warning about variables" class="md-nav__link">
@@ -291,14 +297,19 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#switching-between-alternatives-with-select" title="Switching between alternatives with select" class="md-nav__link">
-    Switching between alternatives with select
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-switch-between-alternatives-with-select" title="Example: switch between alternatives with select" class="md-nav__link">
+    Example: switch between alternatives with select
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#special-conventions" title="Special conventions" class="md-nav__link">
     Special conventions
   </a>
@@ -324,16 +335,11 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#bonus-track-keep-it-dry" title="Bonus track: keep it DRY" class="md-nav__link">
     Bonus track: keep it DRY
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -419,12 +425,18 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#change-variables-with-set" title="Change variables with set" class="md-nav__link">
-    Change variables with set
-  </a>
+      </ul>
+    </nav>
   
 </li>
+      
+        <li class="md-nav__item">
+  <a href="#example-change-variables-values-with-set" title="Example: change variables values with set" class="md-nav__link">
+    Example: change variables values with set
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#warning-about-variables" title="Warning about variables" class="md-nav__link">
@@ -433,14 +445,19 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#switching-between-alternatives-with-select" title="Switching between alternatives with select" class="md-nav__link">
-    Switching between alternatives with select
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-switch-between-alternatives-with-select" title="Example: switch between alternatives with select" class="md-nav__link">
+    Example: switch between alternatives with select
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#special-conventions" title="Special conventions" class="md-nav__link">
     Special conventions
   </a>
@@ -466,16 +483,11 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#bonus-track-keep-it-dry" title="Bonus track: keep it DRY" class="md-nav__link">
     Bonus track: keep it DRY
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -537,8 +549,7 @@
 <ul>
 <li><code>del</code> if passed as value to <code>set</code> or <code>shadow</code> the key is deleted. E.g. <code>i3configger set someVar del</code>, will remove the key <code>someVar</code> in <code>.messages.json-&gt;set</code></li>
 </ul>
-<h3 id="change-variables-with-set">Change variables with <code>set</code><a class="headerlink" href="#change-variables-with-set" title="Permanent link">&para;</a></h3>
-<p>A lot in the i3 configuration can be changed by changing the value of variables. i3configger adds an interface to change them with a (very, very, very) simple messaging language.</p>
+<h2 id="example-change-variables-values-with-set">Example: change variables values with <code>set</code><a class="headerlink" href="#example-change-variables-values-with-set" title="Permanent link">&para;</a></h2>
 <p>One example would be to switch aspects of the status bar(s) - for example mode and position:</p>
 <p>A configuration containing:</p>
 <pre><code class="text">set $bar_mode hidden
@@ -561,7 +572,7 @@ $ i3configger set bar_position bottom
 <h3 id="warning-about-variables">Warning about variables<a class="headerlink" href="#warning-about-variables" title="Permanent link">&para;</a></h3>
 <p>The implementation of this is very simple (it just parses all variables and an optional message into a single dictionary and uses <a href="https://docs.python.org/2/library/string.html#template-strings">Python Template String</a> to do the substitutions. To i3configger all <code>$varName</code> are the same and will be replaced with their value wherever they are.</p>
 <p>This could bite you if you are not aware of that and use regular expressions containing <code>$</code> e.g. in <a href="https://i3wm.org/docs/userguide.html#for_window">for_window</a>. So make sure that you do not use an expression where a part containing <code>$whatever</code> also matches an existing variable that was assigned with <code>set $whatever</code>.</p>
-<h3 id="switching-between-alternatives-with-select">Switching between alternatives with <code>select</code><a class="headerlink" href="#switching-between-alternatives-with-select" title="Permanent link">&para;</a></h3>
+<h2 id="example-switch-between-alternatives-with-select">Example: switch between alternatives with <code>select</code><a class="headerlink" href="#example-switch-between-alternatives-with-select" title="Permanent link">&para;</a></h2>
 <p>Bigger changes can be done by switching between <code>partials</code>. To realize this there is a simple naming convention for <code>partials</code> to mark them as alternatives of which only ever one is integrated into the final configuration.</p>
 <p>The following <code>partials</code> form a group of alternatives:</p>
 <pre><code>~/.i3/config.d/scheme.blue.conf
@@ -579,12 +590,12 @@ $ i3configger select-previous scheme
 </code></pre>
 
 <p>How you call your groups and their values is completely up to you, as long as you stick with the naming convention.</p>
-<h3 id="special-conventions">Special conventions<a class="headerlink" href="#special-conventions" title="Permanent link">&para;</a></h3>
+<h2 id="special-conventions">Special conventions<a class="headerlink" href="#special-conventions" title="Permanent link">&para;</a></h2>
 <h4 id="automatic-selection-for-hostname">Automatic selection for hostname<a class="headerlink" href="#automatic-selection-for-hostname" title="Permanent link">&para;</a></h4>
 <p>At the moment there is one special name that I deem useful to be populated differently, which is <code>hostname</code>. If you have <code>partials</code> in you <code>config.d</code> that follow the scheme <code>hostname.&lt;whatever&gt;.conf</code> they will automatically be chosen if your hostname matches <code>whatever</code>.</p>
 <h4 id="deactivate-partials-in-configd">deactivate partials in <code>config.d</code><a class="headerlink" href="#deactivate-partials-in-configd" title="Permanent link">&para;</a></h4>
 <p>If you want to deactivate a partial, you can do that by prepending a <code>.</code> to the file name, e.g. <code>.whatever.conf</code> or <code>.whatever.else.conf</code> are not included in the build even if they reside in your <code>config.d</code>.</p>
-<h3 id="bonus-track-keep-it-dry">Bonus track: keep it DRY<a class="headerlink" href="#bonus-track-keep-it-dry" title="Permanent link">&para;</a></h3>
+<h2 id="bonus-track-keep-it-dry">Bonus track: keep it DRY<a class="headerlink" href="#bonus-track-keep-it-dry" title="Permanent link">&para;</a></h2>
 <p>Using i3configger you can also:</p>
 <ul>
 <li>assign variables to variables (<code>set $someVar $someOtherVar</code>)</li>
