@@ -509,27 +509,28 @@
 </li>
 </ul>
 <h2 id="message-mini-language">Message "mini language"<a class="headerlink" href="#message-mini-language" title="Permanent link">&para;</a></h2>
+<p>A message consists of a command, a  key and - depending on the command - a value.</p>
 <h3 id="commands">Commands<a class="headerlink" href="#commands" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><strong><code>set &lt;variable&gt; &lt;value&gt;</code></strong> assigns a new value to any variable that is set anywhere in the configuration (note: variable name is passed without leading <code>$</code> sign).</p>
+<p><strong><code>set &lt;key&gt; &lt;value&gt;</code></strong> assigns a new value to any variable that is set anywhere in the configuration (note: <code>&lt;key&gt;</code> is the variable name <strong>without</strong> leading <code>$</code> sign).</p>
 </li>
 <li>
-<p><strong><code>select</code></strong> chooses a <code>partial</code> from a group of alternatives following the naming scheme <code>&lt;key&gt;.&lt;value&gt;.conf</code>.</p>
+<p><strong><code>select &lt;key&gt; &lt;value&gt;</code></strong> chooses a <code>partial</code> from a group of alternatives following the naming scheme <code>&lt;key&gt;.&lt;value&gt;.conf</code>.</p>
 </li>
 <li>
-<p><strong><code>select-next</code></strong>, <strong><code>select-previous</code></strong> chooses the next/previous <code>partial</code> from a group of alternatives (in lexical order).</p>
+<p><strong><code>select-next &lt;key&gt;</code></strong>, <strong><code>select-previous &lt;key&gt;</code></strong> chooses the next/previous <code>partial</code> from a group of alternatives (in lexical order).</p>
 </li>
 <li>
-<p><strong><code>shadow</code></strong> shadows any entry in <code>i3configger.json</code> - to address nested dictionaries chain the keys with <code>:</code> as separator - e.g. <code>i3configger shadow bars:targets:laptop:mode dock</code> will translate into:
+<p><strong><code>shadow &lt;key&gt; &lt;value&gt;</code></strong> shadows any entry in <code>i3configger.json</code> - to address nested dictionaries chain the keys with <code>:</code> as separator - e.g. <code>i3configger shadow bars:targets:laptop:mode dock</code> will translate into:
     <code>python
     {"bars": {"targets": {"laptop": {"mode": "dock"}}}}</code></p>
 </li>
 <li>
-<p><strong><code>merge</code></strong> merges the data from a given path into <code>.messages.json</code> to make larger changes in one step. If a relative path is given it is relative to <code>config.d</code>. An absolute path is used unchanged.</p>
+<p><strong><code>merge &lt;path&gt;</code></strong> merges the data from a given path into <code>.messages.json</code> to make larger changes in one step. If a relative path is given it is relative to <code>config.d</code>. An absolute path is used unchanged.</p>
 </li>
 <li>
-<p><strong><code>prune</code></strong> the opposite of merge: remove all keys in given file from <code>.messages.json</code>. If a relative path is given it is relative to <code>config.d</code>. An absolute path is used unchanged.</p>
+<p><strong><code>prune &lt;path&gt;</code></strong> the opposite of merge: remove all keys in given file from <code>.messages.json</code>. If a relative path is given it is relative to <code>config.d</code>. An absolute path is used unchanged.</p>
 </li>
 </ul>
 <h3 id="special-values">Special values<a class="headerlink" href="#special-values" title="Permanent link">&para;</a></h3>
