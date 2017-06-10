@@ -12,23 +12,24 @@ Changes that are made to the configuration via i3configger messages are not writ
 
 ## Message "mini language"
 
+A message consists of a command, a  key and - depending on the command - a value.
+
 ### Commands
 
-* **`set <variable> <value>`** assigns a new value to any variable that is set anywhere in the configuration (note: variable name is passed without leading `$` sign).
+* **`set <key> <value>`** assigns a new value to any variable that is set anywhere in the configuration (note: `<key>` is the variable name **without** leading `$` sign).
 
-* **`select`** chooses a `partial` from a group of alternatives following the naming scheme `<key>.<value>.conf`.
+* **`select <key> <value>`** chooses a `partial` from a group of alternatives following the naming scheme `<key>.<value>.conf`.
 
-* **`select-next`**, **`select-previous`** chooses the next/previous `partial` from a group of alternatives (in lexical order).
+* **`select-next <key>`**, **`select-previous <key>`** chooses the next/previous `partial` from a group of alternatives (in lexical order).
 
-* **`shadow`** shadows any entry in `i3configger.json` - to address nested dictionaries chain the keys with `:` as separator - e.g. `i3configger shadow bars:targets:laptop:mode dock` will translate into:
+* **`shadow <key> <value>`** shadows any entry in `i3configger.json` - to address nested dictionaries chain the keys with `:` as separator - e.g. `i3configger shadow bars:targets:laptop:mode dock` will translate into:
     ```python
     {"bars": {"targets": {"laptop": {"mode": "dock"}}}}
     ```
 
-* **`merge`** merges the data from a given path into `.messages.json` to make larger changes in one step. If a relative path is given it is relative to `config.d`. An absolute path is used unchanged.
+* **`merge <path>`** merges the data from a given path into `.messages.json` to make larger changes in one step. If a relative path is given it is relative to `config.d`. An absolute path is used unchanged.
 
-* **`prune`** the opposite of merge: remove all keys in given file from `.messages.json`. If a relative path is given it is relative to `config.d`. An absolute path is used unchanged.
-
+* **`prune <path>`** the opposite of merge: remove all keys in given file from `.messages.json`. If a relative path is given it is relative to `config.d`. An absolute path is used unchanged.
 
 ### Special values
 
