@@ -14,6 +14,8 @@ Changes that are made to the configuration via i3configger messages are not writ
 
 A message consists of a command, a  key and - depending on the command - a value.
 
+Make sure you keep your filenames simple and avoid special characters. Quote values with special characters like color values (e.g. `i3configger set $myColor '#FFFFFF'`).
+
 ### Commands
 
 * **`set <key> <value>`** assigns a new value to any variable that is set anywhere in the configuration (note: `<key>` is the variable name **without** leading `$` sign).
