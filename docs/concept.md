@@ -102,7 +102,7 @@ How you call your groups and their values is completely up to you, as long as yo
 
 #### Automatic selection for hostname
 
-At the moment there is one special name that I deem useful to be populated differently, which is `hostname`. If you have `partials` in you `config.d` that follow the scheme `hostname.<whatever>.conf` they will automatically be chosen if your hostname matches `whatever`.
+At the moment there is one special name that I deem useful to be populated differently, which is `hostname`. If you have `partials` in your `config.d` that follow the scheme `hostname.<value>.conf` the one will automatically be chosen that matches your current hostname the value (or none if none matches).
 
 #### deactivate partials in `config.d`
 
