@@ -593,7 +593,7 @@ $ i3configger select-previous scheme
 <p>How you call your groups and their values is completely up to you, as long as you stick with the naming convention.</p>
 <h2 id="special-conventions">Special conventions<a class="headerlink" href="#special-conventions" title="Permanent link">&para;</a></h2>
 <h4 id="automatic-selection-for-hostname">Automatic selection for hostname<a class="headerlink" href="#automatic-selection-for-hostname" title="Permanent link">&para;</a></h4>
-<p>At the moment there is one special name that I deem useful to be populated differently, which is <code>hostname</code>. If you have <code>partials</code> in you <code>config.d</code> that follow the scheme <code>hostname.&lt;whatever&gt;.conf</code> they will automatically be chosen if your hostname matches <code>whatever</code>.</p>
+<p>At the moment there is one special name that I deem useful to be populated differently, which is <code>hostname</code>. If you have <code>partials</code> in your <code>config.d</code> that follow the scheme <code>hostname.&lt;value&gt;.conf</code> the one will automatically be chosen that matches your current hostname the value (or none if none matches).</p>
 <h4 id="deactivate-partials-in-configd">deactivate partials in <code>config.d</code><a class="headerlink" href="#deactivate-partials-in-configd" title="Permanent link">&para;</a></h4>
 <p>If you want to deactivate a partial, you can do that by prepending a <code>.</code> to the file name, e.g. <code>.whatever.conf</code> or <code>.whatever.else.conf</code> are not included in the build even if they reside in your <code>config.d</code>.</p>
 <h2 id="bonus-track-keep-it-dry">Bonus track: keep it DRY<a class="headerlink" href="#bonus-track-keep-it-dry" title="Permanent link">&para;</a></h2>
