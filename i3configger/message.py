@@ -8,7 +8,6 @@ log = logging.getLogger(__name__)
 
 I3STATUS = "i3status"
 """reserved key for status bar setting files"""
-# TODO document deletion for set and shadow
 DEL = 'del'
 """signal to delete a key in shadow or set"""
 
