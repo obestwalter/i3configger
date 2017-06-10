@@ -18,7 +18,7 @@ Make sure you keep your filenames simple and avoid special characters. Quote val
 
 ### Commands
 
-* **`set <key> <value>`** assigns a new value to any variable that is set anywhere in the configuration (note: `<key>` is the variable name **without** leading `$` sign).
+* **`set <key> <value>`** assigns a new value to any variable that is set anywhere in the configuration (note: `<key>` is the variable name **without** leading `$` sign). You can also assign variables to variables with set, just like in the configuration - e.g. `i3configger set someVar '$someOtherVar'` (note the **single quotes** to make sure the shell does not try to resolve the variable before passsing it to i3configger).
 
 * **`select <key> <value>`** chooses a `partial` from a group of alternatives following the naming scheme `<key>.<value>.conf`.
 
