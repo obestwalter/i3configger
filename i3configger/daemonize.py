@@ -5,7 +5,7 @@ from pathlib import Path
 import daemon
 import psutil
 
-from i3configger.watch import Watchman
+from i3configger import watch
 from i3configger.base import configure_logging
 
 
@@ -15,7 +15,7 @@ def get_other_i3configgers():
     return [p for p in others if p.pid != os.getpid()]
 
 
-def daemonize(verbosity, logPath, cnf):
+def daemonize(verbosity, logPath, configPath):
     others = get_other_i3configgers()
     if others:
         sys.exit(f"i3configger already running ({others})")
@@ -26,7 +26,7 @@ def daemonize(verbosity, logPath, cnf):
         context.stderr = sys.stderr
     with context:
         configure_logging(verbosity, logPath, isDaemon=True)
-        Watchman(cnf).watch()
+        watch.forever(configPath)
 
 
 def exorcise():

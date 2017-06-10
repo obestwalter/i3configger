@@ -102,7 +102,7 @@ def create(partialsPath) -> t.List[Partial]:
     prts = []
     for path in partialsPath.glob('*%s' % base.SUFFIX):
         if path.name.startswith(EXCLUDE_MARKER):
-            log.warning("exclude %s - starts with a dot", path)
+            log.info(f"excluding {path} because it starts with a dot")
             continue
         prts.append(Partial(path))
     if not prts:

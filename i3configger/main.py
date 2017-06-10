@@ -29,7 +29,7 @@ def main():
         return 0
     if args.watch:
         try:
-            watch.Watchman(configPath).watch()
+            watch.forever(configPath).watch()
         except KeyboardInterrupt:
             sys.exit("interrupted by user")
     build.build_all(configPath)

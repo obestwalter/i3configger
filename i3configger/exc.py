@@ -35,3 +35,7 @@ class PartialsError(I3configgerException):
 
 class ParseError(I3configgerException):
     pass
+
+
+class UserError(I3configgerException):
+    """Something goes wrong because user provided bad input"""

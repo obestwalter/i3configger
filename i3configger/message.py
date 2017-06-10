@@ -36,7 +36,10 @@ class Messenger:
         self.payload = self.fetch_frozen_messages()
         if self.message:
             self.command, self.key, *rest = message
-            self.value = rest[0] if rest else None
+            self.value = rest[0] if rest else ''
+        if self.command != CMD.SHADOW and ':' in self.key:
+            raise exc.UserError(
+                f"nesting of keys only sensible with {CMD.SHADOW}")
         log.debug(f"sending message {message} to {messagesPath}")
 
     def execute(self):
@@ -64,7 +67,7 @@ class Messenger:
         config.freeze(self.messagesPath, self.payload)
 
     def _process_set(self):
-        if self.value and self.value.lower() == DEL:
+        if self.value.lower() == DEL:
             del self.payload[CMD.SET][base.VAR_MARK + self.key]
         else:
             self.payload[CMD.SET][base.VAR_MARK + self.key] = self.value

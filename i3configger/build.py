@@ -3,6 +3,7 @@ import os
 import tempfile
 import time
 from pathlib import Path
+from pprint import pformat
 
 from i3configger import (
     __version__, base, config, context, exc, ipc, partials, message, paths)
@@ -11,6 +12,7 @@ log = logging.getLogger(__name__)
 
 
 def build_all(configPath):
+    log.info(f"start building from {configPath}")
     p = paths.Paths(configPath)
     prts = partials.create(p.root)
     cnf = config.I3configgerConfig(configPath)
@@ -20,6 +22,7 @@ def build_all(configPath):
         cnf, prts, msg[message.CMD.SELECT], msg[message.CMD.SET])
     check_config(pathContentsMap[cnf.mainTargetPath])
     persist_results(pathContentsMap)
+    log.info(f"build from {configPath} done")
 
 
 def generate_contents(cnf, prts, selectorMap, setMap):
@@ -30,10 +33,12 @@ def generate_contents(cnf, prts, selectorMap, setMap):
     ctx = context.process(selected + [setMap])
     ctx = context.resolve_variables(ctx)
     ctx = context.remove_variable_markers(ctx)
+    log.info(f"main context:\n{pformat(ctx)}")
     mainContent = generate_main_content(cnf.partialsPath, selected, ctx)
     for barName, barCnf in barTargets.items():
         barCnf["id"] = barName
         eCtx = context.process([ctx, barCnf])
+        log.info(f"bar {barName} context:\n{pformat(eCtx)}")
         mainContent += "\n%s" % generate_bar_setting(barCnf, prts, eCtx)
         statusFileContent = generate_status_file_content(
             prts, barCnf["key"], barCnf["value"], eCtx)

@@ -63,7 +63,7 @@ def fetch(path):
     if not path.exists():
         raise exc.ConfigError(f"file not found: {path}")
     with path.open() as f:
-        log.info("fetch from %s", )
+        log.info(f"fetch from {path}")
         payload = json.load(f)
         log.debug(f"{path}: {pprint.pformat(payload)}")
         return payload
