@@ -40,8 +40,7 @@ def _main(args):
     ipc.Notify.set_notify_command(args.notify)
     if args.daemon:
         daemonize.daemonize(args.v, args.log, configPath)
-        return 0
-    if args.watch:
+    elif args.watch:
         try:
             watch.forever(configPath).watch()
         except KeyboardInterrupt:
