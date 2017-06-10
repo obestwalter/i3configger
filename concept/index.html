@@ -526,7 +526,7 @@
 <h3 id="commands">Commands<a class="headerlink" href="#commands" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><strong><code>set &lt;key&gt; &lt;value&gt;</code></strong> assigns a new value to any variable that is set anywhere in the configuration (note: <code>&lt;key&gt;</code> is the variable name <strong>without</strong> leading <code>$</code> sign).</p>
+<p><strong><code>set &lt;key&gt; &lt;value&gt;</code></strong> assigns a new value to any variable that is set anywhere in the configuration (note: <code>&lt;key&gt;</code> is the variable name <strong>without</strong> leading <code>$</code> sign). You can also assign variables to variables with set, just like in the configuration - e.g. <code>i3configger set someVar '$someOtherVar'</code> (note the <strong>single quotes</strong> to make sure the shell does not try to resolve the variable before passsing it to i3configger).</p>
 </li>
 <li>
 <p><strong><code>select &lt;key&gt; &lt;value&gt;</code></strong> chooses a <code>partial</code> from a group of alternatives following the naming scheme <code>&lt;key&gt;.&lt;value&gt;.conf</code>.</p>
