@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.7.1 (The great packaging adventure begins) - 2017-06-10
+
+### Changed
+
+- (internal) vendor in a different inotify library that  makes it easier to package for Archlinux
+
 ## 0.7.0 (Better safe than sorry) - 2017-06-10
 
 ### Changed
