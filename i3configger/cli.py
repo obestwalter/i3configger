@@ -39,7 +39,7 @@ def _parse_args(p):
                    help="show build notification via notify-send")
     p.add_argument('--log', action="store", default=None,
                    help="i3configgerPath to where log should be stored")
-    p.add_argument('-c', '--config', action="store",
-                   default=None, help="path to config file")
+    p.add_argument('-c', '--config', action="store", default=None,
+                   help="path to i3configger config file")
     p.add_argument("message", help="message to send to i3configger", nargs="*")
     return p.parse_args()
