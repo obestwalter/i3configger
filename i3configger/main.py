@@ -46,7 +46,8 @@ def _main(args):
             watch.forever(configPath).watch()
         except KeyboardInterrupt:
             sys.exit("interrupted by user")
-    build.build_all(configPath)
-    ipc.I3.refresh()
-    ipc.StatusBar.refresh()
-    ipc.Notify.send('new config active')
+    else:
+        build.build_all(configPath)
+        ipc.I3.refresh()
+        ipc.StatusBar.refresh()
+        ipc.Notify.send('new config active')
