@@ -2,6 +2,8 @@
 
 **Disclaimer:** this is a tool aimed at users who already know how the configuration of [i3](https://i3wm.org) works (as described in the [excellent docs](https://i3wm.org/docs/userguide.html)). i3configger is an independent add-on, not directly affiliated with the project and in no way necessary to use i3 productively. It is strictly command line oriented and a file based using a very slight enhancement of the existing i3 configuration format with some json sprinkled on top. If you are looking for a graphical tool to help you create a configuration, check out the [resources below](#resources).
 
+**NOTE** using i3configger will replace your existing config files (configs and optional status bar configs), but it will move them to `<original-name>.bak` if no backup exists yet, so that you can easily revert the damage if you want to go back to your old files.
+
 ## Why?
 
 I3 already has a very nice and simple configuration system. i3configger makes it a bit more malleable by making it possible to send "messages" to your configuration to change variables or to switch between alternative sub configurations (e.g. different color schemes). This is done by adding a build step that can be triggered by calling i3configger directly or by running it as a watcher process that automatically rebuilds and reloads when source files change or sending a message.

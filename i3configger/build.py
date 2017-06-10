@@ -90,4 +90,7 @@ def check_config(content):
 
 def persist_results(pathContentsMap):
     for path, content in pathContentsMap.items():
+        backupPath = Path(str(path) + '.bak')
+        if not backupPath.exists():
+            path.rename(backupPath)
         path.write_text(content)

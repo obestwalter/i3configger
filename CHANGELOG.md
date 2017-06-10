@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.7.0 (Better safe than sorry) - 2017-06-10
+
+### Changed
+
+- always create a backup of the users files if it does not exist already. Do **not** clobber it on subsequent builds to make sure you can always go back to your old files if needed, even if they are no external backups or SCM in place.
+
 ## 0.6.0 (Command & Conquer) - 2017-06-10
 
 ### Fixed
