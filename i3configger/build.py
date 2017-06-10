@@ -6,7 +6,7 @@ from pathlib import Path
 from pprint import pformat
 
 from i3configger import (
-    __version__, base, config, context, exc, ipc, partials, message, paths)
+    base, config, context, exc, ipc, partials, message, paths)
 
 log = logging.getLogger(__name__)
 
@@ -55,8 +55,7 @@ def make_header(partialsPath):
     parts = strPath.split(os.getenv('HOME'))
     if len(parts) > 1:
         strPath = "~" + parts[-1]
-    msg = (f'# Built from {strPath} by i3configger {__version__} '
-           f'({time.asctime()}) #')
+    msg = f'# Built from {strPath} by i3configger ({time.asctime()}) #'
     sep = "#" * len(msg)
     return "%s\n%s\n%s\n" % (sep, msg, sep)
 

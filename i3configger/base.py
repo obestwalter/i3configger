@@ -46,5 +46,15 @@ def i3configger_excepthook(type_, value, traceback):
         sys.exit("%s: %s" % (value.__class__.__name__, value))
 
 
+def get_version():
+    """hide behind a wrapped function (slow and not a catastrophe if fails)"""
+    try:
+        from pkg_resources import get_distribution
+        return get_distribution('i3configger').version
+    except:
+        log.exception("fetching version failed")
+        return 'unknown'
+
+
 _REAL_EXCEPTHOOK = sys.excepthook
 sys.excepthook = i3configger_excepthook

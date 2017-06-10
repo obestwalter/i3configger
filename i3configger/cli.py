@@ -2,7 +2,7 @@ import argparse
 import logging
 from pathlib import Path
 
-from i3configger import __version__, base
+from i3configger import base
 
 log = logging.getLogger(__name__)
 
@@ -23,8 +23,7 @@ def process_command_line():
 
 def _parse_args(p):
     """Command line commands - all optional with [reasonable] defaults"""
-    p.add_argument('--version', action='version',
-                   version="%s %s" % (p.prog, __version__))
+    p.add_argument('--version', action='store_true')
     p.add_argument('-v', action="count", help="raise verbosity", default=0)
     g = p.add_mutually_exclusive_group()
     g.add_argument('--watch', action="store_true",

@@ -2,7 +2,7 @@ import logging
 import sys
 
 from i3configger import (
-    build, cli, exc, daemonize, ipc, partials, paths, message, watch)
+    base, build, cli, exc, daemonize, ipc, partials, paths, message, watch)
 
 log = logging.getLogger(__name__)
 
@@ -19,6 +19,9 @@ def main():
 
 
 def _main(args):
+    if args.version:
+        print(f"i3configger {base.get_version()}")
+        return 0
     if args.kill:
         daemonize.exorcise()
         return 0
