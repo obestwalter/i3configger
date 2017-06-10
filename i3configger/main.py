@@ -42,7 +42,7 @@ def _main(args):
         daemonize.daemonize(args.v, args.log, configPath)
     elif args.watch:
         try:
-            watch.forever(configPath).watch()
+            watch.forever(configPath)
         except KeyboardInterrupt:
             sys.exit("interrupted by user")
     else:
