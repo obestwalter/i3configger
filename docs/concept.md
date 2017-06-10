@@ -35,9 +35,7 @@ A message consists of a command, a  key and - depending on the command - a value
 
 * `del` if passed as value to `set` or `shadow` the key is deleted. E.g. `i3configger set someVar del`, will remove the key `someVar` in `.messages.json->set`
 
-### Change variables with `set`
-
-A lot in the i3 configuration can be changed by changing the value of variables. i3configger adds an interface to change them with a (very, very, very) simple messaging language.
+## Example: change variables values with `set`
 
 One example would be to switch aspects of the status bar(s) - for example mode and position:
 
@@ -71,7 +69,7 @@ The implementation of this is very simple (it just parses all variables and an o
 
 This could bite you if you are not aware of that and use regular expressions containing `$` e.g. in [for_window](https://i3wm.org/docs/userguide.html#for_window). So make sure that you do not use an expression where a part containing `$whatever` also matches an existing variable that was assigned with `set $whatever`.
 
-### Switching between alternatives with `select`
+## Example: switch between alternatives with `select`
 
 Bigger changes can be done by switching between `partials`. To realize this there is a simple naming convention for `partials` to mark them as alternatives of which only ever one is integrated into the final configuration.
 
@@ -98,7 +96,7 @@ $ i3configger select-previous scheme
 
 How you call your groups and their values is completely up to you, as long as you stick with the naming convention.
 
-### Special conventions
+## Special conventions
 
 #### Automatic selection for hostname
 
@@ -108,7 +106,7 @@ At the moment there is one special name that I deem useful to be populated diffe
 
 If you want to deactivate a partial, you can do that by prepending a `.` to the file name, e.g. `.whatever.conf` or `.whatever.else.conf` are not included in the build even if they reside in your `config.d`.
 
-### Bonus track: keep it DRY
+## Bonus track: keep it DRY
 
 Using i3configger you can also:
 
