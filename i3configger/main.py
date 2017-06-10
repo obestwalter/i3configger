@@ -29,7 +29,7 @@ def _main(args):
         message.process(p.messages, prts, args.message)
     if daemonize.get_daemon_process():
         if not args.message:
-            sys.exit("already running. Did you mean to send a message?")
+            sys.exit("Already running - did you mean to send a message?")
         log.info("let the daemon do the work")
         return 0
     ipc.I3.set_msg_type(args.i3_refresh_msg)
