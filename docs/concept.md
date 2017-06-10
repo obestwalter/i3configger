@@ -6,7 +6,7 @@ Changes that are made to the configuration via i3configger messages are not writ
 
 ## Terms
 
-* **`partials`**: the i3 configuration (including status bars and theirs configuration files - if configured) is built from files in `config.d` that make up the parts of the configuration to be built. They contain exactly what a normal configuration for i3 would contain only spread over several files (including status bar config files) - with somme added functionality mainly variable solution, alternatives and bar configurations from templates.
+* **`partials`**: the i3 configuration (including status bars and theirs configuration files - if configured) is built from files in `config.d` that make up the parts of the configuration to be built. They contain exactly what a normal configuration for i3 would contain only spread over several files (including status bar config files) - with somme added functionality mainly variable resolution, alternatives and bar configurations from templates.
 
 * **`message`**: when invoking i3configger with positional arguments they constitute a simple message to the configuration, effectively triggering a build with the changes requested in the message.
 
