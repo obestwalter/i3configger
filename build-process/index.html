@@ -297,10 +297,10 @@
 <li>read in all lines that fit the pattern <code>set $.*</code></li>
 <li>parse them into a map key -&gt; value</li>
 <li>Resolve all indirect assignments (e.g. <code>set $bla $blub</code>)</li>
-<li>Replace all variables in configs with their values (bar configs get
-   local context merged before substitution)</li>
+<li>merge additional context from <code>i3configger.json</code> and <code>.message.json</code></li>
+<li>Replace all variables in configs with their values</li>
 <li>Write results</li>
-<li>Check if config is valid - if not switch back to saved backup</li>
+<li>Check if config is valid - if not leave the old configuration in place</li>
 </ol>
                 
                   

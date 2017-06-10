@@ -137,12 +137,12 @@
         },
         {
             "location": "/build-process/",
-            "text": "Build process\n\u00b6\n\n\n\n\nmerge all files that fit the conditions and configuration\n\n\nread in all lines that fit the pattern \nset $.*\n\n\nparse them into a map key -> value\n\n\nResolve all indirect assignments (e.g. \nset $bla $blub\n)\n\n\nReplace all variables in configs with their values (bar configs get\n   local context merged before substitution)\n\n\nWrite results\n\n\nCheck if config is valid - if not switch back to saved backup",
+            "text": "Build process\n\u00b6\n\n\n\n\nmerge all files that fit the conditions and configuration\n\n\nread in all lines that fit the pattern \nset $.*\n\n\nparse them into a map key -> value\n\n\nResolve all indirect assignments (e.g. \nset $bla $blub\n)\n\n\nmerge additional context from \ni3configger.json\n and \n.message.json\n\n\nReplace all variables in configs with their values\n\n\nWrite results\n\n\nCheck if config is valid - if not leave the old configuration in place",
             "title": "Build process"
         },
         {
             "location": "/build-process/#build-process",
-            "text": "merge all files that fit the conditions and configuration  read in all lines that fit the pattern  set $.*  parse them into a map key -> value  Resolve all indirect assignments (e.g.  set $bla $blub )  Replace all variables in configs with their values (bar configs get\n   local context merged before substitution)  Write results  Check if config is valid - if not switch back to saved backup",
+            "text": "merge all files that fit the conditions and configuration  read in all lines that fit the pattern  set $.*  parse them into a map key -> value  Resolve all indirect assignments (e.g.  set $bla $blub )  merge additional context from  i3configger.json  and  .message.json  Replace all variables in configs with their values  Write results  Check if config is valid - if not leave the old configuration in place",
             "title": "Build process"
         },
         {
