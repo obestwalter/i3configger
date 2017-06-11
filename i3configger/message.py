@@ -21,6 +21,11 @@ class CMD:
     PRUNE = "prune"
     SHADOW = "shadow"
 
+    @classmethod
+    def get_all_commands(cls):
+        return [v for k, v in cls.__dict__.items()
+                if k[0].isupper() and k[0] != '_']
+
 
 def process(statePath, prts, message):
     mp = Messenger(statePath, prts, message)
@@ -43,15 +48,20 @@ class Messenger:
         log.debug(f"sending message {message} to {messagesPath}")
 
     def execute(self):
-        {
-            CMD.MERGE: self._process_merge,
-            CMD.PRUNE: self._process_prune,
-            CMD.SET: self._process_set,
-            CMD.SELECT: self._process_select,
-            CMD.SHADOW: self._process_shadow,
-            CMD.SELECT_NEXT: self._process_select_shift,
-            CMD.SELECT_PREVIOUS: self._process_select_shift,
-        }[self.command]()
+        try:
+            {
+                CMD.MERGE: self._process_merge,
+                CMD.PRUNE: self._process_prune,
+                CMD.SET: self._process_set,
+                CMD.SELECT: self._process_select,
+                CMD.SHADOW: self._process_shadow,
+                CMD.SELECT_NEXT: self._process_select_shift,
+                CMD.SELECT_PREVIOUS: self._process_select_shift,
+            }[self.command]()
+        except KeyError:
+            raise exc.UserError(
+                f"Unknown command: {self.command}. "
+                f"Use one of {', '.join(CMD.get_all_commands())}")
 
     def _process_merge(self):
         self._transform(context.merge)
