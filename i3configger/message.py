@@ -27,10 +27,10 @@ class CMD:
                 if k[0].isupper() and k[0] != '_']
 
 
-def process(statePath, prts, message):
-    mp = Messenger(statePath, prts, message)
+def process(messagesPath, prts, message):
+    mp = Messenger(messagesPath, prts, message)
     mp.execute()
-    config.freeze(statePath, mp.payload)
+    config.freeze(messagesPath, mp.payload)
 
 
 class Messenger:
@@ -38,7 +38,6 @@ class Messenger:
         self.messagesPath = messagesPath
         self.prts = prts
         self.message = message
-        self.payload = self.fetch_frozen_messages()
         if self.message:
             self.command, self.key, *rest = message
             self.value = rest[0] if rest else ''
@@ -48,6 +47,7 @@ class Messenger:
         log.debug(f"sending message {message} to {messagesPath}")
 
     def execute(self):
+        self.payload = self.fetch_frozen_messages()
         try:
             {
                 CMD.MERGE: self._process_merge,
@@ -74,7 +74,6 @@ class Messenger:
         if not path.is_absolute():
             path = self.messagesPath.parent / path
         self.payload = func(self.payload, config.fetch(path))
-        config.freeze(self.messagesPath, self.payload)
 
     def _process_set(self):
         if self.value.lower() == DEL:
@@ -135,12 +134,11 @@ class Messenger:
 
     def fetch_frozen_messages(self):
         if not self.messagesPath.exists():
-            state = {}
+            messages = {}
         else:
-            state = config.fetch(self.messagesPath)
-        self.ensure_message_keys(state, self.prts)
-        config.freeze(self.messagesPath, state)
-        return state
+            messages = config.fetch(self.messagesPath)
+        self.ensure_message_keys(messages, self.prts)
+        return messages
 
     def ensure_message_keys(self, state, prts):
         if CMD.SELECT not in state:
