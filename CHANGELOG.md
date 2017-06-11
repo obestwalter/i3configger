@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.7.5 (Time to make an -git AUR?) - 2017-06-11
+
+### Changed
+
+- make checks more forgiving if no i3 is installed - for testing a complete run after a PKGBUILD
+
 ## 0.7.4 (Packaging is fun and good for testing) - 2017-06-11
 
 ### Changed

@@ -59,6 +59,10 @@ class I3:
             return subprocess.check_output(cmd).decode()
         except subprocess.CalledProcessError as e:
             return e.output
+        except FileNotFoundError:
+            assert path.exists(), path
+            log.exception("can't create report  - assuming test system")
+            return ''
 
 
 class Notify:
