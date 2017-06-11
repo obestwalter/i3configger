@@ -1,18 +1,5 @@
 {
   "select": {
-    "hostname": "ob1",
-    "scheme": "solarized-dark"
-  },
-  "set": {
-    "$cfbg": "$blue"
-  },
-  "shadow": {
-    "bars": {
-      "targets": {
-        "laptop": {
-          "mode": "dock"
-        }
-      }
-    }
+    "some-key": "value2"
   }
 }

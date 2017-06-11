@@ -25,3 +25,5 @@ Variables can be set and used anywhere (independent of order. Variables can also
 ## [schemes](4-schemes)
 
 Files following `<key>.<value>.conf` signal that only one of them should be integrated and you can switch between them. One of them will always be included (alphabetically first one on initialization).
+
+In this example there is also a `.message.json` which usually should not be committed as it contains volatile state. This is to demonstrate how messages play into the build behaviour.
