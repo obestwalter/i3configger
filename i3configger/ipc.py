@@ -1,5 +1,6 @@
 import logging
 import subprocess
+from pathlib import Path
 
 log = logging.getLogger(__name__)
 
@@ -59,9 +60,10 @@ class I3:
             return subprocess.check_output(cmd).decode()
         except subprocess.CalledProcessError as e:
             return e.output
-        except FileNotFoundError:
-            assert path.exists(), path
-            log.exception("can't create report  - assuming test system")
+        except FileNotFoundError as e:
+            assert Path(path).exists(), path
+            assert "No such file or directory: 'i3'" in e.strerror
+            log.warning("[IGNORE] crashed - no i3 -> assuming test system")
             return ''
 
 
@@ -89,3 +91,5 @@ class StatusBar:
             subprocess.check_output(['killall', '-SIGUSR1', 'i3status'])
         except subprocess.CalledProcessError as e:
             log.debug("[IGNORE] failed status refresh: %s", e)
+
+I3.get_config_error_report(__file__)
