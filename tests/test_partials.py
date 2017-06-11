@@ -25,7 +25,7 @@ def test_create():
         ('some-category', 'value2', True),
     )
 )
-def test_select_non_existing(key, value, exp):
+def test_select(key, value, exp):
     prts = partials.create(SCHEMES)
     selector = {key: value}
     if not isinstance(exp, bool):
@@ -34,9 +34,7 @@ def test_select_non_existing(key, value, exp):
     else:
         selected = partials.select(prts, selector)
         found = partials.find(prts, key, value)
-        assert selected[1].name == 'some-settings'
-        assert isinstance(selected[0], partials.Partial)
-        assert isinstance(found, partials.Partial)
+        assert all(isinstance(p, partials.Partial) for p in selected)
         assert selected[0] == found
         assert selected[0].key == key
         assert selected[0].value == value
