@@ -9,11 +9,9 @@ from i3configger import base, exc
 
 log = logging.getLogger(__name__)
 
-# TODO document this
 SPECIAL_SELECTORS = {
     "hostname": socket.gethostname()
 }
-# TODO document this
 EXCLUDE_MARKER = "."
 """config files starting with a dot are always excluded"""
 
@@ -37,10 +35,20 @@ class Partial:
     def __lt__(self, other):
         return self.name < other.name
 
-    def get_content(self) -> str:
+    def get_pruned_content(self) -> str:
         """pruned content or '' if file only contains vars and comments"""
         lines = [l for l in self.lines
                  if not l.strip().startswith(base.SET_MARK)]
+        if not self.contain_something(lines):
+            return ''
+        while lines and not lines[0].strip():
+            lines.pop(0)
+        while lines and not lines[-1].strip():
+            lines.pop()
+        return "### %s ###\n%s\n\n" % (self.path.name, "\n".join(lines))
+
+    @staticmethod
+    def contain_something(lines):
         for line in lines:
             line = line.strip()
             if not line:
@@ -49,8 +57,7 @@ class Partial:
                 continue
             if line.startswith(base.SET_MARK):
                 continue
-            return "### %s ###\n%s\n\n" % (self.path.name, "\n".join(lines))
-        return ''
+            return True
 
     @property
     def context(self):

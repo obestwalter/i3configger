@@ -63,7 +63,7 @@ def make_header(partialsPath):
 def generate_main_content(partialsPath, selected, ctx):
     out = [make_header(partialsPath)]
     for prt in selected:
-        content = prt.get_content()
+        content = prt.get_pruned_content()
         if content:
             out.append(content)
     return context.substitute('\n'.join(out), ctx).rstrip('\n') + '\n\n'
@@ -72,7 +72,7 @@ def generate_main_content(partialsPath, selected, ctx):
 def generate_bar_setting(barCnf, prts, ctx):
     tpl = partials.find(prts, barCnf["key"], barCnf["template"])
     assert isinstance(tpl, partials.Partial), tpl
-    return context.substitute(tpl.get_content(), ctx).rstrip('\n')
+    return context.substitute(tpl.get_pruned_content(), ctx).rstrip('\n')
 
 
 def generate_status_file_content(prts, selectKey, selectValue, ctx):
@@ -82,7 +82,8 @@ def generate_status_file_content(prts, selectKey, selectValue, ctx):
                     selectKey, selectKey, base.SUFFIX)
         return
     assert isinstance(prt, partials.Partial), prt
-    return context.substitute(prt.get_content(), ctx).rstrip('\n') + '\n'
+    content = context.substitute(prt.get_pruned_content(), ctx)
+    return content.rstrip('\n') + '\n'
 
 
 def check_config(content):
@@ -91,8 +92,9 @@ def check_config(content):
     errorReport = ipc.I3.get_config_error_report(tmpPath)
     if errorReport:
         raise exc.ConfigError(
-            f"config:\n{content}\n\nerrors:\n{errorReport.decode()}"
-            f"FATAL: config not changed due to errors.")
+            f"config:\n{content}\n\nerrors:\n{errorReport}"
+            f"FATAL: config not changed due to errors. "
+            f"Broken config is at {tmpPath}")
 
 
 def persist_results(pathContentsMap):
