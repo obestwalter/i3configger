@@ -19,6 +19,7 @@ def main():
 
 
 def _main(args):
+    ipc.configure(args)
     if args.version:
         print(f"i3configger {base.get_version()}")
         return 0
@@ -35,9 +36,6 @@ def _main(args):
             sys.exit("Already running - did you mean to send a message?")
         log.info("let the daemon do the work")
         return 0
-    ipc.I3.set_msg_type(args.i3_refresh_msg)
-    log.info("set i3 refresh method to %s", ipc.I3.refresh)
-    ipc.Notify.set_notify_command(args.notify)
     if args.daemon:
         daemonize.daemonize(args.v, args.log, configPath)
     elif args.watch:
@@ -47,6 +45,4 @@ def _main(args):
             sys.exit("interrupted by user")
     else:
         build.build_all(configPath)
-        ipc.I3.refresh()
-        ipc.StatusBar.refresh()
-        ipc.Notify.send('new config active')
+        ipc.communicate(refresh=True)

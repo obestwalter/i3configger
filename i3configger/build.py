@@ -85,7 +85,7 @@ def generate_status_file_content(prts, selectKey, selectValue, ctx):
 def check_config(content):
     tmpPath = Path(tempfile.gettempdir()) / 'i3config_check'
     tmpPath.write_text(content)
-    errorReport = ipc.I3.get_config_errors(tmpPath)
+    errorReport = ipc.I3.get_config_error_report(tmpPath)
     if errorReport:
         raise exc.ConfigError(
             f"config:\n{content}\n\nerrors:\n{errorReport.decode()}"

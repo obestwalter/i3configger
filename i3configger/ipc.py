@@ -1,6 +1,21 @@
+import logging
 import subprocess
 
-from i3configger.base import log
+log = logging.getLogger(__name__)
+
+
+def configure(args):
+    I3.set_msg_type(args.i3_refresh_msg)
+    log.info(f'set i3 refresh method to {I3.refresh.__name__}', )
+    Notify.set_notify_command(args.notify)
+    log.info(f'set notify method to {Notify.send.__name__}', )
+
+
+def communicate(msg='new config active', refresh=False):
+    if refresh:
+        I3.refresh()
+        StatusBar.refresh()
+    Notify.send(msg)
 
 
 class I3:
@@ -38,10 +53,10 @@ class I3:
                 return True
 
     @classmethod
-    def get_config_errors(cls, path):
+    def get_config_error_report(cls, path):
+        cmd = ['i3', '-C', '-c', str(path)]
         try:
-            subprocess.check_output(['i3', '-C', '-c', str(path)])
-            return None
+            return subprocess.check_output(cmd).decode()
         except subprocess.CalledProcessError as e:
             return e.output
 
@@ -49,18 +64,18 @@ class I3:
 class Notify:
     @classmethod
     def set_notify_command(cls, notify):
-        if not notify:
-            log.debug("do not send notifications")
-            cls.send = cls.nop
+        cls.send = cls.notify_send if notify else cls.nop
 
     @classmethod
-    def send(cls, msg, urgency='low'):
+    def notify_send(cls, msg, urgency='low'):
         subprocess.check_call([
             'notify-send', '-a', 'i3configger', '-t', '1', '-u', urgency, msg])
 
     @staticmethod
     def nop(*args, **kwargs):
         pass
+
+    send = notify_send
 
 
 class StatusBar:

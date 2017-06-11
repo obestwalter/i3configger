@@ -25,6 +25,4 @@ def forever(configPath):
         paths = [partialsPath / e[-1] for e in events]
         if any(p.suffix in [base.SUFFIX, '.json'] for p in paths):
             build.build_all(configPath)
-            ipc.I3.refresh()
-            ipc.StatusBar.refresh()
-            ipc.Notify.send('new config active')
+            ipc.communicate(refresh=True)
