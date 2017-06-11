@@ -47,7 +47,7 @@ class Messenger:
         log.debug(f"sending message {message} to {messagesPath}")
 
     def execute(self):
-        self.payload = self.fetch_frozen_messages()
+        self.payload = self.fetch_messages()
         try:
             {
                 CMD.MERGE: self._process_merge,
@@ -132,7 +132,7 @@ class Messenger:
                 self.payload[CMD.SELECT][self.key] = new.value
                 break
 
-    def fetch_frozen_messages(self):
+    def fetch_messages(self):
         if not self.messagesPath.exists():
             messages = {}
         else:
