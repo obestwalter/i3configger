@@ -1,0 +1,3 @@
+# force to integrate .message.json here for the example
+# it should usually not be committed as it contains volatile state
+!.messages.json
