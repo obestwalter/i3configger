@@ -15,3 +15,4 @@
 * [i3-style](https://github.com/acrisci/i3-style)
 * [i3ColourChanger](https://github.com/PMunch/i3ColourChanger)
 * [i3-manager](https://github.com/erayaydin/i3-manager)
+* [i3 session](https://github.com/joepestro/i3session)
