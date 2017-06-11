@@ -1,10 +1,9 @@
 ###############################################################################
 # Built by i3configger /from/some/directory/who/cares  (some time after 1972) #
 ###############################################################################
-### some-category.value1.conf ###
-# If nothing is set in i3configger.json the first file
-# that is found is integrated by default (in alphabetical order)
-# So this file will be integrated
+### some-key.value2.conf ###
+# This is integrated, because it had been selected by a remembered message.
 
-default_orientation vertical
+# var will also be replaced here - although this is just a comment: default
+default_orientation horizontal
 workspace_layout default
