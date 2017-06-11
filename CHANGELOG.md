@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.7.2 (Need for speed) - 2017-06-11
+
+- shave off a few hundred precious milliseconds startup time, by moving the very expensive version fetching into a function that is only called, when the version is really needed.
+- help the user, when they use a non existing command
+- remove unwanted side effects from message
+- when config.d already exists, but no i3configger.json exists yet, it is automatically created now
+- better examples/tests
+
 ## 0.7.1 (The great packaging adventure begins) - 2017-06-10
 
 ### Changed
