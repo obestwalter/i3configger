@@ -1,11 +1,8 @@
-"""This is just a sketch ... """
-raise NotImplementedError()
-
+"""Just an experiment - I might split this out to another proect"""
 BINDCODE = 'bindcode'
 BINDSYM = 'bindsym'
 
 
-# set after build
 class Bindings:
     """
     bindsym | bindcode
@@ -13,8 +10,15 @@ class Bindings:
 
     [--release] [--border] [--whole-window] [<Modifiers>+]button<n> command
     """
-    def __init__(self, lines):
-        self.lines = lines
+    def __init__(self, content):
+        self.content = content
+
+    def get_all_bindings(self):
+        lines = [l.strip() for l in self.content.splitlines()]
+        lines = [
+            l for l in lines if any(m in l for m in [BINDCODE, BINDSYM])]
+        lines = [l for l in lines if not l.startswith(base.COMMENT_MARK)]
+        return sorted(set(lines))
 
     def translate_bindings(self):
         """translate bindcode to bindsym assignments
@@ -25,3 +29,12 @@ class Bindings:
 
     def write_bindings_info(self):
         """Write info in some format that can be nicely displayed"""
+
+
+if __name__ == '__main__':
+    # maybe better use partials and account for modes and bars
+    from i3configger import base, paths
+
+    p = paths.get_i3wm_config_path() / 'config'
+    b = Bindings(p.read_text())
+    print('\n'.join(b.get_all_bindings()))
