@@ -30,7 +30,7 @@ def ensure_i3_configger_sanity(configPath=None) -> Path:
         for candidate in [i3wmConfigPath / 'config', Path('etc/i3/config')]:
             if candidate.exists():
                 log.info("populate config with %s", candidate)
-                shutil.copy2(candidate, configPath.parent / 'config.conf')
+                shutil.copy2(candidate, partialsPath / 'config.conf')
     if not configPath:
         configPath = partialsPath / I3CONFIGGER_CONFIG_NAME
     elif configPath.is_dir():
