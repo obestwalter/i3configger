@@ -37,13 +37,20 @@ class Partial:
     def __lt__(self, other):
         return self.name < other.name
 
-    @property
-    def display(self) -> t.Optional[str]:
+    def get_content(self) -> str:
+        """pruned content or '' if file only contains vars and comments"""
         lines = [l for l in self.lines
                  if not l.strip().startswith(base.SET_MARK)]
-        if not lines:
-            return
-        return "### %s ###\n%s\n\n" % (self.path.name, "\n".join(lines))
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith(base.COMMENT_MARK):
+                continue
+            if line.startswith(base.SET_MARK):
+                continue
+            return "### %s ###\n%s\n\n" % (self.path.name, "\n".join(lines))
+        return ''
 
     @property
     def context(self):

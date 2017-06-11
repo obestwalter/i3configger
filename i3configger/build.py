@@ -5,8 +5,8 @@ import time
 from pathlib import Path
 from pprint import pformat
 
-from i3configger import (
-    base, config, context, exc, ipc, partials, message, paths)
+from i3configger import base, config, context, exc, ipc, message, partials, \
+    paths
 
 log = logging.getLogger(__name__)
 
@@ -61,15 +61,18 @@ def make_header(partialsPath):
 
 
 def generate_main_content(partialsPath, selected, ctx):
-    content = make_header(partialsPath)
-    content += '\n'.join(prt.display for prt in selected if prt.display)
-    return context.substitute(content, ctx).rstrip('\n') + '\n\n'
+    out = [make_header(partialsPath)]
+    for prt in selected:
+        content = prt.get_content()
+        if content:
+            out.append(content)
+    return context.substitute('\n'.join(out), ctx).rstrip('\n') + '\n\n'
 
 
 def generate_bar_setting(barCnf, prts, ctx):
     tpl = partials.find(prts, barCnf["key"], barCnf["template"])
     assert isinstance(tpl, partials.Partial), tpl
-    return context.substitute(tpl.display, ctx).rstrip('\n')
+    return context.substitute(tpl.get_content(), ctx).rstrip('\n')
 
 
 def generate_status_file_content(prts, selectKey, selectValue, ctx):
@@ -79,7 +82,7 @@ def generate_status_file_content(prts, selectKey, selectValue, ctx):
                     selectKey, selectKey, base.SUFFIX)
         return
     assert isinstance(prt, partials.Partial), prt
-    return context.substitute(prt.display, ctx).rstrip('\n') + '\n'
+    return context.substitute(prt.get_content(), ctx).rstrip('\n') + '\n'
 
 
 def check_config(content):

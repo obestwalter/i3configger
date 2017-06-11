@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Unreleased
+
+### Changed
+
+- do not add partial contents into config if it purely contained set statements
+
 ## 0.7.5 (Time to make an -git AUR?) - 2017-06-11
 
 ### Changed

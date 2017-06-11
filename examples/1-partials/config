@@ -1,6 +1,7 @@
 ###############################################################################
 # Built by i3configger /from/some/directory/who/cares  (some time after 1972) #
 ###############################################################################
+
 ### basic-settings.conf ###
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
