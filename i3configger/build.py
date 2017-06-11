@@ -16,7 +16,7 @@ def build_all(configPath):
     p = paths.Paths(configPath)
     prts = partials.create(p.root)
     cnf = config.I3configgerConfig(configPath)
-    msg = config.fetch(p.messages)
+    msg = message.Messenger(p.messages, prts).fetch_messages()
     cnf.payload = context.merge(cnf.payload, msg[message.CMD.SHADOW])
     pathContentsMap = generate_contents(
         cnf, prts, msg[message.CMD.SELECT], msg[message.CMD.SET])
