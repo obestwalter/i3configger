@@ -25,7 +25,7 @@ def _main(args):
     if args.kill:
         daemonize.exorcise()
         return 0
-    configPath = paths.get_my_config_path(args.config)
+    configPath = paths.ensure_i3_configger_sanity(args.config)
     if args.message:
         p = paths.Paths(configPath)
         prts = partials.create(p.root)

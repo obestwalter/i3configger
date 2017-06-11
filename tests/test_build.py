@@ -1,10 +1,9 @@
-import os
 import shutil
 from pathlib import Path
 
 import pytest
 
-from i3configger import build, paths, message, partials
+from i3configger import build, paths
 
 HERE = Path(__file__).parent
 EXAMPLES = HERE.parent / 'examples'
@@ -22,14 +21,13 @@ TEST_FOLDER_NAMES = sorted(list(
 @pytest.mark.parametrize("container", TEST_FOLDER_NAMES)
 def test_build(container, monkeypatch):
     monkeypatch.setattr(
-        paths, 'get_i3_config_path', lambda: EXAMPLES / container)
+        paths, 'get_i3wm_config_path', lambda: EXAMPLES / container)
     monkeypatch.setattr(build, 'make_header', lambda _: FAKE_HEADER)
     if not shutil.which('i3'):
         # we're on CI
         monkeypatch.setattr(build, 'check_config', lambda _: True)
-    configPath = paths.get_my_config_path()
+    configPath = paths.ensure_i3_configger_sanity()
     assert configPath.exists() and configPath.is_file()
-    p = paths.Paths(configPath)
     build.build_all(configPath)
     buildPath = configPath.parents[1]
     referencePath = REFERENCE / container

@@ -21,8 +21,8 @@ def test_create():
         ('non-existing-key', 'some-value', exc.ConfigError),
         ('non-existing-key', 'none-existing-value', exc.ConfigError),
         ('some-category', 'none-existing-value', exc.ConfigError),
-        ('some-category', 'value1', True),
-        ('some-category', 'value2', True),
+        ('some-key', 'value1', True),
+        ('some-key', 'value2', True),
     )
 )
 def test_select(key, value, exp):
