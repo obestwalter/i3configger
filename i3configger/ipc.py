@@ -91,5 +91,3 @@ class StatusBar:
             subprocess.check_output(['killall', '-SIGUSR1', 'i3status'])
         except subprocess.CalledProcessError as e:
             log.debug("[IGNORE] failed status refresh: %s", e)
-
-I3.get_config_error_report(__file__)
