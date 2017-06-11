@@ -7,7 +7,9 @@ from i3configger import paths
 
 def test_no_config(tmpdir, monkeypatch):
     """Given empty sources directory a new config is created from defaults"""
-    monkeypatch.setattr(paths, 'get_i3_config_path', lambda: Path(tmpdir))
+    tmpdir = Path(tmpdir)
+    monkeypatch.setattr(paths, 'get_i3_config_path', lambda: tmpdir)
+    assert not (tmpdir / 'config.d').exists()
     path = i3configger.paths.get_my_config_path()
     assert path.exists()
     assert path.is_file()
@@ -16,3 +18,6 @@ def test_no_config(tmpdir, monkeypatch):
     assert 'main' in payload
     assert 'bars' in payload
     assert 'targets' in payload['bars']
+    assert 'set' not in payload
+    assert 'select' not in payload
+    assert 'shadow' not in payload
