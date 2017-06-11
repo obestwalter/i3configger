@@ -1,10 +1,11 @@
 # CHANGELOG
 
-## Unreleased
+## 0.7.6 (The devil is in the detail) - 2017-06-11
 
 ### Changed
 
-- do not add partial contents into config if it purely contained set statements
+- do not add partial into config if it purely contains set statements
+- strip empty lines from beginning and end of partials
 
 ## 0.7.5 (Time to make an -git AUR?) - 2017-06-11
 
