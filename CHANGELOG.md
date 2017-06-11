@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.7.3 (Do the right thing) - 2017-06-11
+
+- use actual partials path for initialization instead of assuming that parent of config path == partials path
+
 ## 0.7.2 (Need for speed) - 2017-06-11
 
 - shave off a few hundred precious milliseconds startup time, by moving the very expensive version fetching into a function that is only called, when the version is really needed.
