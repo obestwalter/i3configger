@@ -8,17 +8,7 @@ from i3configger import config, exc
 log = logging.getLogger(__name__)
 
 I3CONFIGGER_CONFIG_NAME = 'i3configger.json'
-MESSAGES_NAME = '.messages.json'
 PARTIALS_NAME = 'config.d'
-
-
-class Paths:
-    def __init__(self, configPath):
-        path = Path(configPath)
-        assert path.exists() and path.is_file(), path
-        self.root = path.parent
-        self.config = configPath
-        self.messages = self.root / MESSAGES_NAME
 
 
 def ensure_i3_configger_sanity(configPath=None) -> Path:

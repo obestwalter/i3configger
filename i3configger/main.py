@@ -1,8 +1,8 @@
 import logging
 import sys
 
-from i3configger import (
-    base, build, cli, exc, daemonize, ipc, partials, paths, message, watch)
+from i3configger import base, build, cli, exc, ipc, message, partials, paths, \
+    watch
 
 log = logging.getLogger(__name__)
 
@@ -24,20 +24,20 @@ def _main(args):
         print(f"i3configger {base.get_version()}")
         return 0
     if args.kill:
-        daemonize.exorcise()
+        watch.exorcise()
         return 0
     configPath = paths.ensure_i3_configger_sanity(args.config)
     if args.message:
-        p = paths.Paths(configPath)
+        p = base.Paths(configPath)
         prts = partials.create(p.root)
         message.process(p.messages, prts, args.message)
-    if daemonize.get_daemon_process():
+    if watch.get_daemon_process():
         if not args.message:
             sys.exit("Already running - did you mean to send a message?")
         log.info("let the daemon do the work")
         return 0
     if args.daemon:
-        daemonize.daemonize(args.v, args.log, configPath)
+        watch.daemonized(args.v, args.log, configPath)
     elif args.watch:
         try:
             watch.forever(configPath)

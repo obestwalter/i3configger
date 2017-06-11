@@ -5,15 +5,14 @@ import time
 from pathlib import Path
 from pprint import pformat
 
-from i3configger import base, config, context, exc, ipc, message, partials, \
-    paths
+from i3configger import base, config, context, exc, ipc, message, partials
 
 log = logging.getLogger(__name__)
 
 
 def build_all(configPath):
     log.info(f"start building from {configPath}")
-    p = paths.Paths(configPath)
+    p = base.Paths(configPath)
     prts = partials.create(p.root)
     cnf = config.I3configgerConfig(configPath)
     msg = message.Messenger(p.messages, prts).fetch_messages()

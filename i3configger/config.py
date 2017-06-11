@@ -3,7 +3,7 @@ import logging
 import pprint
 from pathlib import Path
 
-from i3configger import exc, paths
+from i3configger import base, exc
 
 log = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ I3_CONFIGGER_DEFAULTS = {
 
 class I3configgerConfig:
     def __init__(self, configPath: Path):
-        p = paths.Paths(configPath)
+        p = base.Paths(configPath)
         self.configPath = configPath
         self.partialsPath = p.root
         self.payload = fetch(self.configPath)

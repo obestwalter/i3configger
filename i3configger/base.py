@@ -9,10 +9,20 @@ from i3configger import exc
 log = logging.getLogger(__name__)
 DEBUG = os.getenv('DEBUG', 0)
 COMMENT_MARK = '#'
+MESSAGES_NAME = '.messages.json'
 VAR_MARK = '$'
 SET_MARK = 'set'
 SUFFIX = '.conf'
 SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
+
+
+class Paths:
+    def __init__(self, configPath):
+        path = Path(configPath)
+        assert path.exists() and path.is_file(), path
+        self.root = path.parent
+        self.config = configPath
+        self.messages = self.root / MESSAGES_NAME
 
 
 def configure_logging(verbosity: int, logPath: str, isDaemon=False):
