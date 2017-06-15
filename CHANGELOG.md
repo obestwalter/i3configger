@@ -61,9 +61,7 @@
 ### Added
 
 - new command: shadow - shadow arbitrary entries in `i3configger.json`
-
 - new command: merge - merge a `.json` file into `.messages.json`
-
 - new command: prune - opposite of merge: remove all keys from a given `.json` file in `.messages.json`
 
 ### Changed
