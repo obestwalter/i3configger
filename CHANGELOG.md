@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 0.7.7 (It's just getting better and better) - 2017-06-16
+### Added
+
+- resolve variables with as many levels of indirections as you want
+- if resolving fails proper feedback about the failing path is given
+- better error handling/notification, when config is broken
+- tests for resolving contexts
+
+### Fixed
+
+- watch process does not crash anymore but gives proper feedback
+- don't crash if switching without a default in .messages.json
+
 ## 0.7.6 (The devil is in the detail) - 2017-06-11
 ### Changed
 

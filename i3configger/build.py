@@ -90,10 +90,11 @@ def check_config(content):
     tmpPath.write_text(content)
     errorReport = ipc.I3.get_config_error_report(tmpPath)
     if errorReport:
-        raise exc.ConfigError(
-            f"config:\n{content}\n\nerrors:\n{errorReport}"
-            f"FATAL: config not changed due to errors. "
-            f"Broken config is at {tmpPath}")
+        msg = (f"FATAL: config not changed due to errors. "
+               f"Broken config is at {tmpPath}")
+        report = f"config:\n{content}\n\nerrors:\n{errorReport}"
+        ipc.communicate(msg, urgency='normal')
+        raise exc.ConfigError(f"{msg}\n{report}")
 
 
 def persist_results(pathContentsMap):

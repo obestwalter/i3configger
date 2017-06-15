@@ -128,9 +128,11 @@ class Messenger:
                     new = candidates[idx + 1]
                 except IndexError:
                     new = candidates[0]
-                log.info("select %s.%s", self.key, new)
-                self.payload[CMD.SELECT][self.key] = new.value
                 break
+        else:
+            new = candidates[0]
+        log.info("select %s.%s", self.key, new)
+        self.payload[CMD.SELECT][self.key] = new.value
 
     def fetch_messages(self):
         if not self.messagesPath.exists():

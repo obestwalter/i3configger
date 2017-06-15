@@ -1,4 +1,4 @@
-"""Just an experiment - I might split this out to another proect"""
+"""Just an experiment - I might split this out to another project"""
 BINDCODE = 'bindcode'
 BINDSYM = 'bindsym'
 
@@ -32,7 +32,9 @@ class Bindings:
 
 
 if __name__ == '__main__':
-    # maybe better use partials and account for modes and bars
+    # TODO use partials and account for modes
+    # a naming convention would make this quite easy
+    # mode-<modename>.conf -> bindings active in <modename>
     from i3configger import base, paths
 
     p = paths.get_i3wm_config_path() / 'config'

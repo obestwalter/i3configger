@@ -1,6 +1,17 @@
-# Changelog
+# Ideas
 
-http://keepachangelog.com/en/0.3.0/
+# generate unused keys
+
+https://www.reddit.com/r/i3wm/comments/6f8znm/does_i3_support_transient_states/digobgi/
+
+It's tedious, but worthwhile, to define unused keys as "nop" inside a mode. This avoids typos "falling through" into the file you're editing for example.
+
+* Convention for mode: mode-<whatever>.conf
+* add unused keys
+
+## integrat wal
+
+https://github.com/dylanaraps/wal
 
 # Some inspiration from i3 project
 
@@ -24,3 +35,8 @@ It i3configger is started/run once before i3 is started the config can be build 
     tox -e i3configger -- --daemon
 
 e.g. which displays are connected and how should the workspaces and bars be configured according to that.
+
+
+# AUR package
+
+**TODO**

@@ -12,11 +12,11 @@ def configure(args):
     log.info(f'set notify method to {Notify.send.__name__}', )
 
 
-def communicate(msg='new config active', refresh=False):
+def communicate(msg='new config active', refresh=False, urgency='low'):
     if refresh:
         I3.refresh()
         StatusBar.refresh()
-    Notify.send(msg)
+    Notify.send(msg, urgency=urgency)
 
 
 class I3:
@@ -59,7 +59,7 @@ class I3:
         try:
             return subprocess.check_output(cmd).decode()
         except subprocess.CalledProcessError as e:
-            return e.output
+            return e.output.decode()
         except FileNotFoundError as e:
             assert Path(path).exists(), path
             assert "No such file or directory: 'i3'" in e.strerror
@@ -74,6 +74,7 @@ class Notify:
 
     @classmethod
     def notify_send(cls, msg, urgency='low'):
+        """urgency levels: low, normal, critical"""
         subprocess.check_call([
             'notify-send', '-a', 'i3configger', '-t', '1', '-u', urgency, msg])
 

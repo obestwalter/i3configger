@@ -16,6 +16,8 @@ SUFFIX = '.conf'
 SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
 
 
+# FIXME this is wrong - based on assumption that config always resides in partialsPath
+# Either make this a necessity or make it configurable
 class Paths:
     def __init__(self, configPath):
         path = Path(configPath)

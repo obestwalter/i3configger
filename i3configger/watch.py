@@ -18,7 +18,20 @@ _MASK = (flags.CREATE | flags.ATTRIB | flags.DELETE | flags.MODIFY |
 """Tell inotify to trigger on changes"""
 
 
+# FIXME based on assumption that partialsPath is always where configPath is
 def forever(configPath):
+    while True:
+        try:
+            watch_unguarded(configPath)
+        except exc.I3configgerException as e:
+            ipc.communicate("WARNING", urgency='normal')
+            log.warning(str(e))
+        except Exception as e:
+            ipc.communicate("ERROR", urgency='critical')
+            log.error(str(e))
+
+
+def watch_unguarded(configPath):
     partialsPath = configPath.parent
     watcher = INotify()
     watcher.add_watch(str(partialsPath).encode(), mask=_MASK)

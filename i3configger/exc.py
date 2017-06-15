@@ -17,14 +17,6 @@ class ConfigError(I3configgerException):
     pass
 
 
-class DuplicateKey(I3configgerException):
-    pass
-
-
-class MalformedAssignment(I3configgerException):
-    pass
-
-
 class MessageError(I3configgerException):
     pass
 
@@ -34,6 +26,10 @@ class PartialsError(I3configgerException):
 
 
 class ParseError(I3configgerException):
+    pass
+
+
+class ContextError(I3configgerException):
     pass
 
 

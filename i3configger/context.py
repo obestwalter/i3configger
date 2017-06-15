@@ -38,25 +38,25 @@ def prune(dst: dict, src: dict) -> dict:
     return dst
 
 
-def resolve_variables(context: dict) -> dict:
+def resolve_variables(ctx: dict) -> dict:
     """If variables are set by a variable, replace them by their value."""
-    if not any(v.startswith(base.VAR_MARK) for v in context.values()):
-        log.debug("needs no resolution: %s", context)
-        return context
-    resolvedContext = {}
-    seenKeys = []
-    for key, value in context.items():
-        if key in seenKeys:
-            raise exc.DuplicateKey("%s -> %s would be overridden with %s",
-                                   key, context[key], value)
-        if value.startswith(base.VAR_MARK):
-            try:
-                resolvedContext[key] = context[value]
-            except KeyError:
-                log.exception("[IGNORED] %s, %s", key, value)
-        else:
-            resolvedContext[key] = value
-    return resolvedContext
+    while any(v.startswith(base.VAR_MARK) for v in ctx.values()):
+        for key, value in ctx.items():
+            if not value.startswith(base.VAR_MARK):
+                continue
+            else:
+                ctx[key] = _resolve_variable(value, ctx, path=key)
+    return ctx
+
+
+def _resolve_variable(key, ctx, path):
+    path += "->" + key
+    resolved = ctx.get(key)
+    if not resolved:
+        raise exc.ContextError("not resolvable: %s", path)
+    if resolved.startswith(base.VAR_MARK):
+        return _resolve_variable(resolved, ctx, path)
+    return resolved
 
 
 def remove_variable_markers(ctx: dict) -> dict:
