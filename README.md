@@ -45,8 +45,6 @@ Explanation of the messages used:
 * `select[...]` integrates different config partials and can therefore make broad changes. In this case for example there are different `colors.<value>.conf` partials that activate different color schemes
 * `shadow` adds an overlay that in this case changes the mode of the laptop bar between `hide` and `dock`
 
-see [docs](http://oliver.bestwalter.de/i3configger/concept/) for a detailed explanation of the concept and other possible commands.
-
 ### Concept
 
 You can switch between alternative sub configurations (e.g. different color schemes) that conform with a simple naming convention (`config.d/<key>.<value1>.conf`, `config.d/<key>.<value2>.conf`, etc.) by invoking e.g. `i3configger select-next <key>` or `i3configger select <key> <value2>`.
@@ -57,7 +55,7 @@ This is realized by adding a build step that can be triggered by calling i3confi
 
 To get an idea how this works, have a look at the [examples](https://github.com/obestwalter/i3configger/tree/master/examples) and [read the docs](http://oliver.bestwalter.de/i3configger).
 
-[**Full Documentation is here**](http://oliver.bestwalter.de/i3configger)
+see [i3configger docs](http://oliver.bestwalter.de/i3configger/concept/) for a detailed explanation of the concept and other possible commands.
 
 ## Installation
 
