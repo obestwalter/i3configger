@@ -5,20 +5,25 @@
 
 # i3configger
 
-**Disclaimer:** this is a tool aimed at users who already know how the configuration of [i3](https://i3wm.org) works (as described in the [excellent docs](https://i3wm.org/docs/userguide.html)). i3configger is an independent add-on, not directly affiliated with the project and in no way necessary to use i3 productively. It is strictly command line oriented and file based using a very slight enhancement of the existing i3 configuration format with some json sprinkled on top. If you are looking for a graphical tool to help you create a configuration, check out the [resources in the docs](http://oliver.bestwalter.de/i3configger/resources).
-
+**Disclaimer:** this is a tool aimed at users who already know how the configuration of [i3](https://i3wm.org) works (as described in the [excellent docs](https://i3wm.org/docs/userguide.html)). i3configger is an independent add-on, not directly affiliated with the project and in no way necessary to use i3 productively.
 
 **NOTE** using i3configger will replace your existing config files (configs and optional status bar configs), but it will move them to `<original-name>.bak` if no backup exists yet, so that you can easily revert the damage if you want to go back to your old files.
 
 ## Why?
 
-I3 already has a very nice and simple configuration system. i3configger makes it a bit more malleable by spreding it over several files, letting you assign variables to variables and manipulate the config by sending "messages" to your configuration.
+I3 already has a very nice and simple configuration system. i3configger makes it a bit more malleable and making dynamic changes possible that would otherwise make it necessary to change the configuration by hand.
 
 ## How?
 
-### Example
+### Main characteristics
 
-Here's a snippet from a config that uses a mode to alter itself by calling i3configger:
+* command line oriented
+* uses same configuration language as i3 with the added possibility to spread it over several files and assign variables to variables
+* additional configuration of i3configger itself and persistence of changes to the i3 configuration is achieved by sprinkling a bit of json on top of the config files.
+
+### Usage example
+
+Here's a snippet from a config that uses a mode to alter itself by sending messages to i3configger:
 
 ```text
 set $i3cBin ~/.virtualenvs/i3/bin/i3configger
@@ -35,10 +40,12 @@ mode "i3configger" {
 
 ```
 
-These is an example how to use ways of manipulating the config with different messages:
+Explanation of the messages used:
 
 * `select[...]` integrates different config partials and can therefore make broad changes. In this case for example there are different `colors.<value>.conf` partials that activate different color schemes
 * `shadow` adds an overlay that in this case changes the mode of the laptop bar between `hide` and `dock`
+
+see [docs](http://oliver.bestwalter.de/i3configger/concept/) for a detailed explanation of the concept and other possible commands.
 
 ### Concept
 
