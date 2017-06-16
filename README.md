@@ -12,13 +12,39 @@
 
 ## Why?
 
-I3 already has a very nice and simple configuration system. i3configger makes it a bit more malleable by making it possible to send "messages" to your configuration.
+I3 already has a very nice and simple configuration system. i3configger makes it a bit more malleable by spreding it over several files, letting you assign variables to variables and manipulate the config by sending "messages" to your configuration.
 
 ## How?
 
-You can change any variable you have defined in the configuration by invoking `i3configger set <variable name> <new value>`.
+### Example
+
+Here's a snippet from a config that uses a mode to alter itself by calling i3configger:
+
+```text
+set $i3cBin ~/.virtualenvs/i3/bin/i3configger
+
+bindsym $win+w mode "i3configger"
+mode "i3configger" {
+    bindsym Right exec "$i3cBin select-next colors --i3-refresh-msg restart"
+    bindsym Left exec "$i3cBin select-previous colors --i3-refresh-msg restart"
+    bindsym Up exec "$i3cBin shadow bars:targets:laptop:mode dock"
+    bindsym Down exec "$i3cBin shadow bars:targets:laptop:mode hide"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+```
+
+These is an example how to use ways of manipulating the config with different messages:
+
+* `select[...]` integrates different config partials and can therefore make broad changes. In this case for example there are different `colors.<value>.conf` partials that activate different color schemes
+* `shadow` adds an overlay that in this case changes the mode of the laptop bar between `hide` and `dock`
+
+### Concept
 
 You can switch between alternative sub configurations (e.g. different color schemes) that conform with a simple naming convention (`config.d/<key>.<value1>.conf`, `config.d/<key>.<value2>.conf`, etc.) by invoking e.g. `i3configger select-next <key>` or `i3configger select <key> <value2>`.
+
+You can change any variable you have defined in the configuration by invoking `i3configger set <variable name> <new value>`.
 
 This is realized by adding a build step that can be triggered by calling i3configger directly or by running it as a watcher process that automatically rebuilds and reloads when source files change or messages are sent.
 
