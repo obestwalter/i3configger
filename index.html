@@ -353,9 +353,9 @@
 <p>I3 already has a very nice and simple configuration system. i3configger makes it a bit more malleable by making it possible to send "messages" to your configuration to change variables or to switch between alternative sub configurations (e.g. different color schemes). This is done by adding a build step that can be triggered by calling i3configger directly or by running it as a watcher process that automatically rebuilds and reloads when source files change or sending a message.</p>
 <h2 id="detailed-features">Detailed Features<a class="headerlink" href="#detailed-features" title="Permanent link">&para;</a></h2>
 <ul>
-<li>build main config and one or several i3status configs from the same sources</li>
+<li>build main config and one or several i3bar configs from the same sources</li>
 <li>variables are handled slightly more intelligently than i3 does it (variables assigned to other variables are resolved)</li>
-<li>variables in i3status configs are also resolved (set anywhere in the sources)</li>
+<li>variables in i3bar configs are also resolved (set anywhere in the sources)</li>
 <li>reload or restart i3 when a change has been done (using <code>i3-msg</code>)</li>
 <li>notify when new config has been created and activated (using <code>notify-send</code>)</li>
 <li>simple way to render partials based on key value pairs in file name</li>
