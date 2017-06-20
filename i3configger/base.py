@@ -13,7 +13,6 @@ MESSAGES_NAME = '.messages.json'
 VAR_MARK = '$'
 SET_MARK = 'set'
 SUFFIX = '.conf'
-SETTINGS_MARK = VAR_MARK + SET_MARK + '_'
 
 
 # FIXME this is wrong - based on assumption that config always resides
