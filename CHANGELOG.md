@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## UNRELEASED
+## Changed
+
+* Name for i3bar key is fixed to `i3bar` - no need to be configurable
+
+## Fixed
+* don't crash if no i3bar config file was yet generated
+* terminology i3status -> i3bar
+
+
 ## 0.7.7 (It's just getting better and better) - 2017-06-16
 ### Added
 
