@@ -13,6 +13,10 @@ MESSAGES_NAME = '.messages.json'
 VAR_MARK = '$'
 SET_MARK = 'set'
 SUFFIX = '.conf'
+I3BAR = "i3bar"
+"""reserved key for status bar template files"""
+DEL = 'del'
+"""signal to delete a key in shadow or set"""
 
 
 # FIXME this is wrong - based on assumption that config always resides

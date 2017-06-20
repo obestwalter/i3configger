@@ -113,5 +113,5 @@ If you want to deactivate a partial, you can do that by prepending a `.` to the 
 Using i3configger you can also:
 
 * assign variables to variables (`set $someVar $someOtherVar`)
-* Use variables set anywhere in config `partials` in i3status configuration files
+* Use variables set anywhere in config `partials` in i3bar configuration files
 * generate `bar {...}` settings from templates with some extra config.

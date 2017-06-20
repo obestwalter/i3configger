@@ -10,9 +10,9 @@ I3 already has a very nice and simple configuration system. i3configger makes it
 
 ##  Detailed Features
 
-* build main config and one or several i3status configs from the same sources
+* build main config and one or several i3bar configs from the same sources
 * variables are handled slightly more intelligently than i3 does it (variables assigned to other variables are resolved)
-* variables in i3status configs are also resolved (set anywhere in the sources)
+* variables in i3bar configs are also resolved (set anywhere in the sources)
 * reload or restart i3 when a change has been done (using `i3-msg`)
 * notify when new config has been created and activated (using `notify-send`)
 * simple way to render partials based on key value pairs in file name

@@ -13,7 +13,7 @@ yields something like:
 2017-06-08 19:25:49,131 i3configger.base:set_notify_command:54 DEBUG: do not send notifications
 2017-06-08 19:25:49,131 i3configger.config:fetch:159 INFO: read config from /home/oliver/.i3/config.d/i3configger.json
 2017-06-08 19:25:49,132 i3configger.config:fetch:161 DEBUG: use:
-{'bars': {'defaults': {'key': 'i3status',
+{'bars': {'defaults': {'key': 'i3bar',
                        'target': '..',
                        'template': 'tpl',
                        'value': 'default'},
@@ -28,7 +28,7 @@ yields something like:
  'mainTargetPath': PosixPath('/home/oliver/.i3/config'),
  'message': None,
  'partialsPath': PosixPath('/home/oliver/.i3/config.d'),
- 'payload': {'bars': {'defaults': {'key': 'i3status',
+ 'payload': {'bars': {'defaults': {'key': 'i3bar',
                                    'target': '..',
                                    'template': 'tpl',
                                    'value': 'default'},
@@ -67,7 +67,7 @@ yields something like:
 
 Have a look at the [examples](https://github.com/obestwalter/i3configger/tree/master/examples) to get an idea about how you can move towards a more dynamic configuration.
 
-For a real world example look at [my own i3 config](https://github.com/obestwalter/i3config). Here are the config partials and settings: [.i3/config.d](https://github.com/obestwalter/i3config/tree/master/config.d), from which [config](https://github.com/obestwalter/i3config/tree/master/config) and all `i3status.*conf` files are built.
+For a real world example look at [my own i3 config](https://github.com/obestwalter/i3config). Here are the config partials and settings: [.i3/config.d](https://github.com/obestwalter/i3config/tree/master/config.d), from which [config](https://github.com/obestwalter/i3config/tree/master/config) and all `i3bar.*conf` files are built.
 
 ## Dev mode - watch config folder
 

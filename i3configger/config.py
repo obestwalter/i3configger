@@ -13,9 +13,8 @@ I3_CONFIGGER_DEFAULTS = {
     },
     "bars": {
         "defaults": {
-            "target": "..",
             "template": "tpl",
-            "key": "i3status",
+            "target": "..",
             "value": "default"
         },
         "targets": {}
@@ -46,6 +45,7 @@ class I3configgerConfig:
         if not barSettings:
             return barTargets
         defaults = barSettings.get("defaults", {})
+        defaults['key'] = base.I3BAR
         for name, bar in barSettings["targets"].items():
             newBar = dict(bar)
             barTargets[name] = newBar

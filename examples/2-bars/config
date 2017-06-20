@@ -8,7 +8,7 @@
 workspace_layout tabbed
 
 
-### i3status.tpl.conf ###
+### i3bar.tpl.conf ###
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
@@ -17,12 +17,12 @@ bar {
         # you can access the settings from i3configger.json here
         # They will be added to the context from bars->targets
         # they are pre populated by the bars->defaults
-        status_command i3status -c ~/.i3/i3status.full.conf
+        status_command i3status -c ~/.i3/i3bar.full.conf
         output DP-3
         mode dock
         position bottom
 }
-### i3status.tpl.conf ###
+### i3bar.tpl.conf ###
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
@@ -31,7 +31,7 @@ bar {
         # you can access the settings from i3configger.json here
         # They will be added to the context from bars->targets
         # they are pre populated by the bars->defaults
-        status_command i3status -c ~/.i3/i3status.clock.conf
+        status_command i3status -c ~/.i3/i3bar.clock.conf
         output DP-4
         mode dock
         position top

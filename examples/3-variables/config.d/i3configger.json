@@ -1,7 +1,6 @@
 {
   "bars": {
     "defaults": {
-      "key": "i3status",
       "target": "..",
       "mode": "dock",
       "template": "tpl"

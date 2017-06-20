@@ -1,15 +1,10 @@
 import logging
 from pathlib import Path
 
-from i3configger import base, config, exc, partials, context
+from i3configger import base, config, context, exc, partials
+from i3configger.base import DEL, I3BAR
 
 log = logging.getLogger(__name__)
-
-
-I3STATUS = "i3status"
-"""reserved key for status bar setting files"""
-DEL = 'del'
-"""signal to delete a key in shadow or set"""
 
 
 class CMD:
@@ -148,7 +143,7 @@ class Messenger:
             for prt in prts:
                 if not prt.needsSelection:
                     continue
-                if prt.key not in initialSelects and prt.key != I3STATUS:
+                if prt.key not in initialSelects and prt.key != I3BAR:
                     initialSelects[prt.key] = prt.value
             state[CMD.SELECT] = initialSelects
         if CMD.SET not in state:

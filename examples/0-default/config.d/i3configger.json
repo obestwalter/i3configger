@@ -1,7 +1,7 @@
 {
   "bars": {
     "defaults": {
-      "key": "i3status",
+      "key": "i3bar",
       "target": "..",
       "template": "tpl",
       "value": "full"
