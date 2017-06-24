@@ -115,7 +115,7 @@ class Messenger:
             raise exc.MessageError(
                 f"No candidates for {self.message} in {self.prts}")
         if self.command == CMD.SELECT_PREVIOUS:
-            candidates = reversed(candidates)
+            candidates = list(reversed(candidates))
         current = self.payload["select"].get(self.key) or candidates[0].key
         for idx, candidate in enumerate(candidates):
             if candidate.value == current:
