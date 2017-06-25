@@ -13,7 +13,6 @@ def process_command_line():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     args = _parse_args(parser)
     base.configure_logging(verbosity=args.v, logPath=args.log)
-    args.config = Path(args.config).expanduser() if args.config else None
     if args.message and any([args.daemon, args.kill, args.watch]):
         parser.error("message and daemon/watch can't be used together. "
                      "Start the watcher process first and then you can send "
@@ -23,7 +22,8 @@ def process_command_line():
 
 def _parse_args(p):
     """Command line commands - all optional with [reasonable] defaults"""
-    p.add_argument('--version', action='store_true')
+    p.add_argument('--version', action='store_true',
+                   help='show version information and exit')
     p.add_argument('-v', action="count", help="raise verbosity", default=0)
     g = p.add_mutually_exclusive_group()
     g.add_argument('--watch', action="store_true",
@@ -39,7 +39,5 @@ def _parse_args(p):
                    help="show build notification via notify-send")
     p.add_argument('--log', action="store", default=None,
                    help="i3configgerPath to where log should be stored")
-    p.add_argument('-c', '--config', action="store", default=None,
-                   help="path to i3configger config file")
     p.add_argument("message", help="message to send to i3configger", nargs="*")
     return p.parse_args()

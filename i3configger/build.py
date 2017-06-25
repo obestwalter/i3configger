@@ -10,21 +10,21 @@ from i3configger import base, config, context, exc, ipc, message, partials
 log = logging.getLogger(__name__)
 
 
-def build_all(configPath):
-    log.info(f"start building from {configPath}")
-    p = base.Paths(configPath)
-    prts = partials.create(p.root)
-    cnf = config.I3configgerConfig(configPath)
-    msg = message.Messenger(p.messages, prts).fetch_messages()
+def build_all():
+    cnf = config.I3configgerConfig()
+    log.info(f"start building from {cnf.partialsPath}")
+    prts = partials.create(cnf.partialsPath)
+    msg = message.Messenger(cnf.messagesPath, prts).fetch_messages()
     cnf.payload = context.merge(cnf.payload, msg[message.CMD.SHADOW])
-    pathContentsMap = generate_contents(
-        cnf, prts, msg[message.CMD.SELECT], msg[message.CMD.SET])
-    check_config(pathContentsMap[cnf.mainTargetPath])
+    pathContentsMap = generate_contents(cnf, prts, msg)
+    check_config(pathContentsMap[cnf.targetPath])
     persist_results(pathContentsMap)
-    log.info(f"build from {configPath} done")
+    log.info(f"build from {cnf.configPath} done")
 
 
-def generate_contents(cnf, prts, selectorMap, setMap):
+def generate_contents(cnf: config.I3configgerConfig, prts, msg):
+    selectorMap = msg[message.CMD.SELECT]
+    setMap = msg[message.CMD.SET]
     pathContentsMap = {}
     barTargets = cnf.get_bar_targets()
     excludes = {b["key"] for b in barTargets.values()}
@@ -45,7 +45,7 @@ def generate_contents(cnf, prts, selectorMap, setMap):
             filename = f"{barCnf['key']}.{barCnf['value']}{base.SUFFIX}"
             dst = Path(barCnf["target"]) / filename
             pathContentsMap[dst] = statusFileContent
-    pathContentsMap[cnf.mainTargetPath] = mainContent.rstrip('\n') + '\n'
+    pathContentsMap[cnf.targetPath] = mainContent.rstrip('\n') + '\n'
     return pathContentsMap
 
 

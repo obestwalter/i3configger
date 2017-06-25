@@ -1,4 +1,6 @@
 """Just an experiment - I might split this out to another project"""
+from i3configger import config
+
 BINDCODE = 'bindcode'
 BINDSYM = 'bindsym'
 
@@ -37,6 +39,6 @@ if __name__ == '__main__':
     # mode-<modename>.conf -> bindings active in <modename>
     from i3configger import base, paths
 
-    p = paths.get_i3wm_config_path() / 'config'
+    p = config.I3configgerConfig().targetPath
     b = Bindings(p.read_text())
     print('\n'.join(b.get_all_bindings()))

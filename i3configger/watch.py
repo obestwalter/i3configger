@@ -6,7 +6,7 @@ from pathlib import Path
 import daemon
 import psutil
 
-from i3configger import base, build, exc, ipc
+from i3configger import base, build, exc, ipc, config
 from i3configger.inotify_simple import INotify, flags
 
 log = logging.getLogger(__name__)
@@ -18,11 +18,10 @@ _MASK = (flags.CREATE | flags.ATTRIB | flags.DELETE | flags.MODIFY |
 """Tell inotify to trigger on changes"""
 
 
-# FIXME based on assumption that partialsPath is always where configPath is
-def forever(configPath):
+def watch_guarded():
     while True:
         try:
-            watch_unguarded(configPath)
+            watch_unguarded()
         except exc.I3configgerException as e:
             ipc.communicate("WARNING", urgency='normal')
             log.warning(str(e))
@@ -31,19 +30,19 @@ def forever(configPath):
             log.error(str(e))
 
 
-def watch_unguarded(configPath):
-    partialsPath = configPath.parent
+def watch_unguarded():
+    cnf = config.I3configgerConfig(load=False)
     watcher = INotify()
-    watcher.add_watch(str(partialsPath).encode(), mask=_MASK)
+    watcher.add_watch(str(cnf.partialsPath).encode(), mask=_MASK)
     log.debug(f"initialized {watcher}")
     while True:
         events = watcher.read(read_delay=50)
         log.debug(f"events: {[f'{e[3]}:m={e[1]}' for e in events]}")
         if not events:
             continue
-        paths = [partialsPath / e[-1] for e in events]
+        paths = [cnf.partialsPath / e[-1] for e in events]
         if any(p.suffix in [base.SUFFIX, '.json'] for p in paths):
-            build.build_all(configPath)
+            build.build_all()
             ipc.communicate(refresh=True)
 
 
@@ -60,7 +59,7 @@ def get_daemon_process():
             f"and tell me how you did it.")
 
 
-def daemonized(verbosity, logPath, configPath):
+def daemonized(verbosity, logPath):
     others = get_daemon_process()
     if others:
         sys.exit(f"i3configger already running ({others})")
@@ -71,7 +70,7 @@ def daemonized(verbosity, logPath, configPath):
         context.stderr = sys.stderr
     with context:
         base.configure_logging(verbosity, logPath, isDaemon=True)
-        forever(configPath)
+        watch_guarded()
 
 
 def exorcise():

@@ -23,9 +23,9 @@ class CMD:
 
 
 def process(messagesPath, prts, message):
-    mp = Messenger(messagesPath, prts, message)
-    mp.execute()
-    config.freeze(messagesPath, mp.payload)
+    messenger = Messenger(messagesPath, prts, message)
+    messenger.digest_message()
+    config.freeze(messagesPath, messenger.payload)
 
 
 class Messenger:
@@ -41,7 +41,7 @@ class Messenger:
                     f"nesting of keys only sensible with {CMD.SHADOW}")
         log.debug(f"sending message {message} to {messagesPath}")
 
-    def execute(self):
+    def digest_message(self):
         self.payload = self.fetch_messages()
         try:
             {
