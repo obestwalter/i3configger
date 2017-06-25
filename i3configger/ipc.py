@@ -15,7 +15,7 @@ def configure(args):
 def communicate(msg='new config active', refresh=False, urgency='low'):
     if refresh:
         I3.refresh()
-        StatusBar.refresh()
+        I3bar.refresh()
     Notify.send(msg, urgency=urgency)
 
 
@@ -85,10 +85,12 @@ class Notify:
     send = notify_send
 
 
-class StatusBar:
+class I3bar:
     @classmethod
     def refresh(cls):
         try:
+            # TODO make i3status command configurable
+            # subprocess.check_output(['killall', '-SIGUSR1', 'py3status'])
             subprocess.check_output(['killall', '-SIGUSR1', 'i3status'])
         except subprocess.CalledProcessError as e:
             log.debug("[IGNORE] failed status refresh: %s", e)

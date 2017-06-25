@@ -1,15 +1,24 @@
 import json
 import logging
+import os
 import pprint
+import shutil
 from pathlib import Path
 
 from i3configger import base, exc
 
 log = logging.getLogger(__name__)
 
-I3_CONFIGGER_DEFAULTS = {
+# TODO make this all optional and always use default as base
+# * use context.merge to layer the config from file over it
+# * make all command line options configurable in config file
+# layer settings in order of defaults -> json -> commandline
+DEFAULTS = {
     "main": {
         "target": "../config",
+        "i3-refresh-msg": 'reload',
+        "i3status-command": "i3status",
+        "notify": False,
     },
     "bars": {
         "defaults": {
@@ -23,16 +32,22 @@ I3_CONFIGGER_DEFAULTS = {
 
 
 class I3configgerConfig:
-    def __init__(self, configPath: Path):
-        p = base.Paths(configPath)
-        self.configPath = configPath
-        self.partialsPath = p.root
-        self.payload = fetch(self.configPath)
-        targetPath = Path(self.payload["main"]["target"]).expanduser()
-        if targetPath.is_absolute():
-            self.mainTargetPath = targetPath.resolve()
-        else:
-            self.mainTargetPath = (self.partialsPath / targetPath).resolve()
+    PARTIALS_NAME = 'config.d'
+    CONFIG_NAME = 'i3configger.json'
+    MESSAGES_NAME = '.messages.json'
+
+    def __init__(self, load=True):
+        i3configBasePath = get_i3wm_config_path()
+        self.partialsPath = i3configBasePath / self.PARTIALS_NAME
+        self.configPath = self.partialsPath / self.CONFIG_NAME
+        self.messagesPath = self.partialsPath / self.MESSAGES_NAME
+        if load:
+            self.payload = fetch(self.configPath)
+            targetPath = Path(self.payload["main"]["target"]).expanduser()
+            if targetPath.is_absolute():
+                self.targetPath = targetPath.resolve()
+            else:
+                self.targetPath = (self.partialsPath / targetPath).resolve()
 
     def __str__(self):
         return "%s:\n%s" % (self.__class__.__name__,
@@ -73,3 +88,34 @@ def freeze(path, obj):
     with open(path, 'w') as f:
         json.dump(obj, f, sort_keys=True, indent=2)
     log.debug("froze %s to %s", pprint.pformat(obj), path)
+
+
+def ensure_i3_configger_sanity():
+    i3wmConfigPath = get_i3wm_config_path()
+    partialsPath = i3wmConfigPath / I3configgerConfig.PARTIALS_NAME
+    if not partialsPath.exists():
+        log.info("create new config folder at %s", partialsPath)
+        partialsPath.mkdir()
+        for candidate in [i3wmConfigPath / 'config', Path('etc/i3/config')]:
+            if candidate.exists():
+                log.info("populate config with %s", candidate)
+                shutil.copy2(candidate, partialsPath / 'config.conf')
+    configPath = partialsPath / I3configgerConfig.CONFIG_NAME
+    if not configPath.exists():
+        log.info("create default configuration at %s", configPath)
+        freeze(configPath, DEFAULTS)
+
+
+def get_i3wm_config_path():
+    """Use same search order like i3 (no system stuff though).
+
+    see: https://github.com/i3/i3/blob/4.13/libi3/get_config_path.c#L31
+    """
+    candidates = [
+        Path('~/.i3').expanduser(),
+        Path(os.getenv("XDG_CONFIG_HOME", '~/.config/')).expanduser() / 'i3']
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    raise exc.ConfigError(
+        f"can't find i3 config at the standard locations: {candidates}")
