@@ -13,7 +13,6 @@ log = logging.getLogger(__name__)
 def build_all():
     cnf = config.I3configgerConfig()
     log.info(f"start building from {cnf.partialsPath}")
-    ipc.configure(cnf)
     prts = partials.create(cnf.partialsPath)
     msg = message.Messenger(cnf.messagesPath, prts).fetch_messages()
     cnf.payload = context.merge(cnf.payload, msg[message.CMD.SHADOW])

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from i3configger import build, config, ipc
+from i3configger import build, config
 
 HERE = Path(__file__).parent
 EXAMPLES = HERE.parent / 'examples'
@@ -18,6 +18,7 @@ TEST_FOLDER_NAMES = sorted(list(
 
 
 @pytest.mark.parametrize("container", TEST_FOLDER_NAMES)
+@pytest.mark.usefixtures('deactivate_ipc')
 def test_build(container, monkeypatch):
     monkeypatch.setattr(
         config, 'get_i3wm_config_path', lambda: EXAMPLES / container)
@@ -25,7 +26,6 @@ def test_build(container, monkeypatch):
     monkeypatch.setattr(build, 'check_config', lambda _: True)
     config.ensure_i3_configger_sanity()
     cnf = config.I3configgerConfig()
-    ipc.configure(deactivate=True)
     assert cnf.configPath.exists() and cnf.configPath.is_file()
     build.build_all()
     buildPath = cnf.configPath.parents[1]
