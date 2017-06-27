@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+Lots of simplifications and refactoring.
+
+## Added
+
+* where it makes sense, defaults for command line settings can be changed in i3configger.json (command line overrides settings in config)
+* make status command configurable (for refresh)
+* add off-switch to ipc configuration (for testing)
+
+## Changed
+
+* breaking changes in i3configger.json - check examples to see what is different. Easiest way to upgrade is to move your old config to the side, run i3configger to generate a new default config and add your settings from the old config back in.
+* terminology: i3status -> i3bar
+* terminology: value -> select
+
 ## Removed
 
 * option for different config has no real use and unnecessarily complicates things

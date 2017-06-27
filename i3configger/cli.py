@@ -1,8 +1,7 @@
 import argparse
 import logging
-from pathlib import Path
 
-from i3configger import base
+from i3configger import config
 
 log = logging.getLogger(__name__)
 
@@ -12,7 +11,7 @@ def process_command_line():
         'i3configger',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     args = _parse_args(parser)
-    base.configure_logging(verbosity=args.v, logPath=args.log)
+    config.cliMainOverrideMap = vars(args)
     if args.message and any([args.daemon, args.kill, args.watch]):
         parser.error("message and daemon/watch can't be used together. "
                      "Start the watcher process first and then you can send "

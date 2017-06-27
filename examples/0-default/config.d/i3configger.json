@@ -1,14 +1,17 @@
 {
   "bars": {
     "defaults": {
-      "key": "i3bar",
       "target": "..",
       "template": "tpl",
-      "value": "full"
+      "select": "default"
     },
     "targets": {}
   },
   "main": {
+    "i3_refresh_msg": "reload",
+    "status_command": "i3status",
+    "log": null,
+    "notify": false,
     "target": "../config"
   }
 }

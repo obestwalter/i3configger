@@ -1,4 +1,3 @@
-import shutil
 from pathlib import Path
 
 import pytest
@@ -18,14 +17,14 @@ TEST_FOLDER_NAMES = sorted(list(
      if d.is_dir() and not str(d.name).startswith('_')]))
 
 
+# @pytest.mark.parametrize("container", ["2-bars"])
 @pytest.mark.parametrize("container", TEST_FOLDER_NAMES)
+@pytest.mark.usefixtures('deactivate_ipc')
 def test_build(container, monkeypatch):
     monkeypatch.setattr(
         config, 'get_i3wm_config_path', lambda: EXAMPLES / container)
     monkeypatch.setattr(build, 'make_header', lambda _: FAKE_HEADER)
-    if not shutil.which('i3'):
-        # we're on CI
-        monkeypatch.setattr(build, 'check_config', lambda _: True)
+    monkeypatch.setattr(build, 'check_config', lambda _: True)
     config.ensure_i3_configger_sanity()
     cnf = config.I3configgerConfig()
     assert cnf.configPath.exists() and cnf.configPath.is_file()

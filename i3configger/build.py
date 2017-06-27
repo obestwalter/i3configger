@@ -13,13 +13,15 @@ log = logging.getLogger(__name__)
 def build_all():
     cnf = config.I3configgerConfig()
     log.info(f"start building from {cnf.partialsPath}")
+    ipc.configure(cnf)
     prts = partials.create(cnf.partialsPath)
     msg = message.Messenger(cnf.messagesPath, prts).fetch_messages()
     cnf.payload = context.merge(cnf.payload, msg[message.CMD.SHADOW])
     pathContentsMap = generate_contents(cnf, prts, msg)
     check_config(pathContentsMap[cnf.targetPath])
     persist_results(pathContentsMap)
-    log.info(f"build from {cnf.configPath} done")
+    ipc.communicate(refresh=True)
+    log.info("build done")
 
 
 def generate_contents(cnf: config.I3configgerConfig, prts, msg):
@@ -27,24 +29,20 @@ def generate_contents(cnf: config.I3configgerConfig, prts, msg):
     setMap = msg[message.CMD.SET]
     pathContentsMap = {}
     barTargets = cnf.get_bar_targets()
-    excludes = {b["key"] for b in barTargets.values()}
-    selected = partials.select(prts, selectorMap, excludes)
+    selected = partials.select(prts, selectorMap, excludes=[base.I3BAR])
     ctx = context.process(selected + [setMap])
-    ctx = context.resolve_variables(ctx)
-    ctx = context.remove_variable_markers(ctx)
-    log.info(f"main context:\n{pformat(ctx)}")
+    log.debug(f"main context:\n{pformat(ctx)}")
     mainContent = generate_main_content(cnf.partialsPath, selected, ctx)
     for barName, barCnf in barTargets.items():
         barCnf["id"] = barName
+        log.debug(f"bar {barName} config:\n{pformat(barCnf)}")
         eCtx = context.process([ctx, barCnf])
-        log.info(f"bar {barName} context:\n{pformat(eCtx)}")
-        mainContent += "\n%s" % generate_bar_setting(barCnf, prts, eCtx)
-        statusFileContent = generate_status_file_content(
-            prts, barCnf["key"], barCnf["value"], eCtx)
-        if statusFileContent:
-            filename = f"{barCnf['key']}.{barCnf['value']}{base.SUFFIX}"
+        mainContent += "\n%s" % get_bar_setting(barCnf, prts, eCtx)
+        i3barFileContent = generate_i3bar_content(prts, barCnf["select"], eCtx)
+        if i3barFileContent:
+            filename = f"{base.I3BAR}.{barCnf['select']}{base.SUFFIX}"
             dst = Path(barCnf["target"]) / filename
-            pathContentsMap[dst] = statusFileContent
+            pathContentsMap[dst] = i3barFileContent
     pathContentsMap[cnf.targetPath] = mainContent.rstrip('\n') + '\n'
     return pathContentsMap
 
@@ -68,18 +66,18 @@ def generate_main_content(partialsPath, selected, ctx):
     return context.substitute('\n'.join(out), ctx).rstrip('\n') + '\n\n'
 
 
-def generate_bar_setting(barCnf, prts, ctx):
-    tpl = partials.find(prts, barCnf["key"], barCnf["template"])
+def get_bar_setting(barCnf, prts, ctx):
+    tpl = partials.find(prts, base.I3BAR, barCnf["template"])
     assert isinstance(tpl, partials.Partial), tpl
+    tpl.name = "%s [id: %s]" % (tpl.name, barCnf["id"])
     return context.substitute(tpl.get_pruned_content(), ctx).rstrip('\n')
 
 
-def generate_status_file_content(prts, selectKey, selectValue, ctx):
-    prt = partials.find(prts, selectKey, selectValue)
+def generate_i3bar_content(prts, selectValue, ctx):
+    prt = partials.find(prts, base.I3BAR, selectValue)
     if not prt:
-        log.warning("[IGNORE] no status config named %s.%s%s",
-                    selectKey, selectKey, base.SUFFIX)
-        return
+        raise exc.ConfigError("[IGNORE] no status config named %s.%s%s",
+                              base.I3BAR, selectValue, base.SUFFIX)
     assert isinstance(prt, partials.Partial), prt
     content = context.substitute(prt.get_pruned_content(), ctx)
     return content.rstrip('\n') + '\n'

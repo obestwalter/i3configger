@@ -1,3 +1,4 @@
+import copy
 import json
 import logging
 import os
@@ -5,26 +6,25 @@ import pprint
 import shutil
 from pathlib import Path
 
-from i3configger import base, exc
+from i3configger import context, exc
 
 log = logging.getLogger(__name__)
+cliMainOverrideMap = {}
+"""holds parsed args if started from cli and was initialized"""
 
-# TODO make this all optional and always use default as base
-# * use context.merge to layer the config from file over it
-# * make all command line options configurable in config file
-# layer settings in order of defaults -> json -> commandline
 DEFAULTS = {
     "main": {
         "target": "../config",
-        "i3-refresh-msg": 'reload',
-        "i3status-command": "i3status",
+        "i3_refresh_msg": 'reload',
+        "status_command": "i3status",
+        "log": None,
         "notify": False,
     },
     "bars": {
         "defaults": {
             "template": "tpl",
             "target": "..",
-            "value": "default"
+            "select": "default"
         },
         "targets": {}
     }
@@ -42,16 +42,24 @@ class I3configgerConfig:
         self.configPath = self.partialsPath / self.CONFIG_NAME
         self.messagesPath = self.partialsPath / self.MESSAGES_NAME
         if load:
-            self.payload = fetch(self.configPath)
-            targetPath = Path(self.payload["main"]["target"]).expanduser()
-            if targetPath.is_absolute():
-                self.targetPath = targetPath.resolve()
-            else:
-                self.targetPath = (self.partialsPath / targetPath).resolve()
+            self.load()
 
     def __str__(self):
         return "%s:\n%s" % (self.__class__.__name__,
                             pprint.pformat(vars(self)))
+
+    def load(self):
+        """ layered overrides `DEFAULTS` -> `i3configger.json`-> `args`"""
+        cnfFromDefaults = copy.deepcopy(DEFAULTS)
+        cnfFromFile = fetch(self.configPath)
+        self.payload = context.merge(cnfFromDefaults, cnfFromFile)
+        mainOverrides = dict(main=cliMainOverrideMap)
+        self.payload = context.merge(self.payload, mainOverrides)
+        targetPath = Path(self.payload["main"]["target"]).expanduser()
+        if targetPath.is_absolute():
+            self.targetPath = targetPath.resolve()
+        else:
+            self.targetPath = (self.partialsPath / targetPath).resolve()
 
     def get_bar_targets(self):
         """Create a resolved copy of the bar settings."""
@@ -60,7 +68,6 @@ class I3configgerConfig:
         if not barSettings:
             return barTargets
         defaults = barSettings.get("defaults", {})
-        defaults['key'] = base.I3BAR
         for name, bar in barSettings["targets"].items():
             newBar = dict(bar)
             barTargets[name] = newBar
@@ -74,13 +81,12 @@ class I3configgerConfig:
         return barTargets
 
 
-def fetch(path):
+def fetch(path: Path) -> dict:
     if not path.exists():
         raise exc.ConfigError(f"file not found: {path}")
     with path.open() as f:
-        log.info(f"fetch from {path}")
         payload = json.load(f)
-        log.debug(f"{path}: {pprint.pformat(payload)}")
+        log.debug(f"{path}:\n{pprint.pformat(payload)}")
         return payload
 
 

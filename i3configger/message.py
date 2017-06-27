@@ -2,18 +2,17 @@ import logging
 from pathlib import Path
 
 from i3configger import base, config, context, exc, partials
-from i3configger.base import DEL, I3BAR
 
 log = logging.getLogger(__name__)
 
 
 class CMD:
-    SELECT_NEXT = "select-next"
-    SELECT_PREVIOUS = "select-previous"
-    SELECT = "select"
-    SET = "set"
     MERGE = "merge"
     PRUNE = "prune"
+    SELECT = "select"
+    SELECT_NEXT = "select-next"
+    SELECT_PREVIOUS = "select-previous"
+    SET = "set"
     SHADOW = "shadow"
 
     @classmethod
@@ -22,10 +21,12 @@ class CMD:
                 if k[0].isupper() and k[0] != '_']
 
 
-def process(messagesPath, prts, message):
-    messenger = Messenger(messagesPath, prts, message)
+def save(message):
+    cnf = config.I3configgerConfig(load=False)
+    prts = partials.create(cnf.partialsPath)
+    messenger = Messenger(cnf.messagesPath, prts, message)
     messenger.digest_message()
-    config.freeze(messagesPath, messenger.payload)
+    config.freeze(cnf.messagesPath, messenger.payload)
 
 
 class Messenger:
@@ -39,19 +40,19 @@ class Messenger:
             if self.command != CMD.SHADOW and ':' in self.key:
                 raise exc.UserError(
                     f"nesting of keys only sensible with {CMD.SHADOW}")
-        log.debug(f"sending message {message} to {messagesPath}")
+        self.payload = self.fetch_messages()
+        log.debug(f"send message '{message}' to {messagesPath}")
 
     def digest_message(self):
-        self.payload = self.fetch_messages()
         try:
             {
                 CMD.MERGE: self._process_merge,
                 CMD.PRUNE: self._process_prune,
-                CMD.SET: self._process_set,
                 CMD.SELECT: self._process_select,
-                CMD.SHADOW: self._process_shadow,
                 CMD.SELECT_NEXT: self._process_select_shift,
                 CMD.SELECT_PREVIOUS: self._process_select_shift,
+                CMD.SET: self._process_set,
+                CMD.SHADOW: self._process_shadow,
             }[self.command]()
         except KeyError:
             raise exc.UserError(
@@ -71,7 +72,7 @@ class Messenger:
         self.payload = func(self.payload, config.fetch(path))
 
     def _process_set(self):
-        if self.value.lower() == DEL:
+        if self.value.lower() == base.DEL:
             del self.payload[CMD.SET][base.VAR_MARK + self.key]
         else:
             self.payload[CMD.SET][base.VAR_MARK + self.key] = self.value
@@ -85,7 +86,7 @@ class Messenger:
         if not candidate:
             raise exc.MessageError(
                 f"No candidates for {self.message} in {candidates}")
-        if self.value and self.value.lower() == DEL:
+        if self.value and self.value.lower() == base.DEL:
             del self.payload[CMD.SELECT][self.key]
         else:
             self.payload[CMD.SELECT][self.key] = candidate.value
@@ -103,7 +104,7 @@ class Messenger:
                 current[part] = {}
                 current = current[part]
             else:
-                if self.value is not None and self.value.lower() == DEL:
+                if self.value is not None and self.value.lower() == base.DEL:
                     del current[part]
                 else:
                     current[part] = self.value
@@ -143,7 +144,7 @@ class Messenger:
             for prt in prts:
                 if not prt.needsSelection:
                     continue
-                if prt.key not in initialSelects and prt.key != I3BAR:
+                if prt.key not in initialSelects and prt.key != base.I3BAR:
                     initialSelects[prt.key] = prt.value
             state[CMD.SELECT] = initialSelects
         if CMD.SET not in state:

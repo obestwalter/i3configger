@@ -34,7 +34,7 @@ def watch_unguarded():
     cnf = config.I3configgerConfig(load=False)
     watcher = INotify()
     watcher.add_watch(str(cnf.partialsPath).encode(), mask=_MASK)
-    log.debug(f"initialized {watcher}")
+    log.debug(f"start watching {cnf.partialsPath}")
     while True:
         events = watcher.read(read_delay=50)
         log.debug(f"events: {[f'{e[3]}:m={e[1]}' for e in events]}")
@@ -46,7 +46,7 @@ def watch_unguarded():
             ipc.communicate(refresh=True)
 
 
-def get_daemon_process():
+def get_i3configger_process():
     """should always be max one, but you never know ..."""
     all_ = [p for p in psutil.process_iter() if p.name() == 'i3configger']
     others = [p for p in all_ if p.pid != os.getpid()]
@@ -60,9 +60,9 @@ def get_daemon_process():
 
 
 def daemonized(verbosity, logPath):
-    others = get_daemon_process()
-    if others:
-        sys.exit(f"i3configger already running ({others})")
+    process = get_i3configger_process()
+    if process:
+        sys.exit(f"i3configger already running ({process})")
     context = daemon.DaemonContext(working_directory=Path(__file__).parent)
     if verbosity > 2:
         # spew output to terminal from where daemon was started
@@ -74,7 +74,7 @@ def daemonized(verbosity, logPath):
 
 
 def exorcise():
-    process = get_daemon_process()
+    process = get_i3configger_process()
     if not process:
         raise exc.UserError("no daemon running - nothing to kill")
     process.kill()

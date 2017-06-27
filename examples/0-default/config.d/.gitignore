@@ -1,0 +1,4 @@
+# i3configger provides defaults for everything,
+# so for simple usages a config file is not necessary.
+# On first use a config file contatinin the defaults will always be created
+i3configger.json

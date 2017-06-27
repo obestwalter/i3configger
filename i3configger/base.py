@@ -27,7 +27,7 @@ def configure_logging(verbosity: int, logPath: str, isDaemon=False):
         logPath = Path(tempfile.gettempdir()) / name
     if DEBUG:
         print('logging to %s' % logPath)
-        level = 'DEBUG'
+        level = logging.getLevelName('DEBUG')
     else:
         level = logging.getLevelName(
             {0: 'ERROR', 1: 'WARNING', 2: 'INFO'}.get(verbosity, 'DEBUG'))
@@ -35,7 +35,6 @@ def configure_logging(verbosity: int, logPath: str, isDaemon=False):
            '%(levelname)s: %(message)s')
     if not rootLogger.handlers:
         logging.basicConfig(format=fmt, level=level)
-        log.debug("logging initialized: %s", rootLogger.handlers)
     fileHandler = logging.FileHandler(logPath)
     fileHandler.setFormatter(logging.Formatter(fmt))
     fileHandler.setLevel(level)

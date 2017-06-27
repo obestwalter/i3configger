@@ -5,11 +5,19 @@ from pathlib import Path
 log = logging.getLogger(__name__)
 
 
-def configure(args):
-    I3.set_msg_type(args.i3_refresh_msg)
-    log.info(f'set i3 refresh method to {I3.refresh.__name__}', )
-    Notify.set_notify_command(args.notify)
-    log.info(f'set notify method to {Notify.send.__name__}', )
+def configure(cnf=None, deactivate=False):
+    if deactivate:
+        I3.configure(None)
+        I3bar.configure(None)
+        Notify.configure(None)
+        log.info("ipc deactivated")
+    else:
+        I3.configure(cnf.payload["main"]["i3_refresh_msg"])
+        log.info(f'set i3 refresh method to {I3.refresh.__name__}', )
+        I3bar.configure(cnf.payload["main"]["status_command"])
+        log.info(f'set i3bar refresh method to {I3bar.refresh.__name__}', )
+        Notify.configure(cnf.payload["main"]["notify"])
+        log.info(f'set notify method to {Notify.send.__name__}', )
 
 
 def communicate(msg='new config active', refresh=False, urgency='low'):
@@ -21,11 +29,11 @@ def communicate(msg='new config active', refresh=False, urgency='low'):
 
 class I3:
     @classmethod
-    def set_msg_type(cls, which):
+    def configure(cls, which):
         cls.refresh = {
             'restart': cls.restart_i3,
             'reload': cls.reload_i3,
-        }.get(which, cls.nop)
+        }.get(which, nop)
 
     @classmethod
     def reload_i3(cls):
@@ -34,10 +42,6 @@ class I3:
     @classmethod
     def restart_i3(cls):
         subprocess.call(['i3-msg', 'restart'])
-
-    @classmethod
-    def nop(cls):
-        pass
 
     refresh = restart_i3
 
@@ -69,8 +73,8 @@ class I3:
 
 class Notify:
     @classmethod
-    def set_notify_command(cls, notify):
-        cls.send = cls.notify_send if notify else cls.nop
+    def configure(cls, notify):
+        cls.send = cls.notify_send if notify else nop
 
     @classmethod
     def notify_send(cls, msg, urgency='low'):
@@ -78,19 +82,27 @@ class Notify:
         subprocess.check_call([
             'notify-send', '-a', 'i3configger', '-t', '1', '-u', urgency, msg])
 
-    @staticmethod
-    def nop(*args, **kwargs):
-        pass
-
     send = notify_send
 
 
 class I3bar:
+    command = 'i3status'
+
     @classmethod
-    def refresh(cls):
+    def configure(cls, command):
+        cls.command = command
+        cls.refresh = cls.refresh if command else nop
+
+    @classmethod
+    def send_sigusr1(cls):
         try:
-            # TODO make i3status command configurable
-            # subprocess.check_output(['killall', '-SIGUSR1', 'py3status'])
-            subprocess.check_output(['killall', '-SIGUSR1', 'i3status'])
+            subprocess.check_output(['killall', '-SIGUSR1', cls.command])
         except subprocess.CalledProcessError as e:
             log.debug("[IGNORE] failed status refresh: %s", e)
+
+    refresh = send_sigusr1
+
+
+# noinspection PyUnusedLocal
+def nop(*args, **kwargs):
+    pass

@@ -37,7 +37,7 @@ if __name__ == '__main__':
     # TODO use partials and account for modes
     # a naming convention would make this quite easy
     # mode-<modename>.conf -> bindings active in <modename>
-    from i3configger import base, paths
+    from i3configger import base
 
     p = config.I3configgerConfig().targetPath
     b = Bindings(p.read_text())

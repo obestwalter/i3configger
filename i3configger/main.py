@@ -1,8 +1,7 @@
 import logging
 import sys
 
-from i3configger import (
-    base, build, cli, config, exc, ipc, message, partials,  watch)
+from i3configger import base, build, cli, config, exc, ipc, message, watch
 
 log = logging.getLogger(__name__)
 
@@ -18,10 +17,14 @@ def main():
         sys.exit(e)
 
 
+# TODO turn watch, daemon and kill also into commands?
+
+
 def _main(args):
     config.ensure_i3_configger_sanity()
-    cnf = config.I3configgerConfig(load=False)
-    ipc.configure(args)
+    cnf = config.I3configgerConfig()
+    base.configure_logging(
+        verbosity=args.v, logPath=cnf.payload['main']["log"])
     if args.version:
         print(f"i3configger {base.get_version()}")
         return 0
@@ -29,12 +32,11 @@ def _main(args):
         watch.exorcise()
         return 0
     if args.message:
-        prts = partials.create(cnf.partialsPath)
-        message.process(cnf.messagesPath, prts, args.message)
-    if watch.get_daemon_process():
+        message.save(args.message)
+    if watch.get_i3configger_process():
         if not args.message:
             sys.exit("Already running - did you mean to send a message?")
-        log.info("let the daemon do the work")
+        log.info("let the running process do the work")
         return 0
     if args.daemon:
         watch.daemonized(args.v, args.log)

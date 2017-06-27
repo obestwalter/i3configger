@@ -4,7 +4,7 @@
 
 ### filler.conf ###
 # Theoretically the config could be empty, but i3 -C crashes if it is only
-# passed bar settings and not at least one othe config value
+# passed bar settings and not at least one other config value
 workspace_layout tabbed
 
 
