@@ -8,6 +8,6 @@ branches:
   except:
     - experimental
 install:
-  - pip install tox
+  - pip install --pre -U tox
 script:
   - tox
