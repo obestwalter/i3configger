@@ -1,7 +1,5 @@
 # Getting started
 
-**WARNING** going ahead will overwrite your existing config file, so make sure your config is under source control and/or you have a backup. i3configger will create a backup of your old config but only one, so running i3configger twice will leave no trace of your original configuration file.
-
 Having that out of the way: simply running i3configger once you have it installed should get you set up nicely.
 
     $ i3configger -vv
