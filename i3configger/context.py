@@ -49,9 +49,7 @@ def resolve_variables(ctx: dict) -> dict:
     """If variables are set by a variable, replace them by their value."""
     while any(v.startswith(base.VAR_MARK) for v in ctx.values()):
         for key, value in ctx.items():
-            if not value.startswith(base.VAR_MARK):
-                continue
-            else:
+            if value.startswith(base.VAR_MARK):
                 ctx[key] = _resolve_variable(value, ctx, path=key)
     return ctx
 
