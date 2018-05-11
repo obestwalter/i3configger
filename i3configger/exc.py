@@ -4,7 +4,7 @@ class I3configgerException(Exception):
         try:
             # noinspection PyArgumentList
             super().__init__(args[0] % (args[1:]), **kwargs)
-        except:
+        except Exception:
             # noinspection PyArgumentList
             super().__init__(*args, **kwargs)
 

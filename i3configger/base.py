@@ -46,7 +46,7 @@ def get_version():
     try:
         from pkg_resources import get_distribution
         return get_distribution('i3configger').version
-    except:
+    except Exception:
         log.exception("fetching version failed")
         return 'unknown'
 
