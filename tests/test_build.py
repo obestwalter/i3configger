@@ -34,7 +34,7 @@ def test_build(container, monkeypatch):
     assert names
     for name in names:
         resultFilePath = buildPath / name
-        referenceFilePath = (referencePath / name)
+        referenceFilePath = referencePath / name
         assert resultFilePath != referenceFilePath
         result = resultFilePath.read_text()
         reference = referenceFilePath.read_text()
