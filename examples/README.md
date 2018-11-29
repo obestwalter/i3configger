@@ -20,7 +20,9 @@ Let's generate more bars now. If you have an external monitor where you want to 
 
 ## [variables](3-variables)
 
-Variables can be set and used anywhere (independent of order. Variables can also be assigned the value of other variables.
+Variables can be set and used anywhere (independent of order).
+
+Variables can also be assigned the value of other variables.
 
 ## [schemes](4-schemes)
 
