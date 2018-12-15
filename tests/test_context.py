@@ -19,7 +19,7 @@ unresolvedIndirection = {"$k1": "$k2", "$k2": "$k3", "$k3": "$k4"}
         (oneIndirection, {"$k1": "v1", "$k2": "v1"}),
         (twoIndirections, {"$k1": "v1", "$k2": "v1", "$k3": "v1"}),
         (unresolvedIndirection, exc.ContextError),
-    )
+    ),
 )
 def test_context(ctx, exp):
     if isinstance(exp, dict):

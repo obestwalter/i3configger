@@ -5,7 +5,7 @@ import pytest
 from i3configger import ipc
 
 
-@pytest.fixture(name='tmpdir')
+@pytest.fixture(name="tmpdir")
 def tmpdir_as_pathlib_path(tmpdir):
     return Path(tmpdir)
 

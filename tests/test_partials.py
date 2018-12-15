@@ -4,7 +4,7 @@ import pytest
 
 from i3configger import exc, partials
 
-SCHEMES = Path(__file__).parents[1] / 'examples' / '4-schemes' / 'config.d'
+SCHEMES = Path(__file__).parents[1] / "examples" / "4-schemes" / "config.d"
 
 
 def test_create():
@@ -13,17 +13,18 @@ def test_create():
 
 
 @pytest.mark.parametrize(
-    "key, value, exp", (
-        ('', '', exc.ConfigError),
-        ('some-key', '', exc.ConfigError),
-        ('', '', exc.ConfigError),
+    "key, value, exp",
+    (
+        ("", "", exc.ConfigError),
+        ("some-key", "", exc.ConfigError),
+        ("", "", exc.ConfigError),
         (None, None, exc.ConfigError),
-        ('non-existing-key', 'some-value', exc.ConfigError),
-        ('non-existing-key', 'none-existing-value', exc.ConfigError),
-        ('some-category', 'none-existing-value', exc.ConfigError),
-        ('some-key', 'value1', True),
-        ('some-key', 'value2', True),
-    )
+        ("non-existing-key", "some-value", exc.ConfigError),
+        ("non-existing-key", "none-existing-value", exc.ConfigError),
+        ("some-category", "none-existing-value", exc.ConfigError),
+        ("some-key", "value1", True),
+        ("some-key", "value2", True),
+    ),
 )
 def test_select(key, value, exp):
     prts = partials.create(SCHEMES)
