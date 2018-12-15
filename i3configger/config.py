@@ -34,7 +34,6 @@ class I3configgerConfig:
 
     def __init__(self, load=True):
         i3configBasePath = get_i3wm_config_path()
-        # FIXME rename partialsPath -> i3configgerPath
         self.partialsPath = i3configBasePath / self.PARTIALS_NAME
         self.configPath = self.partialsPath / self.CONFIG_NAME
         self.messagesPath = self.partialsPath / self.MESSAGES_NAME
@@ -79,17 +78,14 @@ class I3configgerConfig:
 
 def fetch(path: Path) -> dict:
     if not path.exists():
-        raise exc.ConfigError(f"file not found: {path}")
-    # FIXME update to read_text() (also all other occurences)
-    with path.open() as f:
-        payload = json.load(f)
-        log.debug(f"{path}:\n{pprint.pformat(payload)}")
-        return payload
+        raise exc.ConfigError(f"config not found at {path}")
+    payload = json.loads(path.read_text())
+    log.debug(f"{path}:\n{pprint.pformat(payload)}")
+    return payload
 
 
 def freeze(path, obj):
-    with open(path, "w") as f:
-        json.dump(obj, f, sort_keys=True, indent=2)
+    path.write_text(json.dumps(obj, sort_keys=True, indent=2))
     log.debug(f"froze {pprint.pformat(obj)} to {path}")
 
 
