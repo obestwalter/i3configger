@@ -1,8 +1,8 @@
 """Just an experiment - I might split this out to another project"""
 from i3configger import config
 
-BINDCODE = 'bindcode'
-BINDSYM = 'bindsym'
+BINDCODE = "bindcode"
+BINDSYM = "bindsym"
 
 
 class Bindings:
@@ -12,13 +12,13 @@ class Bindings:
 
     [--release] [--border] [--whole-window] [<Modifiers>+]button<n> command
     """
+
     def __init__(self, content):
         self.content = content
 
     def get_all_bindings(self):
         lines = [l.strip() for l in self.content.splitlines()]
-        lines = [
-            l for l in lines if any(m in l for m in [BINDCODE, BINDSYM])]
+        lines = [l for l in lines if any(m in l for m in [BINDCODE, BINDSYM])]
         lines = [l for l in lines if not l.startswith(base.COMMENT_MARK)]
         return sorted(set(lines))
 
@@ -33,7 +33,7 @@ class Bindings:
         """Write info in some format that can be nicely displayed"""
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # TODO use partials and account for modes
     # a naming convention would make this quite easy
     # mode-<modename>.conf -> bindings active in <modename>
@@ -41,4 +41,4 @@ if __name__ == '__main__':
 
     p = config.I3configgerConfig().targetPath
     b = Bindings(p.read_text())
-    print('\n'.join(b.get_all_bindings()))
+    print("\n".join(b.get_all_bindings()))

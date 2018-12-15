@@ -24,8 +24,7 @@ def _main(args):
     config.ensure_i3_configger_sanity()
     cnf = config.I3configgerConfig()
     ipc.configure(cnf)
-    base.configure_logging(
-        verbosity=args.v, logPath=cnf.payload['main']["log"])
+    base.configure_logging(verbosity=args.v, logPath=cnf.payload["main"]["log"])
     if args.version:
         print(f"i3configger {base.get_version()}")
         return 0

@@ -1,6 +1,9 @@
 class I3configgerException(Exception):
     """Main exception with log style string formatting enhancement"""
+
     def __init__(self, *args, **kwargs):
+        # https://lgtm.com/projects/g/obestwalter/i3configger/alerts/?mode=list
+        # todo change all raises to f-strings and get rid of this code
         try:
             # noinspection PyArgumentList
             super().__init__(args[0] % (args[1:]), **kwargs)

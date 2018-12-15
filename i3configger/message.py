@@ -17,8 +17,7 @@ class CMD:
 
     @classmethod
     def get_all_commands(cls):
-        return [v for k, v in cls.__dict__.items()
-                if k[0].isupper() and k[0] != '_']
+        return [v for k, v in cls.__dict__.items() if k[0].isupper() and k[0] != "_"]
 
 
 def save(message):
@@ -36,10 +35,9 @@ class Messenger:
         self.message = message
         if self.message:
             self.command, self.key, *rest = message
-            self.value = rest[0] if rest else ''
-            if self.command != CMD.SHADOW and ':' in self.key:
-                raise exc.UserError(
-                    f"nesting of keys only sensible with {CMD.SHADOW}")
+            self.value = rest[0] if rest else ""
+            if self.command != CMD.SHADOW and ":" in self.key:
+                raise exc.UserError(f"nesting of keys only sensible with {CMD.SHADOW}")
         self.payload = self.fetch_messages()
         log.debug(f"send message '{message}' to {messagesPath}")
 
@@ -57,7 +55,8 @@ class Messenger:
         except KeyError:
             raise exc.UserError(
                 f"Unknown command: {self.command}. "
-                f"Use one of {', '.join(CMD.get_all_commands())}")
+                f"Use one of {', '.join(CMD.get_all_commands())}"
+            )
 
     def _process_merge(self):
         self._transform(context.merge)
@@ -80,12 +79,10 @@ class Messenger:
     def _process_select(self):
         candidates = partials.find(self.prts, self.key)
         if not candidates:
-            raise exc.MessageError(
-                f"No candidates for {self.message} in {self.prts}")
+            raise exc.MessageError(f"No candidates for {self.message} in {self.prts}")
         candidate = partials.find(self.prts, self.key, self.value)
         if not candidate:
-            raise exc.MessageError(
-                f"No candidates for {self.message} in {candidates}")
+            raise exc.MessageError(f"No candidates for {self.message} in {candidates}")
         if self.value and self.value.lower() == base.DEL:
             del self.payload[CMD.SELECT][self.key]
         else:
@@ -96,7 +93,7 @@ class Messenger:
 
         key:deeper:deepest[...] -> [key][deeper][deepest][...]
         """
-        parts = self.key.split(':')
+        parts = self.key.split(":")
         current = self.payload[CMD.SHADOW]
         while True:
             part = parts.pop(0)
@@ -113,8 +110,7 @@ class Messenger:
     def _process_select_shift(self):
         candidates = partials.find(self.prts, self.key)
         if not candidates:
-            raise exc.MessageError(
-                f"No candidates for {self.message} in {self.prts}")
+            raise exc.MessageError(f"No candidates for {self.message} in {self.prts}")
         if self.command == CMD.SELECT_PREVIOUS:
             candidates = list(reversed(candidates))
         current = self.payload["select"].get(self.key) or candidates[0].key

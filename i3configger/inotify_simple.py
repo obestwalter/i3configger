@@ -48,7 +48,9 @@ if sys.version_info.major < 3:
     # In 32-bit Python < 3 the inotify constants don't fit in an IntEnum and
     # will cause an OverflowError. Overwiting the IntEnum with a LongEnum
     # fixes this problem.
-    class LongEnum(long, enum.Enum): pass
+    class LongEnum(long, enum.Enum):
+        pass
+
     _EnumType = LongEnum
 
 else:
@@ -60,10 +62,11 @@ else:
     _fsdecode = os.fsdecode
     _EnumType = enum.IntEnum
 
-__all__ = ['flags', 'masks', 'parse_events', 'INotify', 'Event']
+__all__ = ["flags", "masks", "parse_events", "INotify", "Event"]
 
-_libc = ctypes.cdll.LoadLibrary('libc.so.6')
+_libc = ctypes.cdll.LoadLibrary("libc.so.6")
 _libc.__errno_location.restype = ctypes.POINTER(ctypes.c_int)
+
 
 def _libc_call(function, *args):
     """Wrapper which raises errors and retries on EINTR."""
@@ -71,7 +74,7 @@ def _libc_call(function, *args):
         rc = function(*args)
         if rc == -1:
             errno = _libc.__errno_location().contents.value
-            if errno  == EINTR:
+            if errno == EINTR:
                 # retry
                 continue
             else:
@@ -80,6 +83,7 @@ def _libc_call(function, *args):
 
 
 class INotify(object):
+
     def __init__(self):
         """Object wrapper around ``inotify_init()`` which stores the inotify file
         descriptor. Raises an OSError on failure. :func:`~inotify_simple.INotify.close`
@@ -143,7 +147,7 @@ class INotify(object):
             return []
         if read_delay is not None:
             # Wait for more events to accumulate:
-            time.sleep(read_delay/1000.0)
+            time.sleep(read_delay / 1000.0)
         # How much data is available to read?
         bytes_avail = ctypes.c_int()
         ioctl(self.fd, FIONREAD, bytes_avail)
@@ -170,9 +174,9 @@ class INotify(object):
 #: logging. For best performance, note that element access by index is about
 #: four times faster than by name. Note: in Python 2, name is a bytestring,
 #: not a unicode string. In Python 3 it is a string decoded with ``os.fsdecode()``.
-Event = collections.namedtuple('Event', ['wd', 'mask', 'cookie', 'name'])
+Event = collections.namedtuple("Event", ["wd", "mask", "cookie", "name"])
 
-_EVENT_STRUCT_FORMAT = 'iIII'
+_EVENT_STRUCT_FORMAT = "iIII"
 _EVENT_STRUCT_SIZE = struct.calcsize(_EVENT_STRUCT_FORMAT)
 
 
@@ -191,9 +195,13 @@ def parse_events(data):
     offset = 0
     buffer_size = len(data)
     while offset < buffer_size:
-        wd, mask, cookie, namesize = struct.unpack_from(_EVENT_STRUCT_FORMAT, data, offset)
+        wd, mask, cookie, namesize = struct.unpack_from(
+            _EVENT_STRUCT_FORMAT, data, offset
+        )
         offset += _EVENT_STRUCT_SIZE
-        name = _fsdecode(ctypes.c_buffer(data[offset:offset + namesize], namesize).value)
+        name = _fsdecode(
+            ctypes.c_buffer(data[offset : offset + namesize], namesize).value
+        )
         offset += namesize
         events.append(Event(wd, mask, cookie, name))
     return events
@@ -203,6 +211,7 @@ class flags(_EnumType):
     """Inotify flags as defined in ``inotify.h`` but with ``IN_`` prefix
     omitted. Includes a convenience method for extracting flags from a mask.
     """
+
     ACCESS = 0x00000001  #: File was accessed
     MODIFY = 0x00000002  #: File was modified
     ATTRIB = 0x00000004  #: Metadata changed
@@ -210,7 +219,7 @@ class flags(_EnumType):
     CLOSE_NOWRITE = 0x00000010  #: Unwritable file closed
     OPEN = 0x00000020  #: File was opened
     MOVED_FROM = 0x00000040  #: File was moved from X
-    MOVED_TO  = 0x00000080  #: File was moved to Y
+    MOVED_TO = 0x00000080  #: File was moved to Y
     CREATE = 0x00000100  #: Subfile was created
     DELETE = 0x00000200  #: Subfile was deleted
     DELETE_SELF = 0x00000400  #: Self was deleted
@@ -236,19 +245,25 @@ class flags(_EnumType):
 class masks(_EnumType):
     """Convenience masks as defined in ``inotify.h`` but with ``IN_`` prefix
     omitted."""
+
     #: helper event mask equal to ``flags.CLOSE_WRITE | flags.CLOSE_NOWRITE``
-    CLOSE = (flags.CLOSE_WRITE | flags.CLOSE_NOWRITE)
+    CLOSE = flags.CLOSE_WRITE | flags.CLOSE_NOWRITE
     #: helper event mask equal to ``flags.MOVED_FROM | flags.MOVED_TO``
-    MOVE = (flags.MOVED_FROM | flags.MOVED_TO)
+    MOVE = flags.MOVED_FROM | flags.MOVED_TO
 
     #: bitwise-OR of all the events that can be passed to
     #: :func:`~inotify_simple.INotify.add_watch`
-    ALL_EVENTS  = (flags.ACCESS | flags.MODIFY | flags.ATTRIB | flags.CLOSE_WRITE |
-                   flags.CLOSE_NOWRITE | flags.OPEN | flags.MOVED_FROM |
-                   flags.MOVED_TO | flags.DELETE | flags.CREATE | flags.DELETE_SELF |
-                   flags.MOVE_SELF)
-
-
-
-
-
+    ALL_EVENTS = (
+        flags.ACCESS
+        | flags.MODIFY
+        | flags.ATTRIB
+        | flags.CLOSE_WRITE
+        | flags.CLOSE_NOWRITE
+        | flags.OPEN
+        | flags.MOVED_FROM
+        | flags.MOVED_TO
+        | flags.DELETE
+        | flags.CREATE
+        | flags.DELETE_SELF
+        | flags.MOVE_SELF
+    )
