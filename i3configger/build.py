@@ -35,6 +35,7 @@ def generate_contents(cnf: config.I3configgerConfig, prts, msg):
     for barName, barCnf in barTargets.items():
         barCnf["id"] = barName
         log.debug(f"bar {barName} config:\n{pformat(barCnf)}")
+        # FIXME how about using extendedContext?
         eCtx = context.process([ctx, barCnf])
         mainContent += "\n%s" % get_bar_setting(barCnf, prts, eCtx)
         i3barFileContent = generate_i3bar_content(prts, barCnf["select"], eCtx)
@@ -53,6 +54,7 @@ def make_header(partialsPath):
         strPath = "~" + parts[-1]
     msg = f"# Built from {strPath} by i3configger ({time.asctime()}) #"
     sep = "#" * len(msg)
+    # FIXME port remaining ol' skool stuff like this to f-strings
     return "%s\n%s\n%s\n" % (sep, msg, sep)
 
 

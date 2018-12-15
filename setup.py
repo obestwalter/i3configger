@@ -5,6 +5,7 @@ from setuptools import find_packages, setup
 
 
 def linkify(changelog):
+    # FIXME adapt to markdown
     url = 'https://github.com/obestwalter/i3configger'
     issueReplacement = (r'[^\[]#(\d+)', r'`#\1 <%s/issues/\1>`_' % url)
     pullReplacement = (r'[^\[]#p(\d+)', r'`#p\1 <%s/pull/\1>`_' % url)
@@ -14,6 +15,7 @@ def linkify(changelog):
 
 
 def get_long_description():
+    # FIXME throw this out: new PyPI speaks md :)
     """Pypi doesn't like .md - I don't like .rst - let's compromise."""
     here = Path(__file__).parent
     readme = (here / 'README.md').read_text()
