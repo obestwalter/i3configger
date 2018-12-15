@@ -17,9 +17,6 @@ def main():
         sys.exit(e)
 
 
-# TODO turn watch, daemon and kill also into commands?
-
-
 def _main(args):
     config.ensure_i3_configger_sanity()
     cnf = config.I3configgerConfig()
