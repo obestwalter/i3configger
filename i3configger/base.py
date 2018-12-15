@@ -26,7 +26,7 @@ def configure_logging(verbosity: int, logPath: str, isDaemon=False):
         name = "i3configger-daemon.log" if isDaemon else "i3configger.log"
         logPath = Path(tempfile.gettempdir()) / name
     if DEBUG:
-        print("logging to %s" % logPath)
+        print(f"logging to {logPath}")
         level = logging.getLevelName("DEBUG")
     else:
         level = logging.getLevelName(

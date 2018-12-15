@@ -25,7 +25,7 @@ def get_long_description():
         readme = pypandoc.convert_text(readme, to='rst', format='md')
         changelog = pypandoc.convert_text(changelog, to='rst', format='md')
         changelog = linkify(changelog)
-    return "%s\n\n%s" % (readme, changelog)
+    return f"{readme}\n\n{changelog}"
 
 
 kwargs = dict(

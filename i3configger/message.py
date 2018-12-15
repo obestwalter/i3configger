@@ -123,7 +123,7 @@ class Messenger:
                 break
         else:
             new = candidates[0]
-        log.info("select %s.%s", self.key, new)
+        log.info(f"select {self.key}.{new}")
         self.payload[CMD.SELECT][self.key] = new.value
 
     def fetch_messages(self):

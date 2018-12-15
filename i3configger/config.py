@@ -42,7 +42,7 @@ class I3configgerConfig:
             self.load()
 
     def __str__(self):
-        return "%s:\n%s" % (self.__class__.__name__, pprint.pformat(vars(self)))
+        return f"{self.__class__.__name__}:\n{pprint.pformat(vars(self))}"
 
     def load(self):
         """Layered overrides `DEFAULTS` -> `i3configger.json`-> `args`"""
@@ -90,22 +90,22 @@ def fetch(path: Path) -> dict:
 def freeze(path, obj):
     with open(path, "w") as f:
         json.dump(obj, f, sort_keys=True, indent=2)
-    log.debug("froze %s to %s", pprint.pformat(obj), path)
+    log.debug(f"froze {pprint.pformat(obj)} to {path}")
 
 
 def ensure_i3_configger_sanity():
     i3wmConfigPath = get_i3wm_config_path()
     partialsPath = i3wmConfigPath / I3configgerConfig.PARTIALS_NAME
     if not partialsPath.exists():
-        log.info("create new config folder at %s", partialsPath)
+        log.info(f"create new config folder at {partialsPath}")
         partialsPath.mkdir()
         for candidate in [i3wmConfigPath / "config", Path("etc/i3/config")]:
             if candidate.exists():
-                log.info("populate config with %s", candidate)
+                log.info(f"populate config with {candidate}")
                 shutil.copy2(candidate, partialsPath / "config.conf")
     configPath = partialsPath / I3configgerConfig.CONFIG_NAME
     if not configPath.exists():
-        log.info("create default configuration at %s", configPath)
+        log.info(f"create default configuration at {configPath}")
         freeze(configPath, DEFAULTS)
 
 

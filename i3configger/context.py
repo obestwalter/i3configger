@@ -1,4 +1,5 @@
 import logging
+# FIXME rather import objects directly here?
 import typing as t
 from functools import reduce
 from string import Template
@@ -58,7 +59,7 @@ def _resolve_variable(key, ctx, path):
     path += "->" + key
     resolved = ctx.get(key)
     if not resolved:
-        raise exc.ContextError("not resolvable: %s", path)
+        raise exc.ContextError(f"not resolvable: {path}")
     if resolved.startswith(base.VAR_MARK):
         return _resolve_variable(resolved, ctx, path)
     return resolved

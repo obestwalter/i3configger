@@ -37,7 +37,7 @@ def generate_contents(cnf: config.I3configgerConfig, prts, msg):
         log.debug(f"bar {barName} config:\n{pformat(barCnf)}")
         # FIXME how about using extendedContext?
         eCtx = context.process([ctx, barCnf])
-        mainContent += "\n%s" % get_bar_setting(barCnf, prts, eCtx)
+        mainContent += f"\n{get_bar_setting(barCnf, prts, eCtx)}"
         i3barFileContent = generate_i3bar_content(prts, barCnf["select"], eCtx)
         if i3barFileContent:
             filename = f"{base.I3BAR}.{barCnf['select']}{base.SUFFIX}"
@@ -54,8 +54,7 @@ def make_header(partialsPath):
         strPath = "~" + parts[-1]
     msg = f"# Built from {strPath} by i3configger ({time.asctime()}) #"
     sep = "#" * len(msg)
-    # FIXME port remaining ol' skool stuff like this to f-strings
-    return "%s\n%s\n%s\n" % (sep, msg, sep)
+    return f"{sep}\n{msg}\n{sep}\n"
 
 
 def generate_main_content(partialsPath, selected, ctx):
@@ -70,7 +69,7 @@ def generate_main_content(partialsPath, selected, ctx):
 def get_bar_setting(barCnf, prts, ctx):
     tpl = partials.find(prts, base.I3BAR, barCnf["template"])
     assert isinstance(tpl, partials.Partial), tpl
-    tpl.name = "%s [id: %s]" % (tpl.name, barCnf["id"])
+    tpl.name = f"{tpl.name} [id: {barCnf['id']}]"
     return context.substitute(tpl.get_pruned_content(), ctx).rstrip("\n")
 
 
@@ -78,10 +77,8 @@ def generate_i3bar_content(prts, selectValue, ctx):
     prt = partials.find(prts, base.I3BAR, selectValue)
     if not prt:
         raise exc.ConfigError(
-            "[IGNORE] no status config named %s.%s%s",
-            base.I3BAR,
-            selectValue,
-            base.SUFFIX,
+            f"[IGNORE] no status config named "
+            f"{base.I3BAR}.{selectValue}{base.SUFFIX}"
         )
     assert isinstance(prt, partials.Partial), prt
     content = context.substitute(prt.get_pruned_content(), ctx)

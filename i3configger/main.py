@@ -35,7 +35,7 @@ def _main(args):
         message.save(args.message)
     if watch.get_i3configger_process():
         if not args.message:
-            sys.exit("Already running - did you mean to send a message?")
+            sys.exit("FATAL: already running - did you mean to send a message?")
         log.info("let the running process do the work")
         return 0
     if args.daemon:

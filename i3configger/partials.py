@@ -16,7 +16,6 @@ EXCLUDE_MARKER = "."
 
 @total_ordering
 class Partial:
-
     def __init__(self, path: Path):
         self.path = path
         self.name = self.path.stem
@@ -27,9 +26,7 @@ class Partial:
         self.lines = self.path.read_text().splitlines()
 
     def __repr__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.path.name)
-
-    __str__ = __repr__
+        return f"{self.__class__.__name__}({self.path.name})"
 
     def __lt__(self, other):
         return self.name < other.name
@@ -43,7 +40,8 @@ class Partial:
             lines.pop(0)
         while lines and not lines[-1].strip():
             lines.pop()
-        return "### %s ###\n%s\n\n" % (self.path.name, "\n".join(lines))
+        joinedLines = '\n'.join(lines)
+        return f"### {self.path.name} ###\n{joinedLines}\n\n"
 
     @staticmethod
     def contain_something(lines):
@@ -84,7 +82,6 @@ def find(
 
 
 def select(partials, selection, excludes=None) -> t.List[Partial]:
-
     def _select():
         selected.append(partial)
         if partial.needsSelection:
@@ -97,7 +94,7 @@ def select(partials, selection, excludes=None) -> t.List[Partial]:
     for partial in partials:
         if partial.needsSelection:
             if excludes and partial.key in excludes:
-                log.debug("[IGNORE] %s (in %s)", partial, excludes)
+                log.debug(f"[IGNORE] {partial} (in {excludes})")
                 continue
             if (
                 selection
@@ -107,9 +104,9 @@ def select(partials, selection, excludes=None) -> t.List[Partial]:
                 _select()
         else:
             _select()
-    log.debug("selected:\n%s", pprint.pformat(selected))
+    log.debug(f"selected:\n{pprint.pformat(selected)}")
     if selection and not all(k in SPECIAL_SELECTORS for k in selection):
-        raise exc.ConfigError("selection processed incompletely: %s", selection)
+        raise exc.ConfigError(f"selection processed incompletely: {selection}")
     return selected
 
 
@@ -117,9 +114,9 @@ def create(partialsPath) -> t.List[Partial]:
     partialsPath = Path(partialsPath)
     assert partialsPath.is_dir(), partialsPath
     prts = []
-    for path in partialsPath.glob("*%s" % base.SUFFIX):
+    for path in partialsPath.glob(f"*{base.SUFFIX}"):
         if path.name.startswith(EXCLUDE_MARKER):
-            log.info(f"excluding {path} because it starts with a dot")
+            log.info(f"excluding {path} because it starts with {EXCLUDE_MARKER}")
             continue
         prts.append(Partial(path))
     if not prts:

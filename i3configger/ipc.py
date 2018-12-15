@@ -31,9 +31,7 @@ class I3:
 
     @classmethod
     def configure(cls, which):
-        cls.refresh = {"restart": cls.restart_i3, "reload": cls.reload_i3}.get(
-            which, nop
-        )
+        cls.refresh = cls.METHOD_MAP.get(which, nop)
 
     @classmethod
     def reload_i3(cls):
@@ -44,6 +42,7 @@ class I3:
         subprocess.call(["i3-msg", "restart"])
 
     refresh = restart_i3
+    METHOD_MAP = {"restart": restart_i3, "reload": reload_i3}
 
     @classmethod
     def _send_i3_msg(cls, msg):
@@ -106,4 +105,4 @@ class I3bar:
 
 
 def nop(*args, **kwargs):
-    log.debug("just ignored everything to do with {args} and {kwargs}")
+    log.debug(f"just ignored everything to do with {args} and {kwargs}")
