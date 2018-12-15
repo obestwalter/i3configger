@@ -1,9 +1,9 @@
 import logging
 import pprint
 import socket
-import typing as t
 from functools import total_ordering
 from pathlib import Path
+from typing import Union, List
 
 from i3configger import base, exc
 
@@ -68,8 +68,8 @@ class Partial:
 
 
 def find(
-    prts: t.List[Partial], key: str, value: str = None
-) -> t.Union[Partial, t.List[Partial]]:
+    prts: List[Partial], key: str, value: str = None
+) -> Union[Partial, List[Partial]]:
     findings = []
     for prt in prts:
         if prt.key != key:
@@ -81,7 +81,7 @@ def find(
     return findings
 
 
-def select(partials, selection, excludes=None) -> t.List[Partial]:
+def select(partials, selection, excludes=None) -> List[Partial]:
     def _select():
         selected.append(partial)
         if partial.needsSelection:
@@ -110,7 +110,7 @@ def select(partials, selection, excludes=None) -> t.List[Partial]:
     return selected
 
 
-def create(partialsPath) -> t.List[Partial]:
+def create(partialsPath) -> List[Partial]:
     partialsPath = Path(partialsPath)
     assert partialsPath.is_dir(), partialsPath
     prts = []

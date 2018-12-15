@@ -1,22 +1,21 @@
 import logging
-# FIXME rather import objects directly here?
-import typing as t
 from functools import reduce
 from string import Template
+from typing import Iterable, Union
 
 from i3configger import base, exc, partials
 
 log = logging.getLogger(__name__)
 
 
-def process(item: t.Iterable[t.Union[dict, partials.Partial]]) -> dict:
+def process(item: Iterable[Union[dict, partials.Partial]]) -> dict:
     ctx = merge_all(item)
     ctx = resolve_variables(ctx)
     ctx = remove_variable_markers(ctx)
     return ctx
 
 
-def merge_all(item: t.Iterable[t.Union[dict, partials.Partial]]) -> dict:
+def merge_all(item: Iterable[Union[dict, partials.Partial]]) -> dict:
     """merge contexts of an arbitrary number of items"""
     dicts = []
     for elem in item:
