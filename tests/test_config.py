@@ -35,7 +35,7 @@ def test_config_backup_is_not_overwritten():
 
     http://oliver.bestwalter.de/i3configger/getting-started/
 
-    I though I fixed that, but am not sure so this test should make sure that
+    I thought I fixed that, but am not sure so this test should make sure that
     the original config backup gets never overwritten.
     """
     assert 0  # FIXME
