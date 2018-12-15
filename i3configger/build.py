@@ -35,10 +35,11 @@ def generate_contents(cnf: config.I3configgerConfig, prts, msg):
     for barName, barCnf in barTargets.items():
         barCnf["id"] = barName
         log.debug(f"bar {barName} config:\n{pformat(barCnf)}")
-        # FIXME how about using extendedContext?
-        eCtx = context.process([ctx, barCnf])
-        mainContent += f"\n{get_bar_setting(barCnf, prts, eCtx)}"
-        i3barFileContent = generate_i3bar_content(prts, barCnf["select"], eCtx)
+        extendedContext = context.process([ctx, barCnf])
+        mainContent += f"\n{get_bar_setting(barCnf, prts, extendedContext)}"
+        i3barFileContent = generate_i3bar_content(
+            prts, barCnf["select"], extendedContext
+        )
         if i3barFileContent:
             filename = f"{base.I3BAR}.{barCnf['select']}{base.SUFFIX}"
             dst = Path(barCnf["target"]) / filename
