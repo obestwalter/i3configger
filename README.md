@@ -22,7 +22,27 @@ I wanted to be able to switch between different color themes and do things like 
 * additional configuration of `i3configger` itself and persistence of changes to the i3 configuration is achieved by sprinkling a bit of json on top of the config files.
 * command line driven - activities can be bound to keyboard shortcuts directly or as part of a [binding mode](https://i3wm.org/docs/userguide.html#binding_modes)
 
-## Usage example
+## How?
+
+In the end i3wm needs a config file it can cope with and it needs to reload or restart, when something changes.
+
+This is realized by adding a build step that can be triggered by calling `i3configger` directly or by running it as a \[daemonized\] watcher process that automatically rebuilds and reloads when source files change or messages are sent.
+
+## What can I do with it?
+
+### Switch between arbitrary "themes"
+
+You can switch sub configurations (e.g. different color schemes) that conform with a simple naming convention (`config.d/<key>.<value1>.conf`, `config.d/<key>.<value2>.conf`, etc.) by invoking e.g. `i3configger select-next <key>` or `i3configger select <key> <value2>`.
+
+To get an idea what can be done, have a look at the [examples](https://github.com/obestwalter/i3configger/tree/master/examples) and [read the docs](http://oliver.bestwalter.de/i3configger).
+
+### Override any variable
+
+You can change any variable you have defined in the configuration by invoking `i3configger set <variable name> <new value>`. These changes are persisted not in the config itself but in an additional file.
+
+See [i3configger docs](http://oliver.bestwalter.de/i3configger/concept/) for a detailed explanation of the concept and other possible commands.
+
+### Usage example
 
 Here is a snippet from an i3 config that uses a mode to alter itself by sending messages to `i3configger`:
 
@@ -44,26 +64,6 @@ mode "i3configger" {
 
 * `select[...]` integrates different config partials and can therefore make broad changes. In this case for example there are different `colors.<value>.conf` partials that activate different color schemes
 * `shadow` adds an overlay that in this case changes the mode of the laptop bar between `hide` and `dock`
-
-## How?
-
-In the end i3wm needs a config file it can cope with and it needs to reload or restart, when something changes.
-
-This is realized by adding a build step that can be triggered by calling `i3configger` directly or by running it as a \[daemonized\] watcher process that automatically rebuilds and reloads when source files change or messages are sent.
-
-## What can I do with it?
-
-### Switch between arbitrary "themes"
-
-You can switch sub configurations (e.g. different color schemes) that conform with a simple naming convention (`config.d/<key>.<value1>.conf`, `config.d/<key>.<value2>.conf`, etc.) by invoking e.g. `i3configger select-next <key>` or `i3configger select <key> <value2>`.
-
-To get an idea what can be done, have a look at the [examples](https://github.com/obestwalter/i3configger/tree/master/examples) and [read the docs](http://oliver.bestwalter.de/i3configger).
-
-### Override any variable
-
-You can change any variable you have defined in the configuration by invoking `i3configger set <variable name> <new value>`. These changes are persisted not in the config itself but in an additional file.
-
-See [i3configger docs](http://oliver.bestwalter.de/i3configger/concept/) for a detailed explanation of the concept and other possible commands.
 
 ## Installation
 
