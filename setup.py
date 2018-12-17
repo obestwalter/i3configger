@@ -36,7 +36,7 @@ kwargs = dict(
     long_description=get_long_description(),
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
-    entry_points={'console_scripts': ['i3configger = i3configger.main:main']},
+    entry_points={'console_scripts': ['i3configger = i3configger.cli:main']},
     install_requires=['psutil', 'python-daemon'],
     packages=find_packages(),
     classifiers=[
