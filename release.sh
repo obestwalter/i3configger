@@ -10,6 +10,8 @@ fi
 
 python -c "import twine"  # crash early if this is not installed
 git tag "$1"
-python twine upload
+python setup.py sdist bdist_wheel
+twine check
+twine upload
 git push --tags
 echo "SUCCESS: released $(git describe --tags $(git rev-list --tags --max-count=1))"
