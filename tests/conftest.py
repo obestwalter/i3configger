@@ -5,6 +5,7 @@ import pytest
 from i3configger import ipc
 
 
+# FIXME pytest has not a tmp_path fixture
 @pytest.fixture(name="tmpdir")
 def tmpdir_as_pathlib_path(tmpdir):
     return Path(tmpdir)
