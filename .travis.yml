@@ -1,9 +1,10 @@
 language: python
-cache: pip
-python:
- - "3.7"
+sudo: required
+dist: xenial
+python: "3.7"
+#cache: pip
 git:
-  depth: 10
+  depth: 1
 branches:
   except:
     - experimental
