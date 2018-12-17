@@ -1,8 +1,8 @@
-language: python
-sudo: required
 dist: xenial
+sudo: required
+language: python
 python: "3.7"
-#cache: pip
+cache: pip
 git:
   depth: 1
 branches:
