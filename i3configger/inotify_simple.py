@@ -2,6 +2,8 @@
 https://github.com/chrisjbillington/inotify_simple
 
 Copyright (c) 2016, Chris Billington
+Copyright (c) 2018, Oliver Bestwalter (simplifications/Py3 only)
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -24,66 +26,48 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-import os
-import sys
 import enum
 import collections
 import struct
 import select
 import time
 import ctypes
+from os import strerror, fsencode, read, close, fsdecode
 from errno import EINTR
 from termios import FIONREAD
 from fcntl import ioctl
 
 
-if sys.version_info.major < 3:
-    # For Python 2, we work with bytestrings. If the user passes in a unicode
-    # string, it will be encoded with the filesystem encoding before use:
-    _fsencoding = sys.getfilesystemencoding()
-    _fsencode = lambda s: s.encode(_fsencoding)
-    # And we will not decode bytestrings in inotify events, we will simply
-    # give the user bytestrings back:
-    _fsdecode = lambda s: s
-    # In 32-bit Python < 3 the inotify constants don't fit in an IntEnum and
-    # will cause an OverflowError. Overwiting the IntEnum with a LongEnum
-    # fixes this problem.
-    class LongEnum(long, enum.Enum):
-        pass
-
-    _EnumType = LongEnum
-
-else:
-    # For Python 3, we work with (unicode) strings. We use os.fsencode and
-    # os.fsdecode, which are used by standard-library functions that return
-    # paths, and are able to round-trip possibly incorrectly encoded
-    # filepaths:
-    _fsencode = os.fsencode
-    _fsdecode = os.fsdecode
-    _EnumType = enum.IntEnum
-
 __all__ = ["flags", "masks", "parse_events", "INotify", "Event"]
-
 _libc = ctypes.cdll.LoadLibrary("libc.so.6")
 _libc.__errno_location.restype = ctypes.POINTER(ctypes.c_int)
 
+Event = collections.namedtuple("Event", ["wd", "mask", "cookie", "name"])
+"""A ``namedtuple`` (wd, mask, cookie, name) for an inotify event.
+ 
+``namedtuple`` objects are very lightweight to instantiate and access, 
+whilst being human readable when printed, which is useful for debugging and logging. 
+For best performance, note that element access by index is about four times faster than by name. 
+"""
+_EVENT_STRUCT_FORMAT = "iIII"
+_EVENT_STRUCT_SIZE = struct.calcsize(_EVENT_STRUCT_FORMAT)
 
-def _libc_call(function, *args):
+
+def _libc_call(func, *args):
     """Wrapper which raises errors and retries on EINTR."""
     while True:
-        rc = function(*args)
+        rc = func(*args)
         if rc == -1:
             errno = _libc.__errno_location().contents.value
             if errno == EINTR:
                 # retry
                 continue
             else:
-                raise OSError(errno, os.strerror(errno))
+                raise OSError(errno, strerror(errno))
         return rc
 
 
 class INotify(object):
-
     def __init__(self):
         """Object wrapper around ``inotify_init()`` which stores the inotify file
         descriptor. Raises an OSError on failure. :func:`~inotify_simple.INotify.close`
@@ -105,7 +89,7 @@ class INotify(object):
                 If ``str`` in python3 or ``unicode`` in python2, will be encoded with
                 the filesystem encoding before being passed to
                 ``inotify_add_watch()``. Note that ``pathlib.Path`` objects are
-                sufficiently stringlike to be passed to this method as-is.
+                sufficiently string-like to be passed to this method as-is.
 
             mask (int): The mask of events to watch for. Can be constructed by
                 bitwise-ORing :class:`~inotify_simple.flags` together.
@@ -113,7 +97,7 @@ class INotify(object):
         Returns:
             int: watch descriptor"""
         if not isinstance(path, bytes):
-            path = _fsencode(path)
+            path = fsencode(path)
         return _libc_call(_libc.inotify_add_watch, self.fd, path, mask)
 
     def rm_watch(self, wd):
@@ -153,31 +137,19 @@ class INotify(object):
         ioctl(self.fd, FIONREAD, bytes_avail)
         buffer_size = bytes_avail.value
         # Read and parse it:
-        data = os.read(self.fd, buffer_size)
+        data = read(self.fd, buffer_size)
         events = parse_events(data)
         return events
 
     def close(self):
         """Close the inotify file descriptor"""
-        os.close(self.fd)
+        close(self.fd)
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
-
-
-#: A ``namedtuple`` (wd, mask, cookie, name) for an inotify event.
-#: ``namedtuple`` objects are very lightweight to instantiate and access, whilst
-#: being human readable when printed, which is useful for debugging and
-#: logging. For best performance, note that element access by index is about
-#: four times faster than by name. Note: in Python 2, name is a bytestring,
-#: not a unicode string. In Python 3 it is a string decoded with ``os.fsdecode()``.
-Event = collections.namedtuple("Event", ["wd", "mask", "cookie", "name"])
-
-_EVENT_STRUCT_FORMAT = "iIII"
-_EVENT_STRUCT_SIZE = struct.calcsize(_EVENT_STRUCT_FORMAT)
 
 
 def parse_events(data):
@@ -188,7 +160,7 @@ def parse_events(data):
     :func:`~inotify_simple.INotify.read`.
 
     Args:
-        data (bytes): A bytestring as read from an inotify file descriptor
+        data (bytes): A byte string as read from an inotify file descriptor
     Returns:
         list: list of :attr:`~inotify_simple.Event` namedtuples"""
     events = []
@@ -199,7 +171,7 @@ def parse_events(data):
             _EVENT_STRUCT_FORMAT, data, offset
         )
         offset += _EVENT_STRUCT_SIZE
-        name = _fsdecode(
+        name = fsdecode(
             ctypes.c_buffer(data[offset : offset + namesize], namesize).value
         )
         offset += namesize
@@ -207,7 +179,7 @@ def parse_events(data):
     return events
 
 
-class flags(_EnumType):
+class flags(enum.IntEnum):
     """Inotify flags as defined in ``inotify.h`` but with ``IN_`` prefix
     omitted. Includes a convenience method for extracting flags from a mask.
     """
@@ -242,7 +214,7 @@ class flags(_EnumType):
         return [flag for flag in cls.__members__.values() if flag & mask]
 
 
-class masks(_EnumType):
+class masks(enum.IntEnum):
     """Convenience masks as defined in ``inotify.h`` but with ``IN_`` prefix
     omitted."""
 
