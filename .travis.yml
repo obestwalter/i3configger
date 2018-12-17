@@ -1,7 +1,7 @@
 language: python
 cache: pip
 python:
- - "3.6"
+ - "3.7"
 git:
   depth: 10
 branches:
@@ -9,5 +9,9 @@ branches:
     - experimental
 install:
   - pip install --pre -U tox
-script:
-  - tox
+jobs:
+  include:
+    - stage: lint
+    script: tox -e lint
+    - stage: test
+    script: tox -e test

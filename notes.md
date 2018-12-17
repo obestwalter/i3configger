@@ -45,4 +45,3 @@ It i3configger is started/run once before i3 is started the config can be build 
     tox -e i3configger -- --daemon
 
 e.g. which displays are connected and how should the workspaces and bars be configured according to that.
-
