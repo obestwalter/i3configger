@@ -44,10 +44,10 @@ _libc.__errno_location.restype = ctypes.POINTER(ctypes.c_int)
 
 Event = collections.namedtuple("Event", ["wd", "mask", "cookie", "name"])
 """A ``namedtuple`` (wd, mask, cookie, name) for an inotify event.
- 
-``namedtuple`` objects are very lightweight to instantiate and access, 
-whilst being human readable when printed, which is useful for debugging and logging. 
-For best performance, note that element access by index is about four times faster than by name. 
+
+``namedtuple`` objects are very lightweight to instantiate and access,
+whilst being human readable when printed, which is useful for debugging and logging.
+For best performance, note that element access by index is about four times faster than by name.
 """
 _EVENT_STRUCT_FORMAT = "iIII"
 _EVENT_STRUCT_SIZE = struct.calcsize(_EVENT_STRUCT_FORMAT)

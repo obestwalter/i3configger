@@ -28,7 +28,6 @@ def communicate(msg="new config active", refresh=False, urgency="low"):
 
 
 class I3:
-
     @classmethod
     def configure(cls, which):
         cls.refresh = cls.METHOD_MAP.get(which, nop)
@@ -71,7 +70,6 @@ class I3:
 
 
 class Notify:
-
     @classmethod
     def configure(cls, notify):
         cls.send = cls.notify_send if notify else nop
