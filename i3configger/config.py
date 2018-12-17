@@ -9,7 +9,7 @@ from pathlib import Path
 from i3configger import context, exc
 
 log = logging.getLogger(__name__)
-cliMainOverrideMap = {}
+cliMainOverrideMap: dict = {}
 """holds parsed args if started from cli and was initialized"""
 
 DEFAULTS = {

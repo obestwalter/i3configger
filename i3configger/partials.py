@@ -40,7 +40,7 @@ class Partial:
             lines.pop(0)
         while lines and not lines[-1].strip():
             lines.pop()
-        joinedLines = '\n'.join(lines)
+        joinedLines = "\n".join(lines)
         return f"### {self.path.name} ###\n{joinedLines}\n\n"
 
     @staticmethod
@@ -90,7 +90,7 @@ def select(partials, selection, excludes=None) -> List[Partial]:
     for key, value in SPECIAL_SELECTORS.items():
         if key not in selection:
             selection[key] = value
-    selected = []
+    selected: List[Partial] = []
     for partial in partials:
         if partial.needsSelection:
             if excludes and partial.key in excludes:

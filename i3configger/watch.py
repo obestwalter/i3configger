@@ -3,8 +3,8 @@ import os
 import sys
 from pathlib import Path
 
-import daemon
-import psutil
+import daemon  # type: ignore
+import psutil  # type: ignore
 
 from i3configger import base, build, exc, ipc, config
 from i3configger.inotify_simple import INotify, flags
