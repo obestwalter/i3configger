@@ -46,15 +46,7 @@ class Messenger:
 
     def digest_message(self):
         try:
-            {
-                CMD.MERGE: self._process_merge,
-                CMD.PRUNE: self._process_prune,
-                CMD.SELECT: self._process_select,
-                CMD.SELECT_NEXT: self._process_select_shift,
-                CMD.SELECT_PREVIOUS: self._process_select_shift,
-                CMD.SET: self._process_set,
-                CMD.SHADOW: self._process_shadow,
-            }[self.command]()
+            self.COMMAND_METHOD_MAP[self.command]()
         except KeyError:
             raise exc.UserError(
                 f"Unknown command: {self.command}. "
@@ -150,3 +142,13 @@ class Messenger:
             state[CMD.SET] = {}
         if CMD.SHADOW not in state:
             state[CMD.SHADOW] = {}
+
+    COMMAND_METHOD_MAP = {
+        CMD.MERGE: _process_merge,
+        CMD.PRUNE: _process_prune,
+        CMD.SELECT: _process_select,
+        CMD.SELECT_NEXT: _process_select_shift,
+        CMD.SELECT_PREVIOUS: _process_select_shift,
+        CMD.SET: _process_set,
+        CMD.SHADOW: _process_shadow,
+    }
