@@ -8,7 +8,7 @@
 
 **Disclaimer:** this is a tool aimed at users who already know how the configuration of [i3](https://i3wm.org) works (as described in the [excellent docs](https://i3wm.org/docs/userguide.html)). `i3configger` is an independent add-on, not directly affiliated with the project and in no way necessary to use i3 productively.
 
-**NOTE** using `i3configger` will replace your existing config files (configs and optional status bar configs), but it will move them to `<original-name>.bak` if no backup exists yet, so that you can easily revert the damage if you want to go back to your old files.
+**NOTE** using `i3configger` will replace your existing config files (`config` and optional status bar configs), but it will move them to `<original-name>.bak` if no backup exists yet, so that you can easily revert the damage if you want to go back to your old files.
 
 ## Why?
 
