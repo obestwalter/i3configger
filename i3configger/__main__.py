@@ -1,5 +1,5 @@
-import i3configger.main
+import i3configger.cli
 
 
 if __name__ == "__main__":
-    i3configger.main.main()
+    i3configger.cli.main()
