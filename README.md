@@ -30,7 +30,7 @@ This is realized by adding a build step that can be triggered by calling `i3conf
 
 ## What can I do with it?
 
-### Switch between arbitrary "themes"
+### Switch between arbitrary "schemes"
 
 You can switch sub configurations (e.g. different color schemes) that conform with a simple naming convention (`config.d/<key>.<value1>.conf`, `config.d/<key>.<value2>.conf`, etc.) by invoking e.g. `i3configger select-next <key>` or `i3configger select <key> <value2>`.
 
