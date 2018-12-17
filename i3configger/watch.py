@@ -1,3 +1,4 @@
+"""Functionality to watch the configuration dir to trigger rebuilds on changes."""
 import logging
 import os
 import sys

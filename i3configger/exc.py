@@ -1,3 +1,6 @@
+"""Custom errors."""
+
+
 class I3configgerException(Exception):
     """Main exception with log style string formatting enhancement"""
 
@@ -27,4 +30,4 @@ class ContextError(I3configgerException):
 
 
 class UserError(I3configgerException):
-    """Something goes wrong because user provided bad input"""
+    """User did something wrong and I can't go on."""

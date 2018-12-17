@@ -1,3 +1,4 @@
+"""Command Line Interface and main entry point."""
 import argparse
 import logging
 import sys
@@ -8,10 +9,7 @@ log = logging.getLogger(__name__)
 
 
 def main():
-    """Wrap main to show own exceptions wo traceback in normal use.
-
-    FIXME check if an what kind of sense this makes together with exception hook
-    """
+    """Wrap main to show own exceptions wo traceback in normal use."""
     args = process_command_line()
     try:
         _main(args)
@@ -36,7 +34,7 @@ def _main(args):
         message.save(args.message)
     if watch.get_i3configger_process():
         if not args.message:
-            sys.exit("FATAL: already running - did you mean to send a message?")
+            exc.UserError("already running - did you mean to send a message?")
         log.info("let the running process do the work")
         return 0
     if args.daemon:

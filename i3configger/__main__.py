@@ -1,3 +1,4 @@
+"""Make python -m i3configger possible."""
 import i3configger.cli
 
 

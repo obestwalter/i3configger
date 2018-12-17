@@ -1,3 +1,4 @@
+"""High level build functionality bringing it all together."""
 import logging
 import os
 import tempfile

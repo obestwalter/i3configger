@@ -1,3 +1,4 @@
+"""Functionality implementing the messaging mechanism."""
 import logging
 from pathlib import Path
 
@@ -33,7 +34,9 @@ class Messenger:
         self.messagesPath = messagesPath
         self.prts = prts
         self.message = message
-        if self.message:
+        if message:
+            if len(message) < 2:
+                raise exc.UserError(f"message needs at least key and value ({message})")
             self.command, self.key, *rest = message
             self.value = rest[0] if rest else ""
             if self.command != CMD.SHADOW and ":" in self.key:

@@ -1,3 +1,4 @@
+"""i3configger configuration functionality."""
 import copy
 import json
 import logging

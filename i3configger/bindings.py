@@ -1,4 +1,4 @@
-"""Just an experiment - I might split this out to another project"""
+"""WARNING Just an experiment - please ignore this."""
 from i3configger import config
 
 BINDCODE = "bindcode"
@@ -26,11 +26,13 @@ class Bindings:
         """translate bindcode to bindsym assignments
 
         this need to be done the moment the information is asked because it
-        depends on the currently acitve layout.
+        depends on the currently active layout.
         """
+        raise NotImplementedError()
 
     def write_bindings_info(self):
         """Write info in some format that can be nicely displayed"""
+        raise NotImplementedError()
 
 
 if __name__ == "__main__":

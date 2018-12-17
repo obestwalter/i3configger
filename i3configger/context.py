@@ -16,7 +16,7 @@ def process(item: Iterable[Union[dict, partials.Partial]]) -> dict:
 
 
 def merge_all(item: Iterable[Union[dict, partials.Partial]]) -> dict:
-    """merge contexts of an arbitrary number of items"""
+    """Merge contexts of an arbitrary number of items."""
     dicts = []
     for elem in item:
         dicts.append(elem if isinstance(elem, dict) else elem.context)
@@ -24,7 +24,7 @@ def merge_all(item: Iterable[Union[dict, partials.Partial]]) -> dict:
 
 
 def merge(dst: dict, src: dict) -> dict:
-    """merge source into destination mapping (overwrite existing keys)"""
+    """merge source into destination mapping (overwrite existing keys)."""
     for key in src:
         if key in dst:
             if isinstance(dst[key], dict) and isinstance(src[key], dict):
@@ -78,5 +78,8 @@ def substitute(content: str, ctx: dict):
 
     Works out of the box, because '$' is the standard substitution
     marker for string.Template
+
+    As there also might be other occurrences of "$" (e.g. in regexes)
+    `safe_substitute()` is used,
     """
     return Template(content).safe_substitute(ctx)

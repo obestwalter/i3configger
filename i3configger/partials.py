@@ -1,3 +1,4 @@
+"""Functionality to create, find and select partial configurations."""
 import logging
 import pprint
 import socket

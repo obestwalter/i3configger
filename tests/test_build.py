@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from i3configger import build, config
+from i3configger import build, config, ipc
 
 HERE = Path(__file__).parent
 EXAMPLES = HERE.parent / "examples"
@@ -24,8 +24,8 @@ TEST_FOLDER_NAMES = sorted(
 
 
 @pytest.mark.parametrize("container", TEST_FOLDER_NAMES)
-@pytest.mark.usefixtures("deactivate_ipc")
 def test_build(container, monkeypatch):
+    ipc.configure(deactivate=True)
     monkeypatch.setattr(config, "get_i3wm_config_path", lambda: EXAMPLES / container)
     monkeypatch.setattr(build, "make_header", lambda _: FAKE_HEADER)
     monkeypatch.setattr(build, "check_config", lambda _: True)

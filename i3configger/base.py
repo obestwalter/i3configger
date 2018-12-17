@@ -1,3 +1,4 @@
+"""Basic names and functionality."""
 import logging
 import os
 import sys
@@ -54,7 +55,7 @@ def i3configger_excepthook(type_, value, traceback):
     if DEBUG or not isinstance(value, exc.I3configgerException):
         _REAL_EXCEPTHOOK(type_, value, traceback)
     else:
-        sys.exit(f"{type(value)}: {value}")
+        sys.exit(f"[FATAL] {type(value).__name__}: {value}")
 
 
 _REAL_EXCEPTHOOK = sys.excepthook

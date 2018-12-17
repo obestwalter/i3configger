@@ -5,10 +5,10 @@ from i3configger import config
 from i3configger.build import persist_results
 
 
-def test_initialization(tmpdir, monkeypatch):
+def test_initialization(tmp_path, monkeypatch):
     """Given empty sources directory a new config is created from defaults"""
-    monkeypatch.setattr(config, "get_i3wm_config_path", lambda: tmpdir)
-    assert not (tmpdir / "config.d").exists()
+    monkeypatch.setattr(config, "get_i3wm_config_path", lambda: tmp_path)
+    assert not (tmp_path / "config.d").exists()
     config.ensure_i3_configger_sanity()
     cnf = config.I3configgerConfig()
     assert cnf.configPath.exists()

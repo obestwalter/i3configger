@@ -1,3 +1,4 @@
+"""Inter Process Communication functionality."""
 import logging
 import subprocess
 from pathlib import Path
