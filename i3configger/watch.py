@@ -72,7 +72,7 @@ def get_i3configger_process():
 def daemonized(verbosity, logPath):
     process = get_i3configger_process()
     if process:
-        sys.exit(f"i3configger already running ({process})")
+        raise exc.UserError(f"i3configger already running ({process})")
     context = daemon.DaemonContext(working_directory=Path(__file__).parent)
     if verbosity > 2:
         # spew output to terminal from where daemon was started

@@ -16,7 +16,7 @@ def main():
     except exc.I3configgerException as e:
         if args.v > 2:
             raise
-        sys.exit(e)
+        sys.exit(f"[FATAL] {e}")
 
 
 def _main(args):
@@ -34,7 +34,7 @@ def _main(args):
         message.save(args.message)
     if watch.get_i3configger_process():
         if not args.message:
-            exc.UserError("already running - did you mean to send a message?")
+            raise exc.UserError("already running - did you mean to send a message?")
         log.info("let the running process do the work")
         return 0
     if args.daemon:
