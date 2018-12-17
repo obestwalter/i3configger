@@ -26,6 +26,7 @@ kwargs = dict(
         "lint": ["pre-commit"],
         "test": ["pytest"],
         "docs": ["mkdocs", "mkdocs-material"],
+        "release": ["twine"],
     },
     packages=find_packages(),
     classifiers=[
