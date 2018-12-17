@@ -12,6 +12,6 @@ install:
 jobs:
   include:
     - stage: lint
-    script: tox -e lint
+      script: tox -e lint
     - stage: test
-    script: tox -e test
+      script: tox -e test
