@@ -18,7 +18,7 @@ I wanted to be able to switch between different color themes and do things like 
 
 * [same config language as i3](https://i3wm.org/docs/userguide.html#configuring) with two differences:
     * possibility to spread config over several files
-    * assign variables to variables
+    * possibility to assign variables to variables
 * additional configuration of `i3configger` itself and persistence of changes to the i3 configuration is achieved by sprinkling a bit of json on top of the config files.
 * command line driven - activities can be bound to keyboard shortcuts directly or as part of a [binding mode](https://i3wm.org/docs/userguide.html#binding_modes)
 
