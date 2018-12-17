@@ -7,7 +7,7 @@ from pathlib import Path
 from i3configger import exc
 
 log = logging.getLogger(__name__)
-DEBUG = os.getenv("DEBUG", 0)
+DEBUG = os.getenv("DEBUG", False)
 COMMENT_MARK = "#"
 VAR_MARK = "$"
 SET_MARK = "set"
@@ -18,21 +18,18 @@ DEL = "del"
 """signal to delete a key in shadow or set"""
 
 
-def configure_logging(verbosity: int, logPath: str, isDaemon=False):
+def configure_logging(verbosity: int, logPath, isDaemon=False):
     rootLogger = logging.getLogger()
+    verbosity = 3 if DEBUG else verbosity
+    level = {0: "ERROR", 1: "WARNING", 2: "INFO"}.get(verbosity, "DEBUG")
     if logPath:
         logPath = Path(logPath).expanduser()
     else:
         name = "i3configger-daemon.log" if isDaemon else "i3configger.log"
         logPath = Path(tempfile.gettempdir()) / name
-    if DEBUG:
-        print(f"logging to {logPath}")
-        level = logging.getLevelName("DEBUG")
-    else:
-        level = logging.getLevelName(
-            {0: "ERROR", 1: "WARNING", 2: "INFO"}.get(verbosity, "DEBUG")
-        )
-    fmt = "%(asctime)s %(name)s:%(funcName)s:%(lineno)s " "%(levelname)s: %(message)s"
+        if verbosity > 1:
+            print(f"logging to {logPath} with level {level}", file=sys.stderr)
+    fmt = "%(asctime)s %(name)s:%(funcName)s:%(lineno)s %(levelname)s: %(message)s"
     if not rootLogger.handlers:
         logging.basicConfig(format=fmt, level=level)
     fileHandler = logging.FileHandler(logPath)
