@@ -27,16 +27,19 @@ def _main(args):
     if args.version:
         print(f"i3configger {base.get_version()}")
         return 0
+
     if args.kill:
         watch.exorcise()
         return 0
+
     if args.message:
         message.save(args.message)
     if watch.get_i3configger_process():
         if not args.message:
             raise exc.UserError("already running - did you mean to send a message?")
-        log.info("let the running process do the work")
+        log.info(f"{args.message} is saved - now let the running process do the work")
         return 0
+
     if args.daemon:
         watch.daemonized(args.v, args.log)
     elif args.watch:
