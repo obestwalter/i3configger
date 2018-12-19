@@ -23,6 +23,11 @@ def main():
         raise ValueError("need a version!")
     version = sys.argv[1]
     dryRun = len(sys.argv) > 2
+    with local.cwd(PROJECT_ROOT_PATH):
+        release(version, dryRun)
+
+
+def release(version, dryRun):
     if not dryRun:
         tidy_up()
         tag_repo(version)
@@ -30,8 +35,11 @@ def main():
     dists = get_dists()
     if not long_description_is_ok(dists):
         sys.exit(2)
-    upload_dists(dists)
-    push_released_tag(version)
+    if not dryRun:
+        upload_dists(dists)
+        push_released_tag(version)
+    if dryRun:
+        log.warning(f"This was a dry run for version {version}")
 
 
 def repo_is_dirty():
