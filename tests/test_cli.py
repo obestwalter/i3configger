@@ -1,3 +1,4 @@
+import shutil
 import subprocess
 from contextlib import suppress
 
@@ -34,7 +35,7 @@ def ensure_config_path_exists():
         path = config.CONFIG_CANDIDATES[0]
         path.mkdir()
         yield path
-        path.rmdir()
+        shutil.rmtree(path, ignore_errors=True)
 
 
 @pytest.fixture(name="runner")
