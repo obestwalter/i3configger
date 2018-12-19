@@ -2,6 +2,7 @@ import subprocess
 from contextlib import suppress
 
 import pytest
+from pathlib import Path
 
 from i3configger import exc, watch
 
@@ -26,7 +27,16 @@ class Runner:
         return cp.returncode, cp.stdout.decode(), cp.stderr.decode()
 
 
+@pytest.fixture(name="configPath")
+def ensure_config_path_exists():
+    path = Path("~/.i3").expanduser()
+    if not path.exists():
+        path.mkdir(parents=True)
+    return path
+
+
 @pytest.fixture(name="runner")
+@pytest.mark.usefixtures("configPath")
 def create_i3configger_runner(monkeypatch, tmp_path) -> Runner:
     with suppress(exc.UserError):
         watch.exorcise()
