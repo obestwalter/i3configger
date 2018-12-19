@@ -1,13 +1,12 @@
-import logging
 import sys
 
+import logging
 import shutil
 from pathlib import Path
-
 from plumbum import local, ProcessExecutionError
-from twine.settings import Settings as twine_Settings
 from twine.commands.check import check as twine_check
 from twine.commands.upload import upload as twine_upload
+from twine.settings import Settings as twine_Settings
 
 log = logging.getLogger(__name__)
 PROJECT_ROOT_PATH = Path(__file__).parent
@@ -28,18 +27,16 @@ def main():
 
 
 def release(version, dryRun):
-    if not dryRun:
-        tidy_up()
-        tag_repo(version)
+    tidy_up()
+    tag_repo(version)
     build_dists()
     dists = get_dists()
     if not long_description_is_ok(dists):
-        sys.exit(2)
-    if not dryRun:
-        upload_dists(dists)
-        push_released_tag(version)
+        sys.exit("Long description not ok.")
     if dryRun:
-        log.warning(f"This was a dry run for version {version}")
+        sys.exit(f"This was a dry run for version {version}.")
+    upload_dists(dists)
+    push_released_tag(version)
 
 
 def repo_is_dirty():
@@ -87,5 +84,4 @@ def push_released_tag(version):
 
 
 if __name__ == "__main__":
-    sys.argv = ["release", "0.8.1", "dry"]
     sys.exit(main())
