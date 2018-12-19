@@ -16,13 +16,13 @@ Lots of simplifications and refactoring.
 * terminology: i3status -> i3bar
 * terminology: value -> select
 
+## Fixed
+
+* wrong use of reversed in select-next/previous
+
 ## Removed
 
 * option for different config has no real use and unnecessarily complicates things
-
-## Fixed
-
-* wrong use of reversed in select-previous,select-previous
 
 ## 0.8.0 (Naming things is hard) - 2017-06-20
 ## Changed
