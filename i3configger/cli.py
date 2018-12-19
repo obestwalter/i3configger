@@ -65,7 +65,7 @@ def process_command_line():
 
 
 def _parse_args(p):
-    """Command line commands - all optional with [reasonable] defaults"""
+    """Command line arguments - all optional with [reasonable] defaults"""
     p.add_argument(
         "--version", action="store_true", help="show version information and exit"
     )
