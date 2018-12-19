@@ -28,11 +28,13 @@ class Runner:
 
 @pytest.fixture(scope="session", name="configPath", autouse=True)
 def ensure_config_path_exists():
-    if config.get_i3wm_config_path():
-        return
-    path = config.CONFIG_CANDIDATES[0]
-    path.mkdir(parents=True)
-    return path
+    try:
+        yield config.get_i3wm_config_path()
+    except exc.ConfigError:
+        path = config.CONFIG_CANDIDATES[0]
+        path.mkdir()
+        yield path
+        path.unlink()
 
 
 @pytest.fixture(name="runner")
