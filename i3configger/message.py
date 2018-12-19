@@ -122,10 +122,10 @@ class Messenger:
         self.payload[CMD.SELECT][self.key] = new.value
 
     def fetch_messages(self):
-        if not self.messagesPath.exists():
-            messages = {}
-        else:
+        if self.messagesPath.exists():
             messages = config.fetch(self.messagesPath)
+        else:
+            messages = {}
         self.ensure_message_keys(messages, self.prts)
         return messages
 
