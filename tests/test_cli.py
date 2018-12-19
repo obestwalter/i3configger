@@ -34,7 +34,7 @@ def ensure_config_path_exists():
         path = config.CONFIG_CANDIDATES[0]
         path.mkdir()
         yield path
-        path.unlink()
+        path.rmdir()
 
 
 @pytest.fixture(name="runner")
