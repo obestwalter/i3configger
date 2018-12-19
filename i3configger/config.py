@@ -26,6 +26,10 @@ DEFAULTS = {
         "targets": {},
     },
 }
+CONFIG_CANDIDATES = [
+    Path("~/.i3").expanduser(),
+    Path(os.getenv("XDG_CONFIG_HOME", "~/.config/")).expanduser() / "i3",
+]
 
 
 class I3configgerConfig:
@@ -111,13 +115,9 @@ def get_i3wm_config_path():
 
     see: https://github.com/i3/i3/blob/4.13/libi3/get_config_path.c#L31
     """
-    candidates = [
-        Path("~/.i3").expanduser(),
-        Path(os.getenv("XDG_CONFIG_HOME", "~/.config/")).expanduser() / "i3",
-    ]
-    for candidate in candidates:
+    for candidate in CONFIG_CANDIDATES:
         if candidate.exists():
             return candidate
     raise exc.ConfigError(
-        f"can't find i3 config at the standard locations: {candidates}"
+        f"can't find i3 config at the standard locations: {CONFIG_CANDIDATES}"
     )
