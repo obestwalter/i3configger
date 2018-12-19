@@ -71,3 +71,12 @@ mode "i3configger" {
     $ pip install i3configger
 
 See [docs](http://oliver.bestwalter.de/i3configger/installation) For more details and different ways of installation.
+
+## Some inspiration from the i3 project
+
+... that I would also like to heed for this project:
+
+> * Never break configuration files or existing workflows. Breaking changes require a major version bump (v4 → v5).
+> * Keep mental complexity low: once you know i3’s key features, other features should be easy to understand.
+> * Only add features which benefit many people, instead of going to great lengths to support rarely used workflows.
+> * Only documented behavior is supported. Clear documentation is a requirement for contributions.
