@@ -1,28 +1,28 @@
 # CHANGELOG
 
-## Unreleased
-
-Lots of simplifications and refactoring.
-
+## 0.9.0 (A new beginning) - 2018-12-19
 ## Added
 
 * where it makes sense, defaults for command line settings can be changed in i3configger.json (command line overrides settings in config)
 * make status command configurable (for refresh)
-* add off-switch to ipc configuration (for testing)
+* off-switch for ipc configuration (for easier testing)
+* functional tests for main cli functionality
 
 ## Changed
 
+* keep Python version in sync with Arch system Python: test with Python 3.7
 * breaking changes in i3configger.json - check examples to see what is different. Easiest way to upgrade is to move your old config to the side, run i3configger to generate a new default config and add your settings from the old config back in.
 * terminology: i3status -> i3bar
 * terminology: value -> select
+* internal modernization and refactoring
+
+## Fixed
+
+* wrong use of reversed in select-next/previous
 
 ## Removed
 
 * option for different config has no real use and unnecessarily complicates things
-
-## Fixed
-
-* wrong use of reversed in select-previous,select-previous
 
 ## 0.8.0 (Naming things is hard) - 2017-06-20
 ## Changed
@@ -84,7 +84,7 @@ Lots of simplifications and refactoring.
 ## 0.7.0 (Better safe than sorry) - 2017-06-10
 ### Changed
 
-- always create a backup of the users files if it does not exist already. Do **not** clobber it on subsequent builds to make sure you can always go back to your old files if needed, even if they are no external backups or SCM in place.
+- always create a backup of the users files if it does not exist already. Do **not** clobber it on subsequent builds to make sure you can always go back to your old files if needed, even if they have no external backups or SCM in place.
 
 ## 0.6.0 (Command & Conquer) - 2017-06-10
 ### Fixed
