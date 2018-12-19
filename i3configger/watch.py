@@ -1,4 +1,6 @@
 """Functionality to watch the configuration dir to trigger rebuilds on changes."""
+import time
+
 import logging
 import os
 import sys
@@ -88,4 +90,11 @@ def exorcise():
     if not process:
         raise exc.UserError("no daemon running - nothing to kill")
     process.kill()
+    # sometimes the process needs a bit longer to die
+    for _ in range(20):
+        if not process.is_running():
+            break
+        time.sleep(0.1)
+    else:
+        raise exc.I3configgerException(f"process {process} does not want to die")
     log.info(f"killed {process}")
