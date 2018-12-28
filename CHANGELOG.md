@@ -1,7 +1,14 @@
 # CHANGELOG
 
+## 0.9.1.post1 (Never too late to botch up the changelog) - 2018-12-28
+## Fixed
+
+* broken changelog
+
 ## 0.9.1 (Never too late to make stupid mistakes) - 2018-12-28
-## Fixed crash when executing command due to forgotten explicit self
+## Fixed
+
+* crash when executing command due to forgotten explicit self
 
 ## 0.9.0 (A new beginning) - 2018-12-19
 ## Added
