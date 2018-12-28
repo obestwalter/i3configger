@@ -46,7 +46,7 @@ class Messenger:
 
     def digest_message(self):
         try:
-            self.COMMAND_METHOD_MAP[self.command]()
+            self.COMMAND_METHOD_MAP[self.command](self)
         except KeyError:
             raise exc.UserError(
                 f"Unknown command: {self.command}. "
