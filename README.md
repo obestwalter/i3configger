@@ -16,7 +16,7 @@ I wanted to be able to switch between different color themes and do things like 
 
 ## Main characteristics
 
-* [same config language as i3](https://i3wm.org/docs/userguide.html#configuring) with these differences:
+* [same config language as i3](https://i3wm.org/docs/userguide.html#configuring) with these enhancements:
     * possibility to spread config over several files
     * possibility to assign variables to variables
     * variables in i3status configs are also resolved (set them anywhere in the sources)
