@@ -16,3 +16,5 @@ jobs:
       script: tox -e lint
     - stage: test
       script: tox -e test
+after_success:
+    - tox -e coveralls

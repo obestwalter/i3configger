@@ -6,3 +6,4 @@ archive/*
 
 site/*
 .messages.json
+.coverage-html

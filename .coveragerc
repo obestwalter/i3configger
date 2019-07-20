@@ -1,0 +1,17 @@
+[run]
+; needs coverage>=5 (and still causes touble in this setup)
+;dynamic_context = test_function
+branch = True
+source = i3configger
+omit =
+    *__main__.py
+    */bindings.py
+    */inotify_simple.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    raise NotImplementedError
+
+[html]
+directory = .coverage-html

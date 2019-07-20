@@ -1,6 +1,7 @@
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Build Status](https://travis-ci.org/obestwalter/i3configger.svg?branch=master)](https://travis-ci.org/obestwalter/i3configger)
 [![PyPI version](https://badge.fury.io/py/i3configger.svg)](https://pypi.org/project/i3configger/)
+[![Build Status](https://travis-ci.org/obestwalter/i3configger.svg?branch=master)](https://travis-ci.org/obestwalter/i3configger)
+[![Coverage Status](https://coveralls.io/repos/github/obestwalter/i3configger/badge.svg?branch=master)](https://coveralls.io/github/obestwalter/i3configger?branch=master)
 [![Documentation](https://img.shields.io/badge/docs-sure!-brightgreen.svg)](http://oliver.bestwalter.de/i3configger)
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 

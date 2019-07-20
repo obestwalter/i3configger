@@ -24,7 +24,7 @@ kwargs = dict(
     install_requires=["psutil", "python-daemon"],
     extras_require={
         "lint": ["pre-commit"],
-        "test": ["pytest"],
+        "test": ["pytest", "coverage"],
         "docs": ["mkdocs", "mkdocs-material"],
         "release": ["plumbum", "twine", "readme_renderer[md]"],
     },
