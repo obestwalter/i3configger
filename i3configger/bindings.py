@@ -19,7 +19,7 @@ class Bindings:
     def get_all_bindings(self):
         lines = [l.strip() for l in self.content.splitlines()]
         lines = [l for l in lines if any(m in l for m in [BINDCODE, BINDSYM])]
-        lines = [l for l in lines if not l.startswith(base.COMMENT_MARK)]
+        lines = [l for l in lines if not l.startswith(config.MARK.COMMENT)]
         return sorted(set(lines))
 
     def translate_bindings(self):
@@ -36,11 +36,9 @@ class Bindings:
 
 
 if __name__ == "__main__":
-    # TODO use partials and account for modes
+    # use partials and account for modes
     # a naming convention would make this quite easy
     # mode-<modename>.conf -> bindings active in <modename>
-    from i3configger import base
-
     p = config.I3configgerConfig().targetPath
     b = Bindings(p.read_text())
     print("\n".join(b.get_all_bindings()))

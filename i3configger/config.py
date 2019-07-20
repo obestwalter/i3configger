@@ -13,6 +13,18 @@ log = logging.getLogger(__name__)
 cliMainOverrideMap: dict = {}
 """holds parsed args if started from cli and was initialized"""
 
+
+class MARK:
+    COMMENT = "#"
+    SET = "set"
+    VAR = "$"
+
+
+SUFFIX = ".conf"
+I3BAR = "i3bar"
+"""reserved key for status bar template files"""
+
+
 DEFAULTS = {
     "main": {
         "target": "../config",

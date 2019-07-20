@@ -6,7 +6,7 @@ from functools import total_ordering
 from pathlib import Path
 from typing import Union, List
 
-from i3configger import base, exc
+from i3configger import config, exc
 
 log = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ class Partial:
 
     def get_pruned_content(self) -> str:
         """pruned content or '' if file only contains vars and comments"""
-        lines = [l for l in self.lines if not l.strip().startswith(base.SET_MARK)]
+        lines = [l for l in self.lines if not l.strip().startswith(config.MARK.SET)]
         if not self.contain_something(lines):
             return ""
         while lines and not lines[0].strip():
@@ -50,9 +50,9 @@ class Partial:
             line = line.strip()
             if not line:
                 continue
-            if line.startswith(base.COMMENT_MARK):
+            if line.startswith(config.MARK.COMMENT):
                 continue
-            if line.startswith(base.SET_MARK):
+            if line.startswith(config.MARK.SET):
                 continue
             return True
 
@@ -60,7 +60,7 @@ class Partial:
     def context(self):
         ctx = {}
         for line in [
-            l.strip() for l in self.lines if l.strip().startswith(base.SET_MARK)
+            l.strip() for l in self.lines if l.strip().startswith(config.MARK.SET)
         ]:
             payload = line.split(maxsplit=1)[1]
             key, value = payload.split(maxsplit=1)
@@ -115,11 +115,11 @@ def create(partialsPath) -> List[Partial]:
     partialsPath = Path(partialsPath)
     assert partialsPath.is_dir(), partialsPath
     prts = []
-    for path in partialsPath.glob(f"*{base.SUFFIX}"):
+    for path in partialsPath.glob(f"*{config.SUFFIX}"):
         if path.name.startswith(EXCLUDE_MARKER):
             log.info(f"excluding {path} because it starts with {EXCLUDE_MARKER}")
             continue
         prts.append(Partial(path))
     if not prts:
-        raise exc.PartialsError(f"no '*{base.SUFFIX}' at {partialsPath}")
+        raise exc.PartialsError(f"no '*{config.SUFFIX}' at {partialsPath}")
     return sorted(prts)

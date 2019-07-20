@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 from pprint import pformat
 
-from i3configger import base, config, context, exc, ipc, message, partials
+from i3configger import config, context, exc, ipc, message, partials
 
 log = logging.getLogger(__name__)
 
@@ -15,7 +15,9 @@ def build_all():
     cnf = config.I3configgerConfig()
     log.info(f"start building from {cnf.partialsPath}")
     prts = partials.create(cnf.partialsPath)
-    msg = message.Messenger(cnf.messagesPath, prts).fetch_messages()
+    msg = message.Messenger(cnf.messagesPath, prts).fetch_messages(
+        exludes=[config.I3BAR]
+    )
     cnf.payload = context.merge(cnf.payload, msg[message.CMD.SHADOW])
     pathContentsMap = generate_contents(cnf, prts, msg)
     check_config(pathContentsMap[cnf.targetPath])
@@ -29,7 +31,7 @@ def generate_contents(cnf: config.I3configgerConfig, prts, msg):
     setMap = msg[message.CMD.SET]
     pathContentsMap = {}
     barTargets = cnf.get_bar_targets()
-    selected = partials.select(prts, selectorMap, excludes=[base.I3BAR])
+    selected = partials.select(prts, selectorMap, excludes=[config.I3BAR])
     ctx = context.process(selected + [setMap])
     log.debug(f"main context:\n{pformat(ctx)}")
     mainContent = generate_main_content(cnf.partialsPath, selected, ctx)
@@ -42,7 +44,7 @@ def generate_contents(cnf: config.I3configgerConfig, prts, msg):
             prts, barCnf["select"], extendedContext
         )
         if i3barFileContent:
-            filename = f"{base.I3BAR}.{barCnf['select']}{base.SUFFIX}"
+            filename = f"{config.I3BAR}.{barCnf['select']}{config.SUFFIX}"
             dst = Path(barCnf["target"]) / filename
             pathContentsMap[dst] = i3barFileContent
     pathContentsMap[cnf.targetPath] = mainContent.rstrip("\n") + "\n"
@@ -69,18 +71,18 @@ def generate_main_content(partialsPath, selected, ctx):
 
 
 def get_bar_setting(barCnf, prts, ctx):
-    tpl = partials.find(prts, base.I3BAR, barCnf["template"])
+    tpl = partials.find(prts, config.I3BAR, barCnf["template"])
     assert isinstance(tpl, partials.Partial), tpl
     tpl.name = f"{tpl.name} [id: {barCnf['id']}]"
     return context.substitute(tpl.get_pruned_content(), ctx).rstrip("\n")
 
 
 def generate_i3bar_content(prts, selectValue, ctx):
-    prt = partials.find(prts, base.I3BAR, selectValue)
+    prt = partials.find(prts, config.I3BAR, selectValue)
     if not prt:
         raise exc.ConfigError(
             f"[IGNORE] no status config named "
-            f"{base.I3BAR}.{selectValue}{base.SUFFIX}"
+            f"{config.I3BAR}.{selectValue}{config.SUFFIX}"
         )
     assert isinstance(prt, partials.Partial), prt
     content = context.substitute(prt.get_pruned_content(), ctx)

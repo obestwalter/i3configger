@@ -9,14 +9,6 @@ from i3configger import exc
 
 log = logging.getLogger(__name__)
 DEBUG = os.getenv("DEBUG", False)
-COMMENT_MARK = "#"
-VAR_MARK = "$"
-SET_MARK = "set"
-SUFFIX = ".conf"
-I3BAR = "i3bar"
-"""reserved key for status bar template files"""
-DEL = "del"
-"""signal to delete a key in shadow or set"""
 
 
 def configure_logging(verbosity: int, logPath, isDaemon=False):
@@ -51,7 +43,7 @@ def get_version():
 
 
 def i3configger_excepthook(type_, value, traceback):
-    """Make all exceptions look like a friendly error message :)"""
+    """Make own exceptions look like a friendly error message :)"""
     if DEBUG or not isinstance(value, exc.I3configgerException):
         _REAL_EXCEPTHOOK(type_, value, traceback)
     else:

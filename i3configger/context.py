@@ -3,7 +3,7 @@ from functools import reduce
 from string import Template
 from typing import Iterable, Union
 
-from i3configger import base, exc, partials
+from i3configger import config, exc, partials
 
 log = logging.getLogger(__name__)
 
@@ -47,9 +47,9 @@ def prune(dst: dict, src: dict) -> dict:
 
 def resolve_variables(ctx: dict) -> dict:
     """If variables are set by a variable, replace them by their value."""
-    while any(v.startswith(base.VAR_MARK) for v in ctx.values()):
+    while any(v.startswith(config.MARK.VAR) for v in ctx.values()):
         for key, value in ctx.items():
-            if value.startswith(base.VAR_MARK):
+            if value.startswith(config.MARK.VAR):
                 ctx[key] = _resolve_variable(value, ctx, path=key)
     return ctx
 
@@ -59,16 +59,16 @@ def _resolve_variable(key, ctx, path):
     resolved = ctx.get(key)
     if not resolved:
         raise exc.ContextError(f"not resolvable: {path}")
-    if resolved.startswith(base.VAR_MARK):
+    if resolved.startswith(config.MARK.VAR):
         return _resolve_variable(resolved, ctx, path)
     return resolved
 
 
 def remove_variable_markers(ctx: dict) -> dict:
     cleaned = {}
-    lvm = len(base.VAR_MARK)
+    lvm = len(config.MARK.VAR)
     for key, value in ctx.items():
-        key = key[lvm:] if key.startswith(base.VAR_MARK) else key
+        key = key[lvm:] if key.startswith(config.MARK.VAR) else key
         cleaned[key] = value
     return cleaned
 

@@ -2,7 +2,7 @@
 import logging
 from pathlib import Path
 
-from i3configger import base, config, context, exc, partials
+from i3configger import config, context, exc, partials
 
 log = logging.getLogger(__name__)
 
@@ -30,6 +30,9 @@ def save(message):
 
 
 class Messenger:
+    DEL = "del"
+    """signal to delete a key in shadow or set"""
+
     def __init__(self, messagesPath, prts, message=None):
         self.messagesPath = messagesPath
         self.prts = prts
@@ -41,7 +44,7 @@ class Messenger:
             self.value = rest[0] if rest else ""
             if self.command != CMD.SHADOW and ":" in self.key:
                 raise exc.UserError(f"nesting of keys only sensible with {CMD.SHADOW}")
-        self.payload = self.fetch_messages()
+        self.payload = self.fetch_messages(exludes=[config.I3BAR])
         log.debug(f"send message '{message}' to {messagesPath}")
 
     def digest_message(self):
@@ -66,10 +69,10 @@ class Messenger:
         self.payload = func(self.payload, config.fetch(path))
 
     def _process_set(self):
-        if self.value.lower() == base.DEL:
-            del self.payload[CMD.SET][base.VAR_MARK + self.key]
+        if self.value.lower() == self.DEL:
+            del self.payload[CMD.SET][config.MARK.VAR + self.key]
         else:
-            self.payload[CMD.SET][base.VAR_MARK + self.key] = self.value
+            self.payload[CMD.SET][config.MARK.VAR + self.key] = self.value
 
     def _process_select(self):
         candidates = partials.find(self.prts, self.key)
@@ -78,7 +81,7 @@ class Messenger:
         candidate = partials.find(self.prts, self.key, self.value)
         if not candidate:
             raise exc.MessageError(f"No candidates for {self.message} in {candidates}")
-        if self.value and self.value.lower() == base.DEL:
+        if self.value and self.value.lower() == self.DEL:
             del self.payload[CMD.SELECT][self.key]
         else:
             self.payload[CMD.SELECT][self.key] = candidate.value
@@ -96,7 +99,7 @@ class Messenger:
                 current[part] = {}
                 current = current[part]
             else:
-                if self.value is not None and self.value.lower() == base.DEL:
+                if self.value is not None and self.value.lower() == self.DEL:
                     del current[part]
                 else:
                     current[part] = self.value
@@ -121,21 +124,21 @@ class Messenger:
         log.info(f"select {self.key}.{new}")
         self.payload[CMD.SELECT][self.key] = new.value
 
-    def fetch_messages(self):
+    def fetch_messages(self, exludes=None):
         if self.messagesPath.exists():
             messages = config.fetch(self.messagesPath)
         else:
             messages = {}
-        self.ensure_message_keys(messages, self.prts)
+        self.ensure_message_keys(messages, self.prts, exludes)
         return messages
 
-    def ensure_message_keys(self, state, prts):
+    def ensure_message_keys(self, state, prts, exludes):
         if CMD.SELECT not in state:
             initialSelects = {}
             for prt in prts:
                 if not prt.needsSelection:
                     continue
-                if prt.key not in initialSelects and prt.key != base.I3BAR:
+                if prt.key not in initialSelects and prt.key not in exludes:
                     initialSelects[prt.key] = prt.value
             state[CMD.SELECT] = initialSelects
         if CMD.SET not in state:

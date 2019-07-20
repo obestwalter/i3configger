@@ -52,7 +52,7 @@ def watch_unguarded():
         if not events:
             continue
         paths = [cnf.partialsPath / e[-1] for e in events]
-        if any(p.suffix in [base.SUFFIX, ".json"] for p in paths):
+        if any(p.suffix in [config.SUFFIX, ".json"] for p in paths):
             build.build_all()
             ipc.communicate(refresh=True)
 
